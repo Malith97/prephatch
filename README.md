@@ -1,37 +1,113 @@
 # PrepHatch
 
-PrepHatch is an exam-readiness platform focused on realistic certification practice, trusted explanations, and cost-aware AI assistance.
+PrepHatch is an AI-assisted certification exam-readiness platform focused on realistic mock exams, strong explanations, progress tracking, and a scalable low-cost architecture.
 
-## Repo Purpose
+The first launch target is:
 
-This repository is designed for AI-assisted planning, development, testing, deployment, and operations.
+- **AWS Certified Solutions Architect – Associate (SAA-C03)**
 
-## Documentation Start Here
+PrepHatch is being built as a focused, high-quality, cost-conscious product with strong AI support across planning, development, testing, and operations.
 
-- `docs/INDEX.md` — documentation map
-- `docs/MASTER_BLUEPRINT.md` — control-tower summary and source of truth
-- `docs/DECISIONS.md` — major decisions and rationale
-- `docs/CHANGELOG.md` — notable documentation and product changes
+---
 
-## Working Principles
+## Project Status
 
-- Cost is a primary constraint.
-- Reliability is more important than feature count.
-- AI is used to accelerate work, not replace source-of-truth logic.
-- The product is built as a modular monolith first.
-- Documentation is written for both humans and AI systems.
+Status: Active planning and build phase
 
-## Suggested Local Setup
+This repository currently contains the product, architecture, engineering, and operations documentation that will guide implementation.
 
-1. Copy `.env.example` to `.env.local`
-2. Fill in Supabase, Stripe, and AI provider secrets
-3. Read `docs/INDEX.md`
-4. Read `docs/MASTER_BLUEPRINT.md`
-5. Follow `docs/engineering/implementation-plan.md`
+Primary documentation entry point:
 
-## Documentation Rules
+- [`docs/INDEX.md`](docs/INDEX.md)
 
-- Keep `MASTER_BLUEPRINT.md` strategic and relatively short.
-- Put detailed rules in section files.
-- Record meaningful changes in `DECISIONS.md` and `CHANGELOG.md`.
-- When a file becomes mixed or too large, split it.
+---
+
+## Documentation Reading Order
+
+Start here if you are new to the project:
+
+1. [`docs/MASTER_BLUEPRINT.md`](docs/MASTER_BLUEPRINT.md)
+2. [`docs/DECISIONS.md`](docs/DECISIONS.md)
+3. [`docs/product/mvp-scope.md`](docs/product/mvp-scope.md)
+4. [`docs/architecture/system-architecture.md`](docs/architecture/system-architecture.md)
+5. [`docs/engineering/implementation-plan.md`](docs/engineering/implementation-plan.md)
+6. [`docs/engineering/IMPLEMENTATION_BACKLOG.md`](docs/engineering/IMPLEMENTATION_BACKLOG.md)
+7. [`docs/engineering/FIRST_SPRINT_CHECKLIST.md`](docs/engineering/FIRST_SPRINT_CHECKLIST.md)
+
+---
+
+## What PrepHatch Is
+
+PrepHatch is intended to help learners:
+
+- take realistic certification mock exams
+- practice under timed conditions
+- get high-quality explanations
+- identify weak areas
+- track improvement over time
+- access structured notes and cheatsheets
+- feel more ready for the real exam
+
+At launch, the product is intentionally narrow:
+
+- one certification first
+- one strong learner flow
+- one modular monolith codebase
+- strict cost control
+- AI used carefully, not everywhere
+
+---
+
+## Core Product Principles
+
+- **Quality first**: explanations, scoring, entitlement checks, and exam behavior must be reliable
+- **Low-cost by design**: avoid unnecessary services, limit runtime AI calls, and optimize infrastructure spend
+- **AI-assisted execution**: use AI heavily for planning, coding, testing, debugging, and documentation
+- **Human-controlled truth**: AI can assist, but scoring, payments, access, and publishing must remain deterministic
+- **Scalable architecture**: start as a modular monolith, with clean boundaries that support future growth
+- **Small real MVP**: launch the smallest version that proves users want and trust the product
+
+---
+
+## Current Build Priorities
+
+The current execution priority is:
+
+1. app scaffold
+2. authentication
+3. schema foundation
+4. free mock exam flow
+5. results and review
+6. payments and entitlements
+7. premium workspace
+8. minimal admin tools
+9. controlled AI explanation layer
+
+Primary working docs for execution:
+
+- [`docs/engineering/IMPLEMENTATION_BACKLOG.md`](docs/engineering/IMPLEMENTATION_BACKLOG.md)
+- [`docs/engineering/FIRST_SPRINT_CHECKLIST.md`](docs/engineering/FIRST_SPRINT_CHECKLIST.md)
+
+---
+
+## Documentation Structure
+
+```text
+docs/
+  INDEX.md
+  MASTER_BLUEPRINT.md
+  DECISIONS.md
+  CHANGELOG.md
+  product/
+  architecture/
+  engineering/
+  operations/
+  prompts/
+
+---
+
+## License
+
+This repository is proprietary. All rights reserved.
+
+No permission is granted to use, copy, modify, distribute, sublicense, sell, train on, or create derivative works from this repository or its contents without prior express written permission from the copyright holder.
