@@ -1,436 +1,377 @@
-# PrepHatch Master Blueprint v1
+# PrepHatch Master Blueprint v2 — AI-Optimized, Cost-Disciplined, Scale-Ready
 
-> Canonical source of truth for PrepHatch product planning, architecture, delivery, operations, and growth.
-> This document consolidates all planning threads into a single GitHub-ready master file for product alignment, AI-assisted implementation, and future evolution.
+> Canonical source of truth for PrepHatch product, architecture, implementation, testing, deployment, and operations.
+> This version replaces vague or high-risk decisions with explicit rules optimized for AI-assisted execution, lower cost, higher quality, and future scalability.
 
 ---
 
-## Document Status
+## 0. Document Control
 
 - **Project:** PrepHatch
-- **Version:** v1
-- **Status:** Active baseline
-- **Primary use:** Product, engineering, AI-assisted coding, and roadmap reference
+- **Version:** v2
+- **Status:** Active canonical blueprint
 - **Owner:** Founder
-- **Scope:** MVP through early scaling
+- **Product Type:** Certification exam-readiness platform
+- **Primary Objective:** Launch a high-quality, low-cost, scalable MVP for one certification, validate demand, and expand safely
+- **Primary Constraints:** solo-founder execution, cost sensitivity, AI-assisted development, high reliability, low bug tolerance
 
----
+### 0.1 Purpose of This Document
 
-## How to Use This Document
+This document exists to make planning, building, testing, and operating PrepHatch easier for both:
+- human contributors
+- AI coding / planning systems
 
-This file is the top-level project blueprint.
+It is intentionally:
+- explicit
+- low-ambiguity
+- modular
+- implementation-oriented
+- diff-friendly
+- optimized for task decomposition
 
-Use it for:
-- product alignment
-- architecture reference
-- engineering implementation
-- AI coding prompts
-- roadmap tracking
-- launch readiness
-- post-launch operations
+### 0.2 How AI Must Use This Document
 
-When the project grows, this file can be split into smaller docs under `docs/`. Until then, this file remains the canonical source of truth.
+Any AI used for planning, coding, refactoring, testing, reviewing, or deployment must follow these rules:
 
----
+1. Treat this document as the **canonical product and architecture contract**.
+2. Do not invent business rules that are not stated here.
+3. If a requested change conflicts with this document, surface the conflict explicitly.
+4. Optimize for:
+   - correctness first
+   - low operational cost second
+   - delivery speed third
+5. Do not introduce new infrastructure, vendors, or abstractions without clear justification.
+6. Do not move core logic into runtime AI where deterministic code is safer.
+7. Every implementation task should reference relevant section numbers from this blueprint.
+8. All code changes must include tests proportionate to risk.
+9. Human approval is required for:
+   - production deploys
+   - payment changes
+   - auth changes
+   - schema migrations
+   - entitlement logic changes
+10. When uncertain, prefer the simpler, cheaper, more testable design.
 
-# Table of Contents
+### 0.3 Decision Precedence
 
-1. [Executive Summary](#1-executive-summary)
-2. [Vision and Strategic Direction](#2-vision-and-strategic-direction)
-3. [Branding and Domain](#3-branding-and-domain)
-4. [Product Scope and MVP Definition](#4-product-scope-and-mvp-definition)
-5. [Users, Market, and Positioning](#5-users-market-and-positioning)
-6. [Business Model and Access Model](#6-business-model-and-access-model)
-7. [Product Experience and User Flows](#7-product-experience-and-user-flows)
-8. [Product Requirements](#8-product-requirements)
-9. [AI Strategy](#9-ai-strategy)
-10. [Technical Architecture](#10-technical-architecture)
-11. [Data Model and Schema Direction](#11-data-model-and-schema-direction)
-12. [Exam Engine Specification](#12-exam-engine-specification)
-13. [Content System and Admin Operations](#13-content-system-and-admin-operations)
-14. [Payments, Entitlements, and Access Control](#14-payments-entitlements-and-access-control)
-15. [Budget and Cost Optimization](#15-budget-and-cost-optimization)
-16. [Development Roadmap](#16-development-roadmap)
-17. [Implementation Blueprint](#17-implementation-blueprint)
-18. [Testing and QA Strategy](#18-testing-and-qa-strategy)
-19. [Deployment and DevOps](#19-deployment-and-devops)
-20. [Maintenance and Operations](#20-maintenance-and-operations)
-21. [Growth and Scaling Strategy](#21-growth-and-scaling-strategy)
-22. [Frozen Decisions Register](#22-frozen-decisions-register)
-23. [Immediate Next Steps](#23-immediate-next-steps)
-24. [Appendix: Recommended Repo Doc Split](#24-appendix-recommended-repo-doc-split)
+When two sources conflict, resolve in this order:
+1. this blueprint
+2. frozen decisions register
+3. approved change log / ADR
+4. implementation notes
+5. AI suggestions
+
+### 0.4 Change Management Rule
+
+No AI or human contributor should silently change product rules.
+Any material change to:
+- pricing
+- package access
+- exam behavior
+- scoring rules
+- authentication methods
+- data model invariants
+- deployment strategy
+
+must be recorded in:
+- `docs/DECISIONS.md`
+- and, if still active, reflected back into this blueprint
 
 ---
 
 # 1. Executive Summary
 
-## 1.1 What PrepHatch Is
+PrepHatch is a focused certification exam-readiness platform.
+Its first product is a preparation package for **AWS Certified Solutions Architect – Associate (SAA-C03)**.
 
-PrepHatch is a certification exam-readiness platform built to help learners prepare for specific certification exams through:
+PrepHatch is **not** a course marketplace, dumping site, or general education portal.
+It is a structured exam simulator and review system designed to help users:
+- practice in exam-like conditions
+- understand why answers are correct or wrong
+- identify weak areas
+- build readiness with measurable progress
 
-- realistic mock exams
-- timed exam simulation
-- practice mode
-- detailed explanations
-- AI-powered deep explanations
-- progress tracking
-- weak-area analysis
-- topic-based notes
-- cheatsheets
-- admin-managed content
+## 1.1 Strategic Thesis
 
-PrepHatch should feel like:
+Users will pay for a prep product that is:
+- more structured than scattered free resources
+- more trustworthy than dumps
+- more exam-like than note collections
+- more practical than generic AI tutoring
 
-- a serious exam simulator
-- a guided exam coach
+## 1.2 Core Product Promise
 
-## 1.2 First Product Focus
-
-The first certification product is:
-
-- **AWS Certified Solutions Architect – Associate (SAA-C03)**
-
-## 1.3 Core User Promise
-
-PrepHatch exists to help users:
-
-- pass faster
-- feel exam-ready
-- identify weak areas clearly
-- increase the chance of passing on the first attempt
-
-## 1.4 Business Model Summary
-
-PrepHatch v1 uses:
-
-- one-time payment per certification package
-- 365-day access per package
-- one free mock exam available after login
-- coupon support for launch promotions
-
-## 1.5 Product Structure Summary
-
-PrepHatch has two major surfaces.
-
-### Learner-facing surface
-- dashboard marketplace
-- free exam flow
-- purchased exam workspace
-- exam engine
-- results and review
-- progress tracking
-- notes
-- cheatsheets
-
-### Admin-facing surface
-- certification and package management
-- question bank management
-- mock exam composition
-- notes and cheatsheets management
-- import workflows
-- archive and publish controls
-- testing-access support
-
-## 1.6 Strategic Build Principle
-
-PrepHatch should be built as a:
-
-- **modular monolith**
-- with a **reusable question bank**
-- and a **hybrid explanation system**:
-  - stored base explanations
-  - AI deep explanations as an additional layer
-
----
-
-# 2. Vision and Strategic Direction
-
-## 2.1 Product Vision
-
-PrepHatch is a focused certification-prep platform that helps learners prepare for specific exams through realistic practice, structured feedback, and targeted improvement tools.
-
-It is not intended to be:
-
-- a random dump site
-- a generic course marketplace
-- a broad learning portal at launch
-
-It is intended to be:
-
-- a practical exam-readiness platform
-- trustworthy
-- measurable
-- focused
-- scalable across certifications later
-
-## 2.2 Core Outcome
-
-When a learner buys a certification package, they should be able to:
-
-- take multiple mock exams
-- simulate exam conditions
+A learner should be able to:
+- take a realistic mock exam
+- review detailed explanations
 - understand weak areas
-- review high-quality explanations
-- learn from wrong answers
-- revise with notes and cheatsheets
-- track progress over time
-- build confidence before taking the real exam
+- improve over multiple attempts
+- feel more confident before the real exam
 
-## 2.3 Long-Term Direction
+## 1.3 Launch Principle
 
-PrepHatch should grow from:
-
-- one certification-ready product
-
-into:
-
-- a trusted multi-certification exam-readiness platform
-
-and later possibly into:
-
-- a broader certification-preparation ecosystem
-
-Potential long-term areas:
-- more certifications
-- bundles
-- renewal flows
-- stronger analytics
-- AI-driven study guidance
-- broader learning assets
-- B2B/team offerings later if justified
-
----
-
-# 3. Branding and Domain
-
-## 3.1 Brand Name
-
-**PrepHatch**
-
-## 3.2 Brand Direction
-
-PrepHatch should feel:
-
-- clean
-- focused
-- serious
-- trustworthy
-- technical
-- professional
-- exam-oriented
-
-## 3.3 Brand Implication
-
-The brand should communicate:
-
-- readiness
-- progress
-- structure
+PrepHatch v1 must ship as a **tight vertical slice**, not as a broad feature platform.
+The launch product must optimize for:
+- validation speed
+- content quality
 - reliability
-- modern technical credibility
+- low cost
+- future extensibility
 
-## 3.4 Domain Status
+## 1.4 Most Important Product Rule
 
-- domain purchased
-- hosting not separately purchased because the platform is planned on managed infrastructure
+The platform must remain useful **even if runtime AI is disabled**.
+
+Stored content, deterministic exam logic, and premium access control are the true core.
+AI is only a value amplifier.
 
 ---
 
-# 4. Product Scope and MVP Definition
+# 2. Product Goals, Constraints, and Non-Negotiables
 
-## 4.1 MVP Objective
+## 2.1 Primary Business Goal
 
-Validate that learners will pay for a focused, exam-specific prep platform that combines:
+Validate that users will pay for a focused exam package built around high-quality mock exams and explanations.
 
-- realistic mock exams
-- explanations
-- AI deep explanations
-- progress tracking
-- weak-area analysis
-- notes
-- cheatsheets
-- exam-like timed behavior
+## 2.2 Primary Product Goal
 
-## 4.2 MVP Certification
+Deliver one certification package that feels reliable, professional, and clearly more useful than scattered free alternatives.
 
-The MVP launches with one certification only:
+## 2.3 Primary Technical Goal
 
+Build a low-complexity system that can scale from one exam package to many without a rewrite.
+
+## 2.4 Hard Constraints
+
+- solo-founder-friendly
+- low monthly burn
+- low AI API spend
+- low operational overhead
+- low incident risk
+- limited manual support burden
+- minimal infrastructure sprawl
+
+## 2.5 Non-Negotiables
+
+These are mandatory:
+- modular monolith architecture
+- strict server-side entitlement enforcement
+- immutable submitted attempt history
+- stored base explanations for every published question
+- ability to operate without runtime AI
+- small real MVP
+- deterministic exam engine behavior
+- preview environment before production
+- automated testing for critical flows
+- human approval for risky changes
+
+---
+
+# 3. Product Scope
+
+## 3.1 Product Identity
+
+PrepHatch is:
+- a realistic exam simulator
+- a structured review system
+- a premium exam-readiness product
+
+PrepHatch is not:
+- a video course platform
+- a generic AI chat app
+- a content marketplace
+- an enterprise learning suite
+
+## 3.2 First Certification
+
+Launch with one certification only:
 - **AWS SAA-C03**
 
-## 4.3 What Is Included in MVP
+## 3.3 Real MVP Definition
 
-### Learner-facing
-- sign up and log in
-- email verification
-- Google login
-- Facebook login
-- dashboard marketplace
+The MVP is the smallest version that can prove willingness to pay.
+
+### Included in launch MVP
+- public homepage
 - package detail page
+- login required for free trial
+- authentication via:
+  - Google OAuth
+  - email magic link / OTP
 - one free mock exam
-- 5 to 8 premium mock exams
+- 2 to 3 premium mock exams
 - practice mode
 - timed mode
-- score and review
-- progress tracking
-- weak-area analysis
-- notes
-- cheatsheets
-- premium workspace
-- AI deep explanations
-- coupon support
-- expired-access handling
-- 365-day access entitlement
-- purchased exams section in dashboard
+- deterministic scoring
+- result and review page
+- basic progress summary
+- paid package workspace
+- one-time purchase via Stripe
+- 365-day entitlement
+- notes and cheatsheets as simple Markdown content
+- minimal admin for content management
+- runtime AI deep explanation as optional, on-demand enhancement only
 
-### Admin-facing
-- admin-only dashboard
-- certification CRUD
-- package CRUD
-- topic CRUD
-- reusable question bank management
-- mock exam composition
-- CSV import
-- notes editor
-- cheatsheets editor
-- publish and unpublish controls
-- archive controls
-- manual testing access support
-
-## 4.4 What Is Explicitly Excluded from MVP
-
-- mobile app
+### Explicitly excluded from launch MVP
+- Facebook login
+- custom email/password auth unless required later
 - subscriptions
-- enterprise or team accounts
+- bundles
+- team / enterprise accounts
+- mobile app
 - community features
 - live AI tutor chat
-- heavy proctoring
-- screenshot-proof browser controls
-- multi-language support
+- AI weak-area coach
 - advanced analytics suite
-- full course and video platform
-- complex editorial workflow system
+- complex editorial workflow
+- feature-rich WYSIWYG editors
+- proctoring
+- screenshot blocking claims
+- multi-language support
+- separate microservices
+- vector database / RAG stack
+- coupons at initial launch unless needed for a specific campaign
 
-## 4.5 Free Trial Boundaries
+## 3.4 Post-Launch Phase 1 Candidates
 
-The free trial is not anonymous.
+Only after launch stability and demand validation:
+- more premium mock exams
+- coupon support
+- richer analytics
+- richer notes and cheatsheets
+- AI study guidance
+- additional auth providers if demand justifies them
 
-A user must:
-- sign up or log in
-- then access the free mock exam
+## 3.5 Post-Launch Phase 2 Candidates
 
-Free trial includes:
-- one free mock exam
-- detailed explanations
-- AI deep explanations
-
-Free trial excludes:
-- premium mock exams
-- premium notes
-- premium cheatsheets
-- premium progress history
-- purchased exam workspace
-
-## 4.6 Premium Package Includes
-
-A paid certification package includes:
-- premium mock exams
-- purchased exam workspace
-- progress tracking
-- weak-area analysis
-- notes
-- cheatsheets
-- AI deep explanations
-- unlimited retakes during active entitlement
+- second certification
+- renewal offers
+- bundles
+- smarter study plans
+- broader content automation
+- team/B2B options
 
 ---
 
-# 5. Users, Market, and Positioning
+# 4. Target Users and Positioning
 
-## 5.1 Target Users
+## 4.1 Primary Users
 
-PrepHatch is for learners actively preparing for a specific certification exam.
-
-Primary user groups:
+PrepHatch targets learners actively preparing for a specific certification exam, especially:
 - working professionals
-- job switchers
+- career switchers
 - retake candidates
-- students and beginners
+- motivated beginners
 
-These groups are all important in v1.
+## 4.2 Primary User Pain Points
 
-## 5.2 Core Pain Points
-
-PrepHatch exists because learners face:
-- fragmented preparation resources
-- low-quality or outdated dumps
-- poor explanation quality
+Users often struggle with:
+- fragmented prep resources
+- low-trust dumps
+- weak explanations
 - no clear readiness signal
-- weak exam simulation
+- unrealistic practice experiences
 - too much irrelevant content
-- low trust in many prep sources
 
-## 5.3 Positioning
+## 4.3 Positioning Statement
 
-PrepHatch should be positioned as:
+PrepHatch is a serious exam-readiness platform for certification learners who want realistic practice, clear explanations, and a trustworthy path to feeling ready.
+
+## 4.4 Product Tone
+
+The product should feel:
 - serious
-- focused
-- realistic
 - technical
+- clear
+- structured
 - trustworthy
+- modern
 
-It should feel like:
-- a serious exam simulator
-- a guided exam coach
+---
 
-## 5.4 Messaging Priorities
+# 5. Core User Experience and Conversion Flow
 
-Core messaging pillars:
-- pass faster
-- feel exam-ready
-- identify weak areas
+## 5.1 Primary Conversion Flow
 
-## 5.5 Explanation Standard
+This is the most important flow in the whole product:
 
-Explanations must be:
-- deep
-- technical
-- easy to understand
-- useful for beginners and stronger learners
-- explicit about why wrong answers are wrong
+1. visitor lands on homepage or package page
+2. visitor understands the certification package and value proposition
+3. visitor signs in or creates an account
+4. visitor takes the free mock exam
+5. visitor sees score, explanation quality, and weak-area signal
+6. visitor sees a clear upgrade path to premium
+7. visitor buys the package
+8. system unlocks premium access
+9. user enters purchased workspace
+10. user keeps practicing and reviewing until confident
 
-## 5.6 Notes Standard
+## 5.2 Product Navigation Model
 
-Notes should support:
-- concept learning
-- revision
-- reinforcement of weak areas
+The user experience has three major surfaces:
+
+### Public surface
+- homepage
+- package detail page
+- login entry points
+
+### Learner surface
+- dashboard
+- package workspace
+- exam engine
+- results and history
+
+### Admin surface
+- content and publishing tools
+
+## 5.3 Dashboard Rule
+
+The dashboard is useful, but it is **not** the main growth surface.
+The most important acquisition and conversion surfaces are:
+- homepage
+- package detail page
+- free exam result page
+
+## 5.4 Free Trial Rules
+
+- login is required
+- exactly one free mock exam for the launch certification
+- free exam uses the same engine as premium
+- free exam includes stored explanations
+- free exam may include AI deep explanation on demand, subject to usage and cost controls
+- free exam results must clearly upsell premium without hiding core value
+
+## 5.5 Premium Workspace Rule
+
+The premium workspace should be focused and low-clutter.
+It should contain:
+- premium mock exams
+- recent attempts
+- basic progress summary
+- notes
+- cheatsheets
+- clear retake/start actions
 
 ---
 
 # 6. Business Model and Access Model
 
-## 6.1 Business Model
+## 6.1 Pricing Model
 
 PrepHatch v1 uses:
-
-- one-time payment per certification package
-
-Example:
-- AWS SAA-C03 package
-- fixed price
+- one-time purchase per certification package
 - 365-day access window
 
-## 6.2 Access Duration
+## 6.2 Package Rule
 
-Each purchase grants:
+A package is the commercial container for:
+- one certification
+- its mock exams
+- its notes
+- its cheatsheets
+- its premium progress features
 
-- **365 days** of access
-
-This is implemented via package entitlements.
-
-## 6.3 Free vs Paid Access Levels
-
-PrepHatch has these user states:
+## 6.3 User States
 
 - visitor
 - free logged-in user
@@ -441,349 +382,252 @@ PrepHatch has these user states:
 ## 6.4 Free User Access
 
 Free users can:
-- browse packages
-- access dashboard
+- browse public pages
+- log in
 - take one free mock exam
-- see detailed explanations
-- use AI deep explanations in free exam
+- review its explanations
+- see basic result history for that free exam
 
 Free users cannot:
 - access premium mock exams
-- use purchased exam workspace
-- access premium notes
-- access premium cheatsheets
-- access premium progress features
+- access premium workspace features
+- access premium notes or cheatsheets
+- access premium analytics
 
 ## 6.5 Paid User Access
 
-Paid users with active entitlement can access:
-- purchased exam workspace
+Paid active users can access:
 - premium mock exams
-- progress tracking
-- weak-area analysis
+- package workspace
 - notes
 - cheatsheets
-- AI deep explanations
-- unlimited retakes during active access window
+- basic and premium progress surfaces
+- optional on-demand AI explanation features, within limits
 
-## 6.6 Expired Access
+## 6.6 Expired User Access
 
-Expired users:
-- can log in
-- can see expired package state
-- can see renewal CTA
+Expired users can:
+- log in
+- see that access has expired
+- see basic historical attempt summaries
+- see a renewal / repurchase CTA
 
 Expired users cannot:
-- access premium mock exams
-- access premium notes
-- access premium cheatsheets
-- access premium detailed historical results
-- access premium AI features within expired package
+- start premium exams
+- open premium notes or cheatsheets
+- use premium AI features
+- access premium-only analytics surfaces
 
-## 6.7 Renewal Direction
+## 6.7 Attempt History Rule
 
-Renewal uses:
-- the same package
+Attempt history is never deleted merely because entitlement expired.
+The system preserves user history for trust, support, analytics, and reactivation.
 
-Future flexibility should allow:
-- special renewal pricing
-- promo-based reactivation
-- renewal campaigns later
+What changes after expiry is feature access, not historical existence.
 
-## 6.8 Coupon Support
+## 6.8 Repurchase / Renewal Rule
 
-Coupon codes are part of MVP.
+For MVP, use one simple rule:
+- repurchase is blocked while entitlement is active
+- repurchase or renewal becomes available when:
+  - entitlement is expired, or
+  - within the last 30 days before expiry
 
-Use cases:
-- launch promotions
-- early user campaigns
-- discount experiments
+This rule must be implemented explicitly in code and UI.
 
-## 6.9 Admin Testing Access
+## 6.9 Refund / Support Rule
 
-Admins may manually grant package access for:
-- testing
-- internal QA
-- support/testing scenarios
-
-This must remain separate from paid revenue analytics.
+Support remains manual-first.
+Refund policy and contact path must exist before paid launch.
 
 ---
 
-# 7. Product Experience and User Flows
+# 7. Runtime AI Strategy
 
-## 7.1 Navigation Model
+## 7.1 Core Principle
 
-PrepHatch should function as:
-- a marketplace for available exams
-- plus a workspace for purchased exams
+AI is allowed only where it increases user value more than it increases cost, risk, or latency.
 
-After login, users land on:
-- **dashboard marketplace**
+## 7.2 Launch Runtime AI Scope
 
-The dashboard should show:
-- available exams
-- purchased exams section
-- package states
-- free trial availability
+Launch runtime AI supports one narrow feature:
+- **deep explanation on demand** for a reviewed question
 
-## 7.2 Signup and Login Flow
+This is intentionally narrow.
+It is not always-on.
+It is not used during exam completion.
+It is not required for scoring or premium access.
 
-1. visitor lands on homepage or package page
-2. user signs up or logs in
-3. user lands on dashboard marketplace
+## 7.3 Runtime AI Must Not Control
 
-## 7.3 Package Detail Flow
-
-Package page should show:
-- certification name
-- code
-- package summary
-- mock exam availability
-- included notes and cheatsheets
-- pricing
-- free trial CTA
-- buy CTA
-
-## 7.4 Free Trial Flow
-
-1. user logs in
-2. user opens free mock exam
-3. user completes exam
-4. user sees score and explanations
-5. user sees premium upgrade path
-
-## 7.5 Purchase Flow
-
-1. user opens package page
-2. user clicks buy
-3. user enters checkout
-4. payment verified server-side
-5. dashboard updates purchased section
-6. user enters purchased exam workspace
-
-## 7.6 Purchased Exam Workspace
-
-Inside purchased exam workspace:
-- premium mock exams
-- progress section
-- weak-area summary
-- notes
-- cheatsheets
-- recent attempts
-- retake actions
-
-## 7.7 Practice Mode Flow
-
-- answer one question
-- check answer
-- see explanation immediately
-- see why wrong answers are wrong
-- answer locks
-- continue to next question
-
-## 7.8 Timed Mode Flow
-
-- timer begins immediately
-- no explanation during attempt
-- question palette/grid visible
-- flagging available
-- unanswered warning before submission
-- no pause
-- auto-submit on timeout
-
-## 7.9 Results and Review Flow
-
-Results page includes:
-- score
-- readiness label
-- topic/domain breakdown
-- weak areas
-- question review
-- correct answer
-- explanation
-- why wrong answers are wrong
-- AI deep explanation layer
-
-## 7.10 Progress Tracking Flow
-
-Progress exists:
-- at summary level in dashboard
-- in more detail inside purchased exam workspace
-
-## 7.11 Notes and Cheatsheets Flow
-
-Notes and cheatsheets live inside the respective purchased exam workspace.
-
-## 7.12 Admin Flows
-
-Admin must support:
-- content creation
-- content editing
-- content archiving
-- content publishing
-- imports
-- test access handling
-
----
-
-# 8. Product Requirements
-
-## 8.1 Authentication and Identity
-- email/password login
-- Google login
-- Facebook login
-- email verification
-- role-aware identity
-
-## 8.2 Marketplace and Package Discovery
-- list exam packages
-- view package detail pages
-- display package access state
-- display free trial and purchase actions
-
-## 8.3 Exam Engine
-- create attempt
-- timed mode
-- practice mode
-- autosave
-- resume
-- scoring
-- review
-- weak-area outputs
-
-## 8.4 Results and Progress
-- score out of 1000
-- readiness label
-- attempt history
-- topic-level breakdown
-- weak-area analysis
-
-## 8.5 Learning Resources
-- notes
-- cheatsheets
-- premium gating
-- purchased-workspace placement
-
-## 8.6 Payments and Entitlements
-- one-time purchase
-- coupon code support
-- verified unlock
-- 365-day entitlement
-- expired access handling
-- repurchase block while active
-
-## 8.7 Admin Operations
-- certification/package/topic management
-- reusable question bank
-- mock exam composition
-- CSV import
-- notes and cheatsheets editing
-- publish/archive controls
-- testing access support
-
-## 8.8 AI Features
-- AI deep explanations
-- AI weak-area study guidance
-- fallback to base explanation
-
-## 8.9 Non-Functional Requirements
-- reliability
-- security
-- performance
-- maintainability
-- scalability by design
-- cost-efficiency
-- AI fallback safety
-
----
-
-# 9. AI Strategy
-
-## 9.1 AI Principle
-
-Use AI as a value amplifier, not the core system of truth.
-
-## 9.2 Two AI Layers
-
-### Build-time AI
-Use for:
-- planning
-- docs
-- schema
-- code generation
-- tests
-- debugging
-- refactoring
-
-### Product-time AI
-Use for:
-- deep explanations
-- study guidance
-- content assistance
-
-## 9.3 Hybrid Explanation Model
-
-Every question must have:
-- stored base explanation
-
-AI adds:
-- deeper technical explanation
-- richer clarification
-- study coaching layer
-
-## 9.4 Where AI Should Be Used
-
-### Learner-facing
-- deep explanation
-- weak-area coaching
-- study guidance
-
-### Admin-facing
-- cleanup of imported content
-- explanation improvement
-- note and cheatsheet assistance
-- tagging suggestions
-
-## 9.5 Where AI Must Not Be Trusted Alone
-
-AI must not be the source of truth for:
+Runtime AI must never be the source of truth for:
 - correct answer validation
 - scoring
-- entitlement access
+- entitlement decisions
 - payment unlock
 - publish approval
+- timing or submission rules
 
-## 9.6 Reliability Rules
+## 7.4 Cost Discipline Rules
 
-- user must complete exam even if AI fails
-- base explanation must always exist
-- AI failure must not break results page
+Runtime AI must follow all of these rules:
+- on-demand only
+- never auto-generate for every question view
+- cache outputs aggressively
+- use the cheapest acceptable model by default
+- use short, structured prompts
+- include only required context
+- rate limit usage per user and per question
+- allow AI to be disabled without breaking the product
 
-## 9.7 Cost Rules
+## 7.5 AI Caching Rule
 
-- AI usage should be monitored
-- outputs should be cached where useful
-- AI should not become an uncontrolled cost center
+Cache key should include at least:
+- question_id
+- explanation_type
+- prompt_version
+- model_name
+- locale
+
+Cached answers should be reused whenever safe.
+
+## 7.6 AI Provider Abstraction
+
+Runtime AI integration should be provider-agnostic behind a small internal interface.
+Do not hard-code product logic around one model vendor.
+
+## 7.7 AI Failure Rule
+
+If AI fails, the user must still have:
+- stored explanation
+- correct answer
+- wrong-answer reasoning
+
+AI failure must degrade gracefully and silently, not break the result page.
+
+## 7.8 Build-Time AI Strategy
+
+AI should be heavily used during internal workflows for:
+- planning
+- task decomposition
+- code scaffolding
+- migrations drafting
+- test generation
+- documentation
+- PR review
+- bug triage
+- refactoring suggestions
+
+But all AI-generated outputs must be reviewed through defined quality gates.
 
 ---
 
-# 10. Technical Architecture
+# 8. AI-Optimized Execution Rules
 
-## 10.1 Architecture Pattern
+## 8.1 Standard Work Pattern for AI
 
-PrepHatch should be built as a:
-- **modular monolith**
+Every AI-assisted engineering task should follow this sequence:
+1. read relevant blueprint sections
+2. restate task and constraints
+3. propose the smallest correct change
+4. implement code
+5. add or update tests
+6. run checks
+7. summarize risks and assumptions
+
+## 8.2 Output Format for AI Engineering Tasks
+
+When AI is asked to implement something, it should return:
+- files to create/change
+- high-level approach
+- code changes
+- tests added/updated
+- migration impact
+- rollback considerations
+- unresolved questions
+
+## 8.3 Mandatory AI Guardrails
+
+AI must not:
+- introduce libraries without justification
+- change schema casually
+- remove tests to make builds pass
+- silence lint/type errors without understanding them
+- skip idempotency in payment flows
+- put secrets in code
+- embed provider-specific logic deep in domain code
+- introduce runtime AI in core hot paths
+
+## 8.4 Human Review Requirements
+
+A human must review:
+- auth changes
+- payment flows
+- webhook handlers
+- migrations
+- exam engine timing logic
+- access control
+- production configs
+
+---
+
+# 9. Technical Architecture
+
+## 9.1 Architecture Pattern
+
+PrepHatch is built as a **modular monolith**.
 
 This means:
-- one main app
-- one main DB
-- one auth provider
-- one payment provider
-- internal feature boundaries
+- one primary application codebase
+- one primary relational database
+- one deployment unit for the app
+- clear internal module boundaries
+- no microservices in MVP
 
-## 10.2 Core Modules
+## 9.2 Why Modular Monolith
 
+This pattern is chosen because it is best for:
+- low cost
+- faster development
+- easier testing
+- lower operational overhead
+- easier AI-assisted code generation
+- future extraction if growth later demands it
+
+## 9.3 Recommended Stack
+
+### Application
+- Next.js (App Router)
+- TypeScript in strict mode
+- Tailwind CSS
+
+### Backend / Data
+- PostgreSQL
+- Supabase for database, auth, and storage
+
+### Payments
+- Stripe
+
+### Hosting
+- Vercel for MVP deployment simplicity and lower execution risk
+
+### Monitoring / Error Tracking
+- minimal error tracking and structured logs from launch
+
+## 9.4 Hosting Decision Rationale
+
+Although Cloudflare can be cost-efficient, the recommended MVP hosting default is Vercel because it reduces integration and deployment complexity for a Next.js-first, AI-assisted, solo-founder workflow.
+
+This is a quality-over-micro-savings decision.
+
+Re-evaluate hosting only if:
+- traffic grows materially
+- serverless cost becomes meaningful
+- product-market fit is already validated
+
+## 9.5 Module List
+
+Core modules:
 - auth
 - catalog
 - packages
@@ -791,85 +635,55 @@ This means:
 - exams
 - attempts
 - progress
-- resources
+- content
 - admin
 - payments
-- coupons
 - ai
+- support_ops
 
-## 10.3 Protection Principles
+## 9.6 Server-Side Protection Principles
 
-Critical flows must be server-protected:
-- premium access checks
-- payment unlock
-- admin actions
-- final submission logic
-- AI runtime endpoints
+Never trust the frontend for:
+- entitlement access
+- admin access
+- scoring
+- timeout logic
+- payment confirmation
+- publish state decisions
 
-## 10.4 Routing Model
+## 9.7 Data Access Strategy
 
-### Public
-- homepage
-- package pages
-- login and signup
-- auth callback
-- checkout success
+Use a mixed strategy:
+- safe user-owned reads/writes through well-defined access rules
+- privileged operations through server-side service layer
+- keep domain logic out of UI components
 
-### User
-- dashboard
-- purchased exam workspace
-- progress
-- notes
-- cheatsheets
-- exam start
-- attempt screen
-- result screen
+## 9.8 Infrastructure Simplicity Rule
 
-### Admin
-- admin home
-- certifications
-- packages
-- topics
-- questions
-- mocks
-- imports
-- notes
-- cheatsheets
-- invites
+No queues, workers, or extra services at launch unless proven necessary.
+Use synchronous or lightweight background-safe operations where possible.
 
-## 10.5 Reliability Approach
-
-- base explanation fallback
-- immutable submitted attempts
-- verified entitlements
-- question snapshots for historical integrity
-- graceful AI degradation
+Introduce asynchronous infrastructure only after a clear bottleneck exists.
 
 ---
 
-# 11. Data Model and Schema Direction
+# 10. Data Model and Domain Rules
 
-## 11.1 Core Modeling Decisions
-
-PrepHatch uses:
-- reusable question bank
-- mock exam question mapping
-- package-specific entitlements
-- immutable attempt history
-- topic-driven analysis
-
-## 11.2 Main Entity Groups
+## 10.1 Core Entity Groups
 
 ### Identity
 - profiles
 - user_roles
 
-### Catalog
+### Catalog and Commerce
 - certifications
 - exam_packages
-- package_features
+- package_resources
+- orders
+- payments
+- entitlements
 
-### Taxonomy
+### Content Taxonomy
 - topics
 
 ### Question Bank
@@ -878,11 +692,6 @@ PrepHatch uses:
 - question_topics
 - mock_exams
 - mock_exam_questions
-
-### Commerce
-- orders
-- payments
-- entitlements
 
 ### Runtime
 - attempts
@@ -895,353 +704,562 @@ PrepHatch uses:
 - cheatsheets
 
 ### AI
-- ai_explanations
-- ai_study_guidance
+- ai_generation_cache
 
-### Admin Support
-- csv_import_jobs
+### Admin / Ops
+- import_jobs
+- support_events
+- product_events
 
-## 11.3 Schema Design Rules
+## 10.2 Key Schema Decisions
 
-- submitted attempts immutable
-- question content snapshotted into attempt history
-- base explanations separate from AI-generated explanations
-- topics reused consistently across questions, notes, cheatsheets, and progress
-- entitlements are source of truth for premium access
+- submitted attempts are immutable
+- questions are snapshotted into attempt history at submission time
+- questions have publish state and review metadata
+- stored base explanations are mandatory for publishable questions
+- wrong-answer reasoning is mandatory for publishable questions
+- topics are reusable across questions and analytics
+- entitlements are the source of truth for premium access
+
+## 10.3 Content Governance Fields
+
+Published question records should include metadata for trust and maintenance:
+- status
+- version
+- last_reviewed_at
+- reviewer_note
+- source_reference_note
+- archived_reason (if archived)
+
+These fields are worth the small cost because they protect long-term content quality.
+
+## 10.4 Notes and Cheatsheets Format
+
+Use **Markdown or MDX-style structured content** for launch.
+Do not use a complex WYSIWYG editor in MVP.
+
+Rationale:
+- lower bug surface
+- easier AI generation and editing
+- easier diffing in Git
+- cheaper implementation
+- cleaner content portability
 
 ---
 
-# 12. Exam Engine Specification
+# 11. Exam Engine Specification
 
-## 12.1 Engine Pattern
+## 11.1 Supported Question Type
 
-Use one unified exam engine with:
+Launch supports only:
+- multiple-choice
+- single-answer questions
+
+No multi-select at launch.
+
+## 11.2 Engine Modes
+
 - practice mode
 - timed mode
 
-## 12.2 Supported Question Type
+Both modes use the same core data model and scoring pipeline.
 
-MVP supports:
-- multiple-choice
-- single-answer only
+## 11.3 Practice Mode Rules
 
-## 12.3 Practice Mode Rules
-
-- explanation shown immediately after answer check
-- wrong-answer reasoning shown
-- AI explanation available
+- user answers one question
+- answer is checked explicitly
+- explanation becomes visible immediately after checking
+- wrong-answer reasoning is visible
 - answer locks after checking
+- user proceeds to next question
 
-## 12.4 Timed Mode Rules
+## 11.4 Timed Mode Rules
 
-- backend-authoritative timer
+- timer starts when the attempt is created
+- deadline is computed server-side and stored as immutable `deadline_at`
 - no pause
-- no explanation during attempt
-- question palette/grid
-- flagged questions
-- unanswered warning before submit
+- no explanation during active attempt
+- question palette/grid visible
+- flagging available
+- unanswered warning before manual submit
 - auto-submit on timeout
 
-## 12.5 Attempt Lifecycle
+## 11.5 Exam Timing Invariants
 
+These rules are mandatory:
+- the server is the source of truth for time
+- client timers are display-only helpers
+- answers written after deadline are rejected
+- reconnecting does not extend time
+- resuming is allowed only before deadline
+- one active timed attempt per user per mock exam at a time
+
+## 11.6 Multi-Tab / Reconnect Rule
+
+MVP does not attempt heavy anti-cheat enforcement.
+Instead it guarantees consistency:
+- last valid write before deadline wins
+- no extra time is granted
+- submission state remains deterministic
+
+## 11.7 Autosave Rule
+
+Answers must autosave during both modes using a simple, reliable pattern.
+Prefer fewer reliable writes over noisy chatty writes.
+
+## 11.8 Submission States
+
+Suggested attempt lifecycle:
 - created
 - in_progress
 - submitted
 - auto_submitted
 - scored
 
-## 12.6 Autosave and Resume
+## 11.9 Scoring Outputs
 
-- answers autosave
-- practice attempts can resume
-- timed attempts can resume only before deadline
-- no extra time granted
-
-## 12.7 Scoring
-
-Outputs:
+Expose:
 - correct count
 - incorrect count
 - unanswered count
-- percentage
-- scaled score out of 1000
+- raw percentage
+- PrepHatch scaled score out of 1000
 - readiness label
 
-## 12.8 Readiness Labels
+## 11.10 Scoring Communication Rule
 
+The 1000-scale score must be clearly labeled as an **internal PrepHatch readiness score**, not an official AWS exam score.
+
+## 11.11 Readiness Labels
+
+Initial label set:
 - Not Ready
 - Improving
 - Nearly Ready
 - Exam Ready
 
-## 12.9 Review Requirements
+These are product labels, not exam authority claims.
 
-Review must include:
+## 11.12 Review Page Requirements
+
+For every reviewed question show:
 - selected answer
 - correct answer
-- detailed explanation
+- stored explanation
 - why wrong answers are wrong
-- topic/domain label
-- AI deep explanation layer
-
-## 12.10 Free Exam Rule
-
-Free exam:
-- uses same engine
-- includes explanations
-- includes AI deep explanations
-- remains separate from premium progress history
+- topic labels
+- optional AI deep explanation action
 
 ---
 
-# 13. Content System and Admin Operations
+# 12. Content System and Admin Operations
 
-## 13.1 Content Philosophy
+## 12.1 Content Philosophy
 
-PrepHatch is a structured, maintainable exam-readiness content system, not a loose question dump.
+PrepHatch wins on trustworthy content quality, not content quantity.
 
-## 13.2 Core Content Types
+## 12.2 Content Types in Launch
 
-- certification packages
-- mock exams
-- reusable question bank
-- explanations
-- notes
-- cheatsheets
-- topics
-- AI explanation cache
+- certification
+- package
+- topic
+- question
+- mock exam
+- note
+- cheatsheet
 
-## 13.3 Key Content Rules
+## 12.3 Minimal Admin Scope for Launch
 
-- no explicit difficulty labels in MVP
-- mock exams should be balanced
-- questions can belong to multiple topics
-- base explanation required for published questions
-- wrong-answer reasoning required for published questions
-- imported CSV questions default to draft
-- admins can archive questions
-- notes and cheatsheets are premium-only
+Launch admin must support:
+- certification CRUD
+- package CRUD
+- topic CRUD
+- question CRUD
+- mock exam composition
+- Markdown notes and cheatsheets management
+- publish / unpublish
+- archive
+- CSV import to draft state
 
-## 13.4 Mock Exam Composition
+Anything beyond this is optional and should not delay launch.
 
-Support:
-- manual composition
-- future/admin-triggered auto-assembly from bank
+## 12.4 Content Status Model
 
-## 13.5 Question Lifecycle
-
+Recommended question lifecycle:
 - draft
 - review_ready
 - published
 - archived
 
-## 13.6 Admin Requirements
+## 12.5 Publish Guard Rule
 
-Admin must support:
-- certification/package/topic CRUD
-- question CRUD
-- option management
-- explanation editing
-- wrong-answer reasoning editing
-- multi-topic tagging
-- mock exam composition
-- notes CRUD
-- cheatsheets CRUD
-- CSV import
-- publish/archive controls
-- testing access support
+A question cannot be published unless it has:
+- stem
+- options
+- exactly one correct answer
+- base explanation
+- wrong-answer reasoning
+- at least one topic tag
 
-## 13.7 Notes and Cheatsheets
+## 12.6 Import Rule
 
-### Notes
-- rich text
-- concept learning
-- revision support
-- premium only
+Imported questions default to `draft`.
+No imported question is auto-published.
 
-### Cheatsheets
-- rich text
-- compact revision content
-- view-only
-- premium only
+## 12.7 Manual Quality Gate
+
+Before content goes live, a human must verify:
+- correctness
+- wording clarity
+- explanation quality
+- answer-key correctness
+- topic tagging sanity
 
 ---
 
-# 14. Payments, Entitlements, and Access Control
+# 13. Payments, Entitlements, and Access Control
 
-## 14.1 Payment Model
+## 13.1 Payment Flow
 
-- one-time purchase per certification package
-- 365-day access window
+Launch uses:
+- Stripe checkout
+- server-side payment verification
+- webhook-driven entitlement activation
 
-## 14.2 Free Trial Rule
+## 13.2 Payment Safety Rules
 
-- login required
-- one free mock exam
-- detailed explanations
-- AI deep explanations
-- progress separate from premium history
+Mandatory:
+- webhook idempotency
+- order state tracking
+- explicit entitlement creation on verified success
+- no frontend-only unlocks
+- logging for payment and entitlement transitions
 
-## 14.3 Entitlement Rules
+## 13.3 Entitlement Source of Truth
 
-Premium access requires:
-- authenticated user
-- matching package entitlement
-- active status
-- current time before expiry
+Premium access is controlled only by entitlement records validated server-side.
 
-## 14.4 What Entitlements Gate
+## 13.4 What Entitlements Gate
 
 - premium mock exams
-- purchased exam workspace
-- premium progress
-- weak-area analysis
+- premium workspace
 - notes
 - cheatsheets
-- premium detailed historical results
+- premium analytics surfaces
 - premium AI features
 
-## 14.5 Expiry Rules
+## 13.5 Coupon Policy
 
-Expired users:
-- can see dashboard and expired state
-- cannot access premium content or premium detailed results
+Coupons are not launch-critical.
+Do not delay launch for coupon support.
+Add only after payment flow is stable.
 
-## 14.6 Repurchase and Renewal
+## 13.6 Admin Grant Policy
 
-- repurchase blocked while active until near expiry in MVP
-- renewal uses same package
-- special renewal pricing may be supported later
-
-## 14.7 Coupon Codes
-
-- supported in MVP
-- used for launch promotions and campaigns
-
-## 14.8 Admin Testing Access
-
-- admins may manually grant testing access
-- invitation and testing email flow handled manually at first
-- grant source must remain separate from paid analytics
-
-## 14.9 Access Control Principle
-
-Never trust frontend alone for premium access.
-Backend entitlement checks are the source of truth.
+Admin testing access is allowed, but it must be explicitly tagged as non-revenue access.
+It must not pollute revenue analytics.
 
 ---
 
-# 15. Budget and Cost Optimization
+# 14. Cost Optimization Strategy
 
-## 15.1 Budget Philosophy
+## 14.1 Cost Philosophy
 
-Launch cheaply, validate quickly, and spend more only when justified.
+Spend only on what materially improves:
+- launch speed
+- user trust
+- conversion
+- system reliability
 
-## 15.2 Main Cost Buckets
+Avoid paying for optional sophistication too early.
 
-- domain
-- hosting
-- database/auth/storage
-- payment fees
-- AI runtime
-- complexity cost
+## 14.2 Biggest Cost Risks
 
-## 15.3 Cost-Minimizing Strategy
+Primary variable cost risks:
+- runtime AI usage
+- unnecessary infrastructure complexity
+- avoidable failed deployments
+- support burden from buggy flows
 
-Use:
-- Cloudflare free or low-cost hosting
-- Supabase free or low-cost start
-- Stripe pay-as-you-go
-- ChatGPT Pro already owned
-- carefully controlled OpenAI runtime
+## 14.3 Cost-Control Priorities
 
-## 15.4 Main Variable Cost Risk
+1. keep runtime AI narrow and cached
+2. keep infrastructure simple
+3. reduce manual support through clearer rules
+4. prevent bugs in payments and entitlements
+5. avoid vendors that add cost without reducing engineering risk
 
-The main variable cost risk is:
-- AI-generated deep explanations
+## 14.4 Runtime AI Cost Controls
 
-## 15.5 AI Cost Strategy
-
-- keep strong stored base explanations
-- use AI as additive layer
-- cache AI outputs
-- avoid uncontrolled repeated generation
-- track usage
-
-## 15.6 Avoid Early Spend On
-
-- extra AI subscriptions without clear need
-- premium builders
-- heavy monitoring stacks
-- premium auth vendor
-- unnecessary SaaS layers
-
-## 15.7 Admin Dashboard as Cost Optimization
-
-The admin dashboard reduces long-term costs by avoiding code changes for content updates.
-
-## 15.8 Entitlement Duration as Cost Optimization
-
-365-day access prevents indefinite support burden from one old one-time sale.
-
----
-
-# 16. Development Roadmap
-
-## 16.1 Milestone 1 — Foundation
-- repo setup
-- app scaffold
-- styling setup
-- Supabase connection
-- migrations workflow
-- base layouts
-
-## 16.2 Milestone 2 — Core User Platform
-- auth
-- dashboard marketplace
-- package detail pages
-- route protection
-- package states
-
-## 16.3 Milestone 3 — Exam Engine
-- attempt creation
-- practice mode
-- timed mode
-- autosave
-- timer
-- results and review
-- progress basics
-
-## 16.4 Milestone 4 — Payments and Entitlements
-- checkout
-- coupons
-- webhooks
-- entitlement creation
-- expiry logic
-- repurchase blocking
-- access gates
-
-## 16.5 Milestone 5 — Admin and Content Ops
-- admin dashboard
-- question bank management
-- notes and cheatsheets
-- mock composition
-- CSV import
-- archive and publish
-
-## 16.6 Milestone 6 — AI Layer and Launch Readiness
-- AI deep explanation
-- AI study guidance
+Required controls:
+- on-demand generation only
 - caching
-- fallback handling
-- QA
-- launch hardening
+- per-user rate limits
+- per-question reuse
+- small default model
+- ability to disable with config
+- token-efficient prompts
+
+## 14.5 Token Usage Discipline
+
+All AI prompts used internally or at runtime should:
+- include only necessary context
+- avoid passing whole documents when a section will do
+- prefer structured bullet context over verbose prose
+- version prompts explicitly
+- cache reusable outputs
+
+## 14.6 Content Format as Cost Strategy
+
+Markdown-first content reduces:
+- editor complexity
+- rendering complexity
+- migration pain
+- AI transformation cost
+- QA burden
+
+## 14.7 Analytics Cost Strategy
+
+Launch with a lightweight event strategy.
+Do not add multiple analytics vendors at the start.
+Only track business-critical events first.
+
+## 14.8 No-RAG Rule for MVP
+
+Do not build a vector database or RAG pipeline at launch.
+It adds cost and complexity without being necessary for the core product.
 
 ---
 
-# 17. Implementation Blueprint
+# 15. Quality, Testing, and Bug Prevention
 
-## 17.1 Repo Shape
+## 15.1 Quality Philosophy
+
+PrepHatch must favor fewer features with higher confidence over more features with shallow reliability.
+
+## 15.2 Definition of Done
+
+A feature is not done unless:
+- product behavior is explicit
+- edge cases are handled
+- tests are added where appropriate
+- logging exists for critical failures
+- access control is correct
+- error states are acceptable
+- AI-generated code has been reviewed
+
+## 15.3 Highest-Risk Areas
+
+These areas require strongest scrutiny:
+- auth
+- payments
+- entitlements
+- timed exam behavior
+- submission and scoring
+- content publish rules
+- migrations
+
+## 15.4 Test Pyramid for Launch
+
+### Unit tests
+Use for:
+- scoring logic
+- entitlement state rules
+- readiness labels
+- date math
+- publish guards
+- AI fallback logic
+
+### Integration tests
+Use for:
+- auth/profile bootstrap
+- attempt creation
+- answer autosave
+- submit and scoring pipeline
+- Stripe webhook to entitlement flow
+- import to draft flow
+
+### End-to-end tests
+Required for:
+1. visitor → login → free exam → results
+2. user → payment → entitlement unlock → premium workspace
+3. paid user → timed exam → timeout/submit → results
+4. expired user blocked from premium exam start
+5. admin creates/publishes content
+
+## 15.5 AI-Assisted QA Workflow
+
+AI may help generate tests and bug hypotheses, but must not replace actual execution.
+Every critical flow must be exercised by real automated tests.
+
+## 15.6 Regression Rule
+
+Any bug found in:
+- payments
+- entitlements
+- exam timing
+- scoring
+- publish rules
+
+should receive a regression test before the fix is considered complete.
+
+---
+
+# 16. Deployment, Environments, and DevOps
+
+## 16.1 Environment Strategy
+
+Use exactly three environments:
+- local
+- preview
+- production
+
+This is the minimum responsible setup.
+
+## 16.2 Deployment Rules
+
+- production deploys come from main
+- preview deploys are automatic for pull requests or equivalent branches
+- tests must pass before merge
+- risky changes require manual review before production deploy
+
+## 16.3 Why Preview Exists
+
+Preview is required to reduce launch risk for:
+- auth callbacks
+- payment flows
+- route protection
+- entitlement checks
+- timed exam behavior
+- content rendering
+
+## 16.4 Secrets Rules
+
+- never commit secrets
+- keep local and production secrets separate
+- maintain `env.example`
+- rotate secrets if exposed
+
+## 16.5 Migration Rules
+
+- migrations are the source of truth
+- never patch production schema manually unless emergency requires it
+- every migration must be reviewed
+- destructive migrations require extra caution and backup plan
+
+## 16.6 Observability Requirements
+
+At minimum capture:
+- auth failures
+- payment events
+- entitlement changes
+- attempt submission failures
+- timeout auto-submits
+- admin publish failures
+- AI generation failures
+- top conversion events
+
+## 16.7 Smoke Test Checklist After Production Deploy
+
+Must verify:
+- homepage loads
+- login works
+- dashboard loads
+- free exam starts
+- results page renders
+- premium gating works
+- admin route protection works
+- checkout can start
+- entitlement unlock path works
+- AI failure fallback works
+
+---
+
+# 17. Analytics and Product Events
+
+## 17.1 Launch Analytics Goal
+
+Track only the events needed to understand acquisition, activation, conversion, and major failure points.
+
+## 17.2 Minimum Event Set
+
+Track at least:
+- homepage_viewed
+- package_viewed
+- login_started
+- login_completed
+- free_exam_started
+- free_exam_completed
+- upgrade_cta_clicked
+- checkout_started
+- checkout_completed
+- premium_exam_started
+- premium_exam_completed
+- entitlement_activated
+- entitlement_expired
+
+## 17.3 Analytics Rule
+
+Do not let analytics tooling delay launch.
+Track fewer events correctly rather than many events badly.
+
+---
+
+# 18. Scalability Strategy
+
+## 18.1 Scalability Goal
+
+The system must scale from:
+- one certification and low traffic
+
+to:
+- multiple certifications, more content, and higher traffic
+
+without a rewrite.
+
+## 18.2 Scalability Principles
+
+- keep domain boundaries clean
+- keep app stateless where possible
+- keep data relational and indexed
+- snapshot history where correctness matters
+- avoid vendor lock into AI-specific assumptions
+- scale architecture only when a clear bottleneck appears
+
+## 18.3 Expected Early Bottlenecks
+
+Likely future bottlenecks:
+- more question/content volume
+- more attempt history rows
+- heavier analytics queries
+- runtime AI latency/cost
+
+## 18.4 Design Choices That Preserve Future Scale
+
+Chosen now to support future scale:
+- modular monolith
+- package-based commerce model
+- reusable question bank
+- topic-based analytics
+- attempt snapshots
+- Markdown content portability
+- provider-agnostic AI wrapper
+
+## 18.5 What Not to Do Too Early
+
+Do not prematurely add:
+- microservices
+- event buses
+- distributed queues
+- vector infrastructure
+- advanced multi-tenant architecture
+- excessive caching layers
+
+---
+
+# 19. Implementation Blueprint
+
+## 19.1 Recommended Repository Shape
 
 ```text
 prephatch/
@@ -1250,30 +1268,40 @@ prephatch/
   features/
   lib/
   server/
-  types/
-  styles/
-  public/
+  content/
   supabase/
   scripts/
   tests/
+  docs/
 ```
 
-## 17.2 Feature Modules
+## 19.2 Content Storage Recommendation
 
-- auth
-- catalog
-- packages
-- entitlements
-- exams
-- attempts
-- progress
-- resources
-- admin
-- payments
-- coupons
-- ai
+Store stable notes and cheatsheets in a content-friendly format that is easy to version and diff.
+Preferred options:
+- database Markdown fields for simple admin editing
+- or repository-backed Markdown files if workflow supports it
 
-## 17.3 Server Shape
+For MVP, avoid complex CMS infrastructure.
+
+## 19.3 Feature Module Breakdown
+
+```text
+features/
+  auth/
+  catalog/
+  packages/
+  exams/
+  attempts/
+  progress/
+  content/
+  entitlements/
+  payments/
+  admin/
+  ai/
+```
+
+## 19.4 Server Structure
 
 ```text
 server/
@@ -1282,541 +1310,198 @@ server/
   policies/
   validators/
   mappers/
+  jobs/
 ```
 
-## 17.4 Shared Utility Shape
-
-```text
-lib/
-  supabase/
-  stripe/
-  auth/
-  constants/
-  utils/
-  ai/
-```
-
-## 17.5 Component Shape
-
-```text
-components/
-  ui/
-  layout/
-  catalog/
-  dashboard/
-  exams/
-  progress/
-  resources/
-  admin/
-  payments/
-```
-
-## 17.6 TypeScript Rules
+## 19.5 Coding Standards
 
 - strict TypeScript
 - explicit domain types
-- avoid leaking raw DB types everywhere
+- thin route handlers / actions
+- no raw SQL or raw DB access in UI components
+- keep business logic in services/policies
+- avoid giant utility files
+- prefer explicit code over clever abstractions
 
-## 17.7 State Management Direction
+## 19.6 First Build Order
 
-- local state for interactive exam UI
-- server data for persisted product data
-- avoid heavy global state early
+### Phase 0 — Foundation
+- initialize app
+- configure TypeScript, linting, formatting
+- configure Supabase and env structure
+- set up testing
+- set up preview deployment
 
-## 17.8 Rich Text Direction
+### Phase 1 — Free Exam Vertical Slice
+- auth
+- catalog/package page
+- free mock exam data seed
+- exam engine
+- results/review
+- basic progress summary
 
-- rich text only where needed
-- notes
-- cheatsheets
-- sanitize output safely
-
-## 17.9 Exam Engine Code Organization
-
-Recommended split:
-- exam shell
-- question card
-- palette
-- timer
-- navigation
-- explanation panel
-- timer hook
-- exam session hook
-- scoring utils
-- question state utils
-- attempt actions and queries
-
-## 17.10 Payments Code Organization
-
-Recommended split:
-- create checkout session
-- apply coupon
+### Phase 2 — Payment and Premium Unlock
+- Stripe checkout
 - webhook handling
-- admin test grant
-- order and entitlement queries
+- entitlements
+- premium workspace
+- premium gates
 
-## 17.11 AI Code Organization
+### Phase 3 — Minimal Admin and Content Ops
+- question CRUD
+- mock composition
+- notes/cheatsheets CRUD
+- publish/archive
+- CSV import to draft
 
-Recommended split:
-- generate deep explanation
-- generate study guidance
-- cached explanation lookup
-- prompt builders
+### Phase 4 — Runtime AI Enhancement
+- on-demand deep explanation
+- caching
+- usage limits
 - fallback handling
 
-## 17.12 Admin Code Organization
+### Phase 5 — Hardening and Launch
+- QA
+- logging review
+- funnel tracking
+- support flows
+- launch docs and policies
 
-Recommended split:
-- certifications
-- packages
-- topics
-- mocks
-- questions
-- notes
-- cheatsheets
-- imports
-- invites
+## 19.7 First Visible Milestone
 
-## 17.13 Coding Sequence
+The first milestone that proves product direction is:
 
-1. app skeleton
-2. auth
-3. schema
-4. dashboard marketplace
-5. content loading
-6. exam engine
-7. payments and access
-8. admin
-9. AI
-10. polish and QA
+**A user can log in, open AWS SAA-C03, start the free mock exam, complete it, and view results with explanations and clear upgrade prompts.**
 
-## 17.14 First 20 Build Tasks
-
-1. initialize Next.js app
-2. add Tailwind and UI base
-3. configure Supabase helpers
-4. env config structure
-5. create public, dashboard, and admin layouts
-6. add auth pages and callback flow
-7. create `profiles` and `user_roles` migrations
-8. create catalog schema migrations
-9. create question and mock schema migrations
-10. seed AWS SAA-C03
-11. build dashboard marketplace
-12. build package detail page
-13. build free exam access flow
-14. create attempt schema and actions
-15. build exam start page
-16. build practice mode UI
-17. build timed mode UI
-18. build submit and scoring flow
-19. build results and review page
-20. build entitlement guards
-
-## 17.15 Coding Rules
-
-- thin route handlers
-- explicit types
-- no raw DB access in UI files
-- backend-enforced access checks
-- immutable submitted attempts
-- AI always has fallback
+Until this exists, avoid spending time on advanced admin or AI features.
 
 ---
 
-# 18. Testing and QA Strategy
+# 20. Operational Playbook
 
-## 18.1 QA Model
+## 20.1 Support Model
 
-Use:
-- manual QA
-- unit tests
-- integration tests
-- a small set of high-value end-to-end flows
-
-## 18.2 Highest-Risk Areas
-
-- auth/provider correctness
-- timer and autosubmit
-- payment unlock
-- entitlement expiry
-- scoring
-- admin publishing
-- import safety
-- AI fallback
-
-## 18.3 Core Manual QA Flows
-
-### User-facing
-- signup and login
-- dashboard load
-- free exam
-- purchase path
-- purchased workspace
-- notes and cheatsheets visibility
-
-### Exam
-- practice mode
-- timed mode
-- palette
-- flagging
-- unanswered warning
-- auto-submit
-- review
-
-### Admin
-- route protection
-- question create, edit, archive
-- imports
-- notes and cheatsheets
-- publish behavior
-
-## 18.4 Core Unit Tests
-
-- entitlement active, expired, revoked logic
-- coupon validation
-- scoring and readiness
-- practice answer lock
-- unanswered detection
-- date calculations
-- content state filtering
-
-## 18.5 Core Integration Tests
-
-- auth/profile bootstrap
-- attempt creation and submit
-- autosave and resume
-- checkout, webhook, entitlement
-- CSV import to draft
-- AI fallback behavior
-
-## 18.6 Must-Have End-to-End Flows
-
-1. visitor to signup to free exam
-2. user buys package and enters purchased workspace
-3. paid user timed exam to result
-4. practice mode completion
-5. expired access blocked
-6. admin creates and publishes content
-
-## 18.7 Pre-Launch QA Gate
-
-Before launch, verify:
-- auth
-- free exam
-- premium exam
-- payments
-- entitlement checks
-- notes and cheatsheets
-- admin content ops
-- AI fallback safety
-
----
-
-# 19. Deployment and DevOps
-
-## 19.1 Environment Strategy
-
-Formal environments:
-- local
-- production
-
-No full staging environment in MVP.
-
-## 19.2 Domain Strategy
-
-Production runs on:
-- root domain
-
-Any preview environment, if used:
-- hidden subdomain
-- password-protected or private
-
-## 19.3 CI/CD Rules
-
-- CI blocks merges if tests fail
-- deploy production from main
-- run smoke tests after every production deploy
-
-## 19.4 Secrets Rules
-
-- never commit secrets
-- separate local and production secrets
-- document environment variables
-- maintain `env.example`
-
-## 19.5 Migration Rules
-
-- migrations are source of truth
-- test locally before production
-- avoid uncontrolled manual production schema edits
-
-## 19.6 Invitation and Testing Emails
-
-Handled manually at first.
-
-## 19.7 Feature Rollout Policy
-
-- coupons live once deployed
-- AI features live once deployed
-- no feature flags in MVP
-
-## 19.8 Logging Priorities
-
-- auth failures
-- payment and webhook events
-- entitlement changes
-- attempt submit failures
-- import failures
-- AI failures
-
-## 19.9 Smoke Test Checklist After Deploy
-
-- homepage
-- login
-- dashboard
-- package page
-- free exam
-- premium gating
-- admin protection
-- checkout creation
-- entitlement checks
-- AI fallback path
-
----
-
-# 20. Maintenance and Operations
-
-## 20.1 Operating Principle
-
-Run PrepHatch with a lightweight but disciplined solo-founder operating model.
-
-## 20.2 Core Ops Areas
-
-- platform health
-- content maintenance
-- user support
-- payment and access operations
-- AI operations
-- admin workflow upkeep
-- cost monitoring
-
-## 20.3 Support Model
-
-Manual-first support via simple contact path.
-
-Support issue categories:
-- access
+Support is manual-first at launch.
+Common issue categories:
+- login/access
 - payment
-- exam
-- content
-- account
+- premium unlock
+- exam behavior
+- content accuracy
+
+## 20.2 Incident Priority Order
+
+1. payment failures
+2. entitlement/access failures
+3. exam submission/timer failures
+4. content correctness issues
+5. AI failures
+6. admin tooling issues
+
+## 20.3 Incident Response Steps
+
+1. detect
+2. assess severity
+3. contain impact
+4. fix or work around
+5. verify
+6. add regression protection
+7. document what changed
 
 ## 20.4 Content Maintenance Rules
 
-- correct weak or inaccurate questions
-- improve explanations
-- archive outdated content
-- refine notes and cheatsheets
-- preserve historical attempt snapshots
-
-## 20.5 Payment and Access Ops
-
-Regularly verify:
-- payments create entitlements
-- expired access blocks correctly
-- coupons work
-- admin grants behave correctly
-- renewal path remains usable
-
-## 20.6 AI Ops
-
-Monitor:
-- failure rate
-- latency
-- output quality
-- usage volume
-- cost
-- cache effectiveness
-
-## 20.7 Incident Handling
-
-Simple incident response:
-1. identify
-2. assess severity
-3. contain harm
-4. fix or work around
-5. verify
-6. record prevention note
-
-## 20.8 Highest Maintenance Priorities
-
-1. keep core learner loop healthy
-2. keep content trustworthy
-3. keep AI useful and affordable
-4. keep admin operations sustainable
+Regularly:
+- review top-used questions
+- improve weak explanations
+- archive outdated or low-trust content
+- update notes and cheatsheets
+- preserve historical attempt snapshots even when source content changes
 
 ---
 
-# 21. Growth and Scaling Strategy
+# 21. Frozen Decisions Register
 
-## 21.1 Growth Order
-
-PrepHatch should scale in this order:
-1. prove one exam works
-2. deepen that exam’s value
-3. add more certifications
-4. improve retention and monetization
-5. improve automation and systems
-
-## 21.2 First Growth Lever
-
-Add more certifications after AWS SAA-C03 proves demand.
-
-## 21.3 Second Growth Lever
-
-Increase value inside each exam package:
-- better explanations
-- better notes
-- better cheatsheets
-- stronger weak-area guidance
-- better revision support
-
-## 21.4 Third Growth Lever
-
-Repeat purchases:
-- one user buys one exam
-- trusts PrepHatch
-- buys another related exam later
-
-## 21.5 Fourth Growth Lever
-
-Renewal-driven revenue:
-- reminders
-- reactivation
-- renewal offers
-- near-expiry campaigns later
-
-## 21.6 Fifth Growth Lever
-
-Better AI assistance:
-- stronger explanations
-- smarter weak-area guidance
-- resource recommendations
-- next-step suggestions
-
-## 21.7 Future Monetization Options
-
-- renewal offers
-- bundles
-- cross-sell flows
-- premium AI tier later
-- B2B and team offerings much later if justified
-
-## 21.8 Avoid Too Early
-
-- too many exams at once
-- giant course platform
-- enterprise-first pivot
-- subscription complexity
-- architecture rewrite without demand
-
----
-
-# 22. Frozen Decisions Register
-
-## 22.1 Product
+## 21.1 Product
 - product name: PrepHatch
 - first certification: AWS SAA-C03
-- serious exam simulator plus guided exam coach positioning
+- positioning: serious exam simulator + structured review system
 
-## 22.2 MVP
+## 21.2 Launch Scope
 - one free mock exam
-- 5 to 8 premium mock exams
-- notes and cheatsheets included in paid package
-- admin dashboard included in MVP
+- 2 to 3 premium mock exams
+- practice mode and timed mode
+- notes and cheatsheets included in premium package
+- admin included, but minimal
+- runtime AI only for on-demand deep explanation
 
-## 22.3 Auth
-- email/password
-- Google
-- Facebook
+## 21.3 Auth
+- Google OAuth
+- email magic link / OTP
+- no Facebook login in MVP
+- no custom password flow in MVP unless justified later
 
-## 22.4 Free Trial
-- login required
-- detailed explanations visible
-- AI deep explanations visible
-- free progress separate from premium
-
-## 22.5 Payments
+## 21.4 Payments
 - one-time package purchase
 - 365-day entitlement
-- coupon support in MVP
-- repurchase blocked while active until near expiry
-- expired premium content fully locked
-- renewal uses same package
-- admin manual testing access supported
+- repurchase blocked while active
+- renewal or repurchase allowed when expired or within last 30 days before expiry
+- coupons deferred unless clearly needed
+- admin test access separated from revenue analytics
 
-## 22.6 Exam Engine
-- unified engine
+## 21.5 Exam Engine
 - multiple-choice single-answer only
-- practice answers lock after checking
+- one unified engine
+- practice answers lock after check
 - timed mode has no pause
-- palette/grid in timed mode
-- flagged questions supported
-- unanswered warning before submit
-- score out of 1000
-- readiness labels fixed
-- wrong answers must be explained
+- server is source of truth for deadlines
+- auto-submit on timeout
+- raw percentage plus PrepHatch scaled score out of 1000
+- readiness labels are internal product labels
 
-## 22.7 Content
+## 21.6 Content
 - reusable question bank
-- balanced mock exams
-- future auto-assembly support
-- no explicit difficulty labels in MVP
-- multiple topics per question
-- archive instead of delete where possible
-- imports default to draft
-- no last-reviewed-date field in MVP
+- publish requires explanation and wrong-answer reasoning
+- imported questions default to draft
+- archive over delete
+- last_reviewed_at and source metadata included
+- Markdown-first notes and cheatsheets
 
-## 22.8 Notes and Cheatsheets
-- premium only
-- inside purchased workspace
-- rich text
-- cheatsheets view-only online
-
-## 22.9 AI
-- AI deep explanations in MVP
-- hybrid explanation model
-- AI weak-area guidance planned in MVP
+## 21.7 AI
+- runtime AI is optional enhancement, not core dependency
 - AI fallback mandatory
+- AI provider abstraction required
+- no RAG at launch
 
-## 22.10 DevOps
-- root domain production
-- local plus production only
-- private hidden preview if used
-- CI blocks merges if tests fail
+## 21.8 DevOps
+- local + preview + production
+- tests block merge
 - migrations are source of truth
-- manual testing emails at first
-- coupons and AI live once deployed
+- human review required for risky changes
 
 ---
 
-# 23. Immediate Next Steps
+# 22. Immediate Next Steps
 
-## 23.1 Repository Documentation
-Create:
+## 22.1 Documentation
+Create or update:
 - `README.md`
-- `docs/MASTER_BLUEPRINT.md` ← this file
+- `docs/MASTER_BLUEPRINT.md`
 - `docs/DECISIONS.md`
+- `docs/ARCHITECTURE.md`
+- `docs/TESTING.md`
 - `env.example`
 
-## 23.2 Technical Initialization
-- initialize Next.js app
-- configure styling
-- wire Supabase
-- create migrations workflow
-- create base layouts
+## 22.2 Technical Setup
 
-## 23.3 First Schema Draft
+1. initialize Next.js app
+2. configure TypeScript, ESLint, Prettier
+3. wire Supabase
+4. create migration workflow
+5. configure preview deploys
+6. add test harness
+
+## 22.3 First Schema Draft
+
 Start with:
 - profiles
 - user_roles
@@ -1837,71 +1522,40 @@ Start with:
 - attempt_topic_scores
 - notes
 - cheatsheets
-- ai_explanations
-- ai_study_guidance
-- csv_import_jobs
+- ai_generation_cache
+- import_jobs
+- product_events
 
-## 23.4 First Product Milestone
-Reach this first visible checkpoint:
+## 22.4 First Product Milestone
 
-**A user can sign up, land on dashboard, open AWS SAA-C03, start the free mock exam, complete the attempt, and see results with explanations.**
+Ship this before anything else expands scope:
 
-## 23.5 Recommended Build Order
-1. app scaffold
-2. auth
-3. schema
-4. dashboard marketplace
-5. free exam flow
-6. exam engine
-7. results and review
-8. payments and entitlements
-9. admin dashboard
-10. AI explanation layer
+**Logged-in user → free AWS SAA-C03 mock exam → completion → result page with stored explanations → clear upgrade CTA**
+
+## 22.5 First Validation Questions
+
+Once the first milestone exists, answer these with real usage:
+- do users finish the free mock?
+- do they trust the explanations?
+- do they click upgrade?
+- do they buy?
+- do support issues cluster around access, content, or UX?
 
 ---
 
-# 24. Appendix: Recommended Repo Doc Split
+# 23. Final Build Philosophy
 
-When this file gets too large, split into:
+PrepHatch should be built as:
+- a narrow but polished product
+- a low-cost but trustworthy system
+- an AI-assisted but not AI-dependent platform
+- a scalable but not over-engineered architecture
 
-```text
-docs/
-  README.md
-  MASTER_BLUEPRINT.md
-  product/
-    vision.md
-    mvp.md
-    requirements.md
-    user-flows.md
-  architecture/
-    architecture.md
-    data-model.md
-    exam-engine.md
-    ai-strategy.md
-  engineering/
-    roadmap.md
-    implementation.md
-    testing.md
-    devops.md
-  operations/
-    maintenance.md
-    support.md
-  growth/
-    scaling.md
-  decisions/
-    frozen-decisions.md
-```
-
----
-
-## Final Note
-
-This document is the current canonical source of truth for PrepHatch v1.
-
-It should be updated whenever:
-- scope changes
-- architecture changes
-- business model changes
-- major implementation decisions change
-
-Until the repo grows large enough for multi-document governance, this file should remain the top-level blueprint for product and engineering alignment.
+The correct launch strategy is not maximum feature count.
+It is:
+- sharp scope
+- strong content quality
+- reliable exam behavior
+- safe payment logic
+- disciplined cost control
+- clean foundations for later growth
