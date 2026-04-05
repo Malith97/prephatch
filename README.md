@@ -90,6 +90,14 @@ Primary working docs for execution:
 
 ---
 
+## License
+
+This repository is proprietary. All rights reserved.
+
+No permission is granted to use, copy, modify, distribute, sublicense, sell, train on, or create derivative works from this repository or its contents without prior express written permission from the copyright holder.
+
+---
+
 ## Documentation Structure
 
 ```text
@@ -104,10 +112,3 @@ docs/
   operations/
   prompts/
 
----
-
-## License
-
-This repository is proprietary. All rights reserved.
-
-No permission is granted to use, copy, modify, distribute, sublicense, sell, train on, or create derivative works from this repository or its contents without prior express written permission from the copyright holder.
