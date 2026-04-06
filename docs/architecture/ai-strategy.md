@@ -2,7 +2,7 @@
 
 Status: Active  
 Owner: Founder  
-Last Updated: 2026-04-06  
+Last Updated: 2026-04-07  
 Purpose: Defines where AI is used, where it is forbidden, and how spend is controlled.
 
 ## AI Principles
@@ -44,9 +44,28 @@ AI cannot be authoritative for:
 ## Cost Controls
 
 - only call AI when the user asks for deeper explanation
-- cache output by question_id + prompt_version
+- cache output by `question_id + prompt_version + model policy`
 - store provider, model, latency, tokens, and cost estimate
 - enforce per-user limits
 - enforce daily budget caps
 - use cheaper model tiers where acceptable
 - fall back to stored base explanation
+
+## Request Contract
+
+Required input:
+- authenticated user
+- reviewed question context from stored snapshot or canonical reviewed question
+- question id
+- prompt version
+
+Response rules:
+- return stored explanation immediately if cached result exists
+- return AI explanation only as a supplemental layer
+- never overwrite base explanation
+
+## Fallback Rules
+
+- if AI fails, times out, or is rate-limited, keep the review page functional
+- show stored base explanation regardless of AI outcome
+- present AI failure as an optional enhancement failure, not as a broken result

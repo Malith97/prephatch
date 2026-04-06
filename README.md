@@ -30,9 +30,9 @@ Start here if you are new to the project:
 2. [`docs/DECISIONS.md`](docs/DECISIONS.md)
 3. [`docs/product/mvp-scope.md`](docs/product/mvp-scope.md)
 4. [`docs/architecture/system-architecture.md`](docs/architecture/system-architecture.md)
-5. [`docs/engineering/implementation-plan.md`](docs/engineering/implementation-plan.md)
-6. [`docs/engineering/IMPLEMENTATION_BACKLOG.md`](docs/engineering/IMPLEMENTATION_BACKLOG.md)
-7. [`docs/engineering/FIRST_SPRINT_CHECKLIST.md`](docs/engineering/FIRST_SPRINT_CHECKLIST.md)
+5. [`docs/engineering/IMPLEMENTATION_BACKLOG.md`](docs/engineering/IMPLEMENTATION_BACKLOG.md)
+6. [`docs/engineering/api-spec.md`](docs/engineering/api-spec.md)
+7. [`docs/operations/release-checklist.md`](docs/operations/release-checklist.md)
 
 ---
 
@@ -45,7 +45,6 @@ PrepHatch is intended to help learners:
 - get high-quality explanations
 - identify weak areas
 - track improvement over time
-- access structured notes and cheatsheets
 - feel more ready for the real exam
 
 At launch, the product is intentionally narrow:
@@ -86,7 +85,7 @@ The current execution priority is:
 Primary working docs for execution:
 
 - [`docs/engineering/IMPLEMENTATION_BACKLOG.md`](docs/engineering/IMPLEMENTATION_BACKLOG.md)
-- [`docs/engineering/FIRST_SPRINT_CHECKLIST.md`](docs/engineering/FIRST_SPRINT_CHECKLIST.md)
+- [`docs/engineering/api-spec.md`](docs/engineering/api-spec.md)
 
 ---
 
@@ -105,10 +104,8 @@ docs/
   INDEX.md
   MASTER_BLUEPRINT.md
   DECISIONS.md
-  CHANGELOG.md
   product/
   architecture/
   engineering/
   operations/
-  prompts/
-
+  internal/

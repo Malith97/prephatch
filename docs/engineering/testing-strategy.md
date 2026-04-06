@@ -2,14 +2,14 @@
 
 Status: Active  
 Owner: Founder  
-Last Updated: 2026-04-06  
+Last Updated: 2026-04-07  
 Purpose: Defines how quality is protected without overbuilding.
 
-## Test Pyramid
+## Test Layers
 
-- unit tests for business rules
-- integration tests for critical flows
-- a small number of E2E flows
+- unit: pure business logic such as scoring, readiness labels, and entitlement checks
+- integration: auth bootstrap, attempt creation, result fetch, and database-backed workflows
+- E2E: only launch-critical user paths
 
 ## Highest-Risk Areas
 
@@ -28,6 +28,14 @@ Purpose: Defines how quality is protected without overbuilding.
 3. timed exam to result
 4. expired access blocked
 5. admin publishes content
+
+## Launch-Blocking Automated Coverage
+
+- one unit suite for scoring and readiness logic
+- one unit suite for entitlement access logic
+- one integration test for auth bootstrap
+- one integration test for attempt creation and snapshotting
+- one E2E happy path for the free mock loop
 
 ## Rule
 

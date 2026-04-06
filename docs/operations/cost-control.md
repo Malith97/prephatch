@@ -2,8 +2,8 @@
 
 Status: Active  
 Owner: Founder  
-Last Updated: 2026-04-06  
-Purpose: Defines cost control rules across infrastructure and AI usage.
+Last Updated: 2026-04-07  
+Purpose: Defines operational cost control rules across infrastructure and AI usage.
 
 ## Cost Priorities
 
@@ -12,18 +12,16 @@ Purpose: Defines cost control rules across infrastructure and AI usage.
 - keep AI spend predictable
 - spend only where it improves conversion, trust, or maintenance efficiency
 
-## AI Cost Rules
+## AI Spend Operations
 
-- deep explanation is optional, not automatic
-- cache AI outputs
-- set daily budget cap
-- set per-user usage limits
-- log usage and cost estimates
+- keep daily budget caps configured
+- monitor usage counts and estimated cost
 - disable expensive models by default
+- rely on `architecture/ai-strategy.md` for runtime behavior rules
 
 ## Infra Cost Rules
 
-- prefer managed services already in stack
+- prefer managed services already in the stack
 - avoid duplicate vendors
 - avoid heavy observability spend early
 - scale infrastructure only after real load appears
