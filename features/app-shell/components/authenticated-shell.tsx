@@ -11,12 +11,12 @@ export function AuthenticatedShell({
   children: ReactNode;
 }>) {
   return (
-    <div className="relative min-h-screen overflow-hidden px-4 py-4 sm:px-6 sm:py-6">
+    <div className="relative min-h-screen overflow-hidden px-4 py-4 sm:px-6 sm:py-6 xl:px-8">
       <div className="ph-animate-glow pointer-events-none absolute left-0 top-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
       <div className="pointer-events-none absolute right-[10%] top-0 h-72 w-72 rounded-full bg-secondary/12 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
 
-      <div className="mx-auto grid w-full max-w-7xl gap-5 lg:grid-cols-[280px_1fr]">
+      <div className="mx-auto grid w-full max-w-[1600px] gap-6 lg:grid-cols-[296px_minmax(0,1fr)]">
         <aside className="ph-surface-elevated hidden rounded-[36px] p-5 lg:sticky lg:top-6 lg:flex lg:min-h-[calc(100vh-3rem)] lg:flex-col">
           <BrandMark inverted />
 
