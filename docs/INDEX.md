@@ -41,6 +41,7 @@ Audience: Founder, collaborators, and AI coding agents.
 ## Engineering
 
 - `docs/engineering/IMPLEMENTATION_BACKLOG.md`
+- `docs/engineering/dashboard-ui-architecture.md`
 - `docs/engineering/repo-structure.md`
 - `docs/engineering/coding-standards.md`
 - `docs/engineering/api-spec.md`
