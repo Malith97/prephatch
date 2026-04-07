@@ -2,13 +2,25 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { BrandMark } from "../../../components/brand-mark";
-import { appNavigationItems, mockSession } from "../mock-session";
-import { AppNavigation } from "./app-navigation";
+import { mockSession } from "../mock-session";
+import { AppNavigation, type NavigationItem } from "./app-navigation";
 
 export function AuthenticatedShell({
   children,
+  navigationItems,
+  railPanel,
+  headerEyebrow,
+  headerTitle,
+  headerDescription,
+  headerActions,
 }: Readonly<{
   children: ReactNode;
+  navigationItems: NavigationItem[];
+  railPanel: ReactNode;
+  headerEyebrow: string;
+  headerTitle: string;
+  headerDescription: string;
+  headerActions?: ReactNode;
 }>) {
   return (
     <div className="relative min-h-screen overflow-hidden px-4 py-4 sm:px-6 sm:py-6 xl:px-8">
@@ -20,21 +32,12 @@ export function AuthenticatedShell({
         <aside className="ph-surface-elevated hidden rounded-[36px] p-5 lg:sticky lg:top-6 lg:flex lg:min-h-[calc(100vh-3rem)] lg:flex-col">
           <BrandMark inverted />
 
-          <div className="mt-8 rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
-            <p className="ph-eyebrow-inverse">
-              Auth preview
-            </p>
-            <p className="mt-3 text-lg font-semibold text-text-primary">
-              {mockSession.focusExam}
-            </p>
-            <p className="mt-2 text-sm leading-6 text-text-secondary">
-              Shared shell is live. Real authentication checks can plug into
-              this layout later without changing the dashboard structure.
-            </p>
+          <div className="mt-8">
+            {railPanel}
           </div>
 
           <div className="mt-6">
-            <AppNavigation items={appNavigationItems} theme="dark" />
+            <AppNavigation items={navigationItems} theme="dark" />
           </div>
 
           <div className="mt-auto rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
@@ -52,6 +55,9 @@ export function AuthenticatedShell({
                 {mockSession.planLabel}
               </span>
             </div>
+            <p className="mt-4 text-xs uppercase tracking-[0.16em] text-text-secondary/65">
+              {mockSession.renewalDateLabel}
+            </p>
             <Link
               href="/login"
               className="ph-btn ph-btn-sm ph-button-secondary ph-hover-lift mt-5 w-fit"
@@ -70,27 +76,20 @@ export function AuthenticatedShell({
                 </div>
                 <div className="hidden lg:block">
                   <p className="ph-eyebrow">
-                    Authenticated preview shell
+                    {headerEyebrow}
                   </p>
                   <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
-                    Front-end app layout only. No real session enforcement yet.
+                    {headerTitle}
+                  </p>
+                  <p className="mt-1 max-w-2xl text-sm leading-6 text-text-secondary/80">
+                    {headerDescription}
                   </p>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="ph-badge ph-badge-primary">
-                    {mockSession.accessLabel}
-                  </span>
-                  <Link
-                    href="/exams"
-                    className="ph-btn ph-btn-sm ph-button-primary ph-hover-lift"
-                  >
-                    Browse exams
-                  </Link>
-                </div>
+                <div className="flex flex-wrap items-center gap-2">{headerActions}</div>
               </div>
 
               <div className="border-t border-border/70 pt-4 lg:hidden">
-                <AppNavigation items={appNavigationItems} compact theme="light" />
+                <AppNavigation items={navigationItems} compact theme="light" />
               </div>
             </div>
           </header>

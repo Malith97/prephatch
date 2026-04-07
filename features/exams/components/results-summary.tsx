@@ -185,7 +185,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
 
   if (resultsState === undefined) {
     return (
-      <main className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-16">
+      <main className="mx-auto flex min-h-screen w-full max-w-[1600px] items-center px-4 py-16 sm:px-6 xl:px-8">
         <p role="status" className="text-sm text-text-secondary">
           Loading your local review...
         </p>
@@ -241,7 +241,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
   );
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-6">
+    <main className="mx-auto w-full max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 xl:px-8">
       <div className="space-y-5">
         <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
           <section className="ph-surface rounded-[36px] p-6 sm:p-8">

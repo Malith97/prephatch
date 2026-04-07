@@ -7,7 +7,11 @@ type NavigationItem = {
   href: string;
   label: string;
   description: string;
+  exact?: boolean;
+  activePrefixes?: string[];
 };
+
+export type { NavigationItem };
 
 type AppNavigationProps = {
   items: NavigationItem[];
@@ -32,9 +36,15 @@ export function AppNavigation({
       }
     >
       {items.map((item) => {
-        const isActive =
-          pathname === item.href ||
-          (item.href !== "/" && pathname.startsWith(`${item.href}/`));
+        const prefixMatches = [
+          item.href,
+          ...(item.activePrefixes ?? []),
+        ].some(
+          (prefix) =>
+            pathname === prefix ||
+            (prefix !== "/" && pathname.startsWith(`${prefix}/`)),
+        );
+        const isActive = item.exact ? pathname === item.href : prefixMatches;
         const activeClass =
           theme === "dark"
             ? "border-primary/25 bg-[linear-gradient(180deg,rgba(248,250,252,0.96),rgba(227,234,255,0.84))] text-slate-950 shadow-glow"

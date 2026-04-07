@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { getDefaultLiveMockHref } from "../../../../features/exams/mock-exam-workspace";
+import { getDefaultLiveMock } from "../../../../features/exams/mock-exam-workspace";
 import { getExamBySlug } from "../../../../server/exams/mock-repository";
 
 type SessionPageProps = {
@@ -11,6 +11,7 @@ type SessionPageProps = {
 
 export default function SessionPage({ params }: SessionPageProps) {
   const exam = getExamBySlug(params.examSlug);
+  const defaultMock = getDefaultLiveMock(params.examSlug);
 
   if (!exam) {
     return (
@@ -31,5 +32,9 @@ export default function SessionPage({ params }: SessionPageProps) {
     );
   }
 
-  redirect(getDefaultLiveMockHref(params.examSlug));
+  redirect(
+    defaultMock
+      ? `/exam/${params.examSlug}/session/${defaultMock.id}`
+      : `/exam/${params.examSlug}/mock-exams`,
+  );
 }

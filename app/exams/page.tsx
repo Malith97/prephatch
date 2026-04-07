@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-
-import { BrowseExamsPage } from "../../features/exams/components/browse-exams-page";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Browse Exams | PrepHatch",
@@ -8,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function ExamsRoute() {
-  return <BrowseExamsPage />;
+  redirect("/dashboard/marketplace");
 }

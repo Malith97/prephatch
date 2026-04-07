@@ -6,12 +6,12 @@
     "node": ">=20 <21"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "dev": "./scripts/use-project-node.sh next dev",
+    "build": "./scripts/use-project-node.sh next build",
+    "start": "./scripts/use-project-node.sh next start",
+    "lint": "./scripts/use-project-node.sh next lint",
+    "test": "./scripts/use-project-node.sh vitest run",
+    "typecheck": "./scripts/use-project-node.sh tsc --noEmit"
   },
   "dependencies": {
     "next": "^14.2.32",

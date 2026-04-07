@@ -240,7 +240,7 @@ export function ExamSession({
 
   if (!attempt) {
     return (
-      <main className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-16">
+      <main className="mx-auto flex min-h-screen w-full max-w-[1600px] items-center px-4 py-16 sm:px-6 xl:px-8">
         <p className="text-sm text-text-secondary">
           Preparing your local mock exam...
         </p>
@@ -266,7 +266,7 @@ export function ExamSession({
   const isLastQuestion = currentQuestionIndex === exam.questions.length - 1;
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-6">
+    <main className="mx-auto w-full max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 xl:px-8">
       <div className="space-y-5">
         <section className="ph-surface rounded-[32px] p-5 sm:p-6">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
@@ -425,32 +425,23 @@ export function ExamSession({
               })}
             </fieldset>
 
-            <div className="mt-8 flex flex-col gap-3 border-t border-border/70 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  disabled={isFirstQuestion}
-                  onClick={() => handleQuestionChange(currentQuestionIndex - 1)}
-                  className="ph-btn ph-button-secondary ph-hover-lift"
-                >
-                  Previous
-                </button>
-                <button
-                  type="button"
-                  disabled={isLastQuestion}
-                  onClick={() => handleQuestionChange(currentQuestionIndex + 1)}
-                  className="ph-btn ph-button-secondary ph-hover-lift"
-                >
-                  Next
-                </button>
-              </div>
+            <div className="mt-8 flex flex-col gap-3 border-t border-border/70 pt-6 sm:flex-row sm:items-center">
+              <button
+                type="button"
+                disabled={isFirstQuestion}
+                onClick={() => handleQuestionChange(currentQuestionIndex - 1)}
+                className="ph-btn ph-button-secondary ph-hover-lift w-full sm:w-auto"
+              >
+                Previous
+              </button>
 
               <button
                 type="button"
-                onClick={() => submitAttempt(attempt, true)}
-                className="ph-btn ph-button-primary ph-hover-lift"
+                disabled={isLastQuestion}
+                onClick={() => handleQuestionChange(currentQuestionIndex + 1)}
+                className="ph-btn ph-button-secondary ph-hover-lift w-full sm:ml-auto sm:w-auto"
               >
-                Submit exam
+                Next
               </button>
             </div>
           </section>

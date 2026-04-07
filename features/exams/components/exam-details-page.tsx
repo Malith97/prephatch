@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { AuthenticatedShell } from "../../app-shell/components/authenticated-shell";
+import { PlatformShell } from "../../app-shell/components/platform-shell";
 import { getMockExamWorkspace } from "../mock-exam-workspace";
 import { ExamMockList } from "./exam-mock-list";
 import { ExamPreviousResults } from "./exam-previous-results";
@@ -24,7 +24,7 @@ export function ExamDetailsPage({ examSlug }: ExamDetailsPageProps) {
 
   if (!exam) {
     return (
-      <AuthenticatedShell>
+      <PlatformShell>
         <main className="ph-surface rounded-[36px] p-8">
           <p className="ph-eyebrow">
             Exam not found
@@ -43,12 +43,12 @@ export function ExamDetailsPage({ examSlug }: ExamDetailsPageProps) {
             Back to browse exams
           </Link>
         </main>
-      </AuthenticatedShell>
+      </PlatformShell>
     );
   }
 
   return (
-    <AuthenticatedShell>
+    <PlatformShell>
       <main className="space-y-5">
         <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
           <section className="ph-surface rounded-[36px] p-6 sm:p-8">
@@ -192,6 +192,6 @@ export function ExamDetailsPage({ examSlug }: ExamDetailsPageProps) {
           tips={exam.tips}
         />
       </main>
-    </AuthenticatedShell>
+    </PlatformShell>
   );
 }
