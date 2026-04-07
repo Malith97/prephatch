@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "PrepHatch",
-  description: "AI-assisted certification exam-readiness platform",
+  description: "Modern certification exam-readiness for focused learners.",
 };
 
 export default function RootLayout({
@@ -13,8 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
 }
-

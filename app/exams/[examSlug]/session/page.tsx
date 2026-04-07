@@ -1,4 +1,6 @@
-import { ExamSession } from "../../../../features/exams/components/exam-session";
+import { redirect } from "next/navigation";
+
+import { getDefaultLiveMockHref } from "../../../../features/exams/mock-exam-workspace";
 import { getExamBySlug } from "../../../../server/exams/mock-repository";
 
 type SessionPageProps = {
@@ -29,5 +31,5 @@ export default function SessionPage({ params }: SessionPageProps) {
     );
   }
 
-  return <ExamSession exam={exam} />;
+  redirect(getDefaultLiveMockHref(params.examSlug));
 }

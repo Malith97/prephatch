@@ -11,6 +11,7 @@ export const awsSaaC03Exam: MockExam = {
   questions: [
     {
       id: "networking-vpc",
+      topicLabel: "VPC routing and subnet boundaries",
       prompt:
         "A company needs a private application tier in AWS while keeping the public web tier reachable from the internet. Which design is the best fit?",
       explanation:
@@ -37,6 +38,7 @@ export const awsSaaC03Exam: MockExam = {
     },
     {
       id: "storage-durability",
+      topicLabel: "Storage durability and service fit",
       prompt:
         "Which AWS storage service is designed for high durability of objects across multiple Availability Zones?",
       explanation:
@@ -51,6 +53,7 @@ export const awsSaaC03Exam: MockExam = {
     },
     {
       id: "scaling-stateless",
+      topicLabel: "Stateless scaling patterns",
       prompt:
         "A stateless web application must scale automatically based on demand. Which design is the best default choice?",
       explanation:
@@ -73,6 +76,7 @@ export const awsSaaC03Exam: MockExam = {
     },
     {
       id: "database-read-scale",
+      topicLabel: "Database read scaling",
       prompt:
         "An application reads from a relational database far more often than it writes. Which option best improves read scalability?",
       explanation:

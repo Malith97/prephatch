@@ -1,14 +1,16 @@
-import { redirect } from "next/navigation";
+import { ResultsSummary } from "../../../../../features/exams/components/results-summary";
+import { getExamBySlug } from "../../../../../server/exams/mock-repository";
 
-import { getExamBySlug } from "../../../../server/exams/mock-repository";
-
-type ResultsPageProps = {
+type AttemptResultsPageProps = {
   params: {
     examSlug: string;
+    attemptId: string;
   };
 };
 
-export default function ResultsPage({ params }: ResultsPageProps) {
+export default function AttemptResultsPage({
+  params,
+}: AttemptResultsPageProps) {
   const exam = getExamBySlug(params.examSlug);
 
   if (!exam) {
@@ -29,5 +31,5 @@ export default function ResultsPage({ params }: ResultsPageProps) {
     );
   }
 
-  redirect(`/exams/${params.examSlug}/results/latest-local`);
+  return <ResultsSummary exam={exam} attemptId={params.attemptId} />;
 }

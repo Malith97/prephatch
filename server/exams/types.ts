@@ -6,6 +6,7 @@ export type QuestionOption = {
 
 export type Question = {
   id: string;
+  topicLabel: string;
   prompt: string;
   explanation: string;
   correctOptionId: string;
@@ -35,12 +36,16 @@ export type ExamSummary = {
 export type AttemptAnswers = Record<string, string>;
 
 export type StoredAttempt = {
+  attemptId?: string;
   examId: string;
   examSlug: string;
+  mockId?: string;
   startedAt: number;
   endsAt: number;
   status: "in_progress" | "submitted";
   answers: AttemptAnswers;
+  currentQuestionIndex?: number;
+  flaggedQuestionIds?: string[];
   submittedAt?: number;
 };
 
