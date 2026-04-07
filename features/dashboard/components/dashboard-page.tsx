@@ -15,24 +15,12 @@ function SectionHeading({
 }>) {
   return (
     <div className="space-y-2">
-      <p
-        className={`text-sm font-semibold uppercase tracking-[0.18em] ${
-          inverted ? "text-sky-200" : "text-sky-700"
-        }`}
-      >
-        {eyebrow}
-      </p>
-      <h2
-        className={`text-2xl font-semibold ${
-          inverted ? "text-white" : "text-slate-950"
-        }`}
-      >
-        {title}
-      </h2>
+      <p className={inverted ? "ph-eyebrow-inverse" : "ph-eyebrow"}>{eyebrow}</p>
+      <h2 className="ph-section-title">{title}</h2>
       {description ? (
         <p
           className={`max-w-2xl text-sm leading-7 ${
-            inverted ? "text-slate-300" : "text-slate-600"
+            inverted ? "text-text-secondary/90" : "text-text-secondary"
           }`}
         >
           {description}
@@ -46,18 +34,18 @@ export function DashboardPage() {
   return (
     <main className="space-y-4">
       <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-[36px] border border-white/70 bg-white/85 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8">
-          <div className="inline-flex rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-sky-800">
+        <div className="ph-surface rounded-[36px] p-6 sm:p-8">
+          <div className="ph-badge ph-badge-primary">
             Dashboard preview
           </div>
           <div className="mt-6 space-y-4">
-            <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-slate-950 sm:text-5xl">
+            <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-text-primary sm:text-5xl">
               {dashboardData.welcome.greeting}
             </h1>
-            <p className="max-w-3xl text-lg leading-8 text-slate-600">
+            <p className="max-w-3xl text-lg leading-8 text-text-secondary">
               {dashboardData.welcome.title}
             </p>
-            <p className="max-w-3xl text-sm leading-7 text-slate-500">
+            <p className="max-w-3xl text-sm leading-7 text-text-secondary/75">
               {dashboardData.welcome.description}
             </p>
           </div>
@@ -65,53 +53,53 @@ export function DashboardPage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/exams"
-              className="inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_36px_rgba(15,23,42,0.14)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0"
+              className="ph-btn ph-button-primary ph-hover-lift"
             >
               Browse exams
             </Link>
             <Link
               href="/exams/aws-saa-c03/mock/aws-saa-c03-free-preview"
-              className="inline-flex rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-950 active:translate-y-0"
+              className="ph-btn ph-button-secondary ph-hover-lift"
             >
               Continue free mock
             </Link>
           </div>
         </div>
 
-        <div className="rounded-[36px] border border-white/70 bg-slate-950 p-6 text-white shadow-[0_30px_90px_rgba(15,23,42,0.16)] sm:p-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-200">
+        <div className="ph-surface-elevated rounded-[36px] p-6 sm:p-8">
+          <p className="ph-eyebrow-inverse">
             Readiness widget
           </p>
           <div className="mt-6 flex items-center gap-5">
-            <div className="flex h-28 w-28 items-center justify-center rounded-full border border-white/10 bg-white/5 shadow-inner">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-teal-300 text-2xl font-semibold text-slate-950">
+            <div className="flex h-28 w-28 items-center justify-center rounded-full border border-border/70 bg-bg/35 shadow-inner">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[linear-gradient(145deg,rgba(91,140,255,0.95),rgba(32,211,194,0.82))] text-2xl font-semibold text-text-primary shadow-glow">
                 {dashboardData.readiness.score}
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-300">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary/75">
                 Current signal
               </p>
-              <h2 className="text-3xl font-semibold">
+              <h2 className="text-3xl font-semibold text-text-primary">
                 {dashboardData.readiness.label}
               </h2>
-              <p className="text-sm leading-7 text-slate-300">
+              <p className="text-sm leading-7 text-text-secondary">
                 {dashboardData.readiness.note}
               </p>
             </div>
           </div>
-          <div className="mt-6 rounded-[28px] border border-white/10 bg-white/5 p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-300">
+          <div className="mt-6 rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary/75">
               Next milestone
             </p>
-            <p className="mt-2 text-sm leading-7 text-slate-200">
+            <p className="mt-2 text-sm leading-7 text-text-secondary">
               {dashboardData.readiness.target}
             </p>
           </div>
         </div>
       </section>
 
-      <section className="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur sm:p-8">
+      <section className="ph-surface rounded-[36px] p-6 sm:p-8">
         <SectionHeading
           eyebrow="Progress summary"
           title="A quick read on momentum and access."
@@ -120,20 +108,24 @@ export function DashboardPage() {
           {dashboardData.metrics.map((metric) => (
             <article
               key={metric.label}
-              className="rounded-[28px] border border-slate-200/80 bg-slate-50 p-5"
+              className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle"
             >
-              <p className="text-sm font-medium text-slate-500">{metric.label}</p>
-              <p className="mt-3 text-3xl font-semibold text-slate-950">
+              <p className="text-sm font-medium text-text-secondary/75">
+                {metric.label}
+              </p>
+              <p className="mt-3 text-3xl font-semibold text-text-primary">
                 {metric.value}
               </p>
-              <p className="mt-3 text-sm leading-6 text-slate-600">{metric.note}</p>
+              <p className="mt-3 text-sm leading-6 text-text-secondary">
+                {metric.note}
+              </p>
             </article>
           ))}
         </div>
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur sm:p-8">
+        <div className="ph-surface rounded-[36px] p-6 sm:p-8">
           <SectionHeading
             eyebrow="Enrolled and purchased exams"
             title="Your current access state in one place."
@@ -142,35 +134,35 @@ export function DashboardPage() {
             {dashboardData.exams.map((exam) => (
               <article
                 key={exam.title}
-                className="rounded-[28px] border border-slate-200/80 bg-slate-50 p-5"
+                className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-xl font-semibold text-slate-950">
+                    <h3 className="text-xl font-semibold text-text-primary">
                       {exam.title}
                     </h3>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">
+                    <p className="mt-2 text-sm leading-7 text-text-secondary">
                       {exam.detail}
                     </p>
                   </div>
-                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-700">
+                  <span className="ph-badge ph-badge-neutral">
                     {exam.access}
                   </span>
                 </div>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl bg-white px-4 py-3">
-                    <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+                  <div className="rounded-2xl border border-border/70 bg-surface-elevated/70 px-4 py-3">
+                    <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                       Status
                     </p>
-                    <p className="mt-2 text-sm font-semibold text-slate-950">
+                    <p className="mt-2 text-sm font-semibold text-text-primary">
                       {exam.status}
                     </p>
                   </div>
-                  <div className="rounded-2xl bg-white px-4 py-3">
-                    <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+                  <div className="rounded-2xl border border-border/70 bg-surface-elevated/70 px-4 py-3">
+                    <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                       Progress
                     </p>
-                    <p className="mt-2 text-sm font-semibold text-slate-950">
+                    <p className="mt-2 text-sm font-semibold text-text-primary">
                       {exam.score}
                     </p>
                   </div>
@@ -181,7 +173,7 @@ export function DashboardPage() {
         </div>
 
         <div className="space-y-4">
-          <section className="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur sm:p-8">
+          <section className="ph-surface rounded-[36px] p-6 sm:p-8">
             <SectionHeading
               eyebrow="Recent activity"
               title="The latest learner events."
@@ -190,17 +182,17 @@ export function DashboardPage() {
               {dashboardData.recentActivity.map((activity) => (
                 <article
                   key={`${activity.title}-${activity.timestamp}`}
-                  className="rounded-[28px] border border-slate-200/80 bg-slate-50 p-5"
+                  className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="text-base font-semibold text-slate-950">
+                    <h3 className="text-base font-semibold text-text-primary">
                       {activity.title}
                     </h3>
-                    <span className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                    <span className="text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary/65">
                       {activity.timestamp}
                     </span>
                   </div>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                  <p className="mt-3 text-sm leading-7 text-text-secondary">
                     {activity.detail}
                   </p>
                 </article>
@@ -208,7 +200,7 @@ export function DashboardPage() {
             </div>
           </section>
 
-          <section className="rounded-[36px] border border-white/70 bg-slate-950 p-6 text-white shadow-[0_30px_90px_rgba(15,23,42,0.16)] sm:p-8">
+          <section className="ph-surface-elevated rounded-[36px] p-6 sm:p-8">
             <SectionHeading
               eyebrow="Browse exams"
               title="Jump back into the catalog."
@@ -217,7 +209,7 @@ export function DashboardPage() {
             />
             <Link
               href="/exams"
-              className="mt-6 inline-flex rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-slate-100"
+              className="ph-btn ph-button-primary ph-hover-lift mt-6"
             >
               Open exam catalog
             </Link>
@@ -226,7 +218,7 @@ export function DashboardPage() {
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-        <section className="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur sm:p-8">
+        <section className="ph-surface rounded-[36px] p-6 sm:p-8">
           <SectionHeading
             eyebrow="Weak areas snapshot"
             title="The topics most likely to benefit from the next study block."
@@ -235,17 +227,17 @@ export function DashboardPage() {
             {dashboardData.weakAreas.map((area) => (
               <article
                 key={area.topic}
-                className="rounded-[28px] border border-slate-200/80 bg-slate-50 p-5"
+                className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle"
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-base font-semibold text-slate-950">
+                  <h3 className="text-base font-semibold text-text-primary">
                     {area.topic}
                   </h3>
-                  <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
+                  <span className="ph-badge ph-badge-warning">
                     {area.accuracy}
                   </span>
                 </div>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
+                <p className="mt-3 text-sm leading-7 text-text-secondary">
                   {area.note}
                 </p>
               </article>
@@ -253,7 +245,7 @@ export function DashboardPage() {
           </div>
         </section>
 
-        <section className="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur sm:p-8">
+        <section className="ph-surface rounded-[36px] p-6 sm:p-8">
           <SectionHeading
             eyebrow="Quick actions"
             title="Keep the next move obvious."
@@ -263,18 +255,18 @@ export function DashboardPage() {
               <Link
                 key={action.title}
                 href={action.href}
-                className="rounded-[28px] border border-slate-200/80 bg-slate-50/90 p-5 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white active:translate-y-0"
+                className="ph-hover-lift rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle transition duration-200 hover:border-primary/20 hover:bg-surface-elevated/70 active:translate-y-0"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-950">
+                    <h3 className="text-lg font-semibold text-text-primary">
                       {action.title}
                     </h3>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">
+                    <p className="mt-2 text-sm leading-7 text-text-secondary">
                       {action.description}
                     </p>
                   </div>
-                  <span className="inline-flex rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white">
+                  <span className="ph-btn ph-btn-sm ph-button-primary">
                     Open
                   </span>
                 </div>

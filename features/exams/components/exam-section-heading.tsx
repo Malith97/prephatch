@@ -13,24 +13,16 @@ export function ExamSectionHeading({
 }: Readonly<ExamSectionHeadingProps>) {
   return (
     <div className="space-y-2.5">
-      <p
-        className={`text-sm font-semibold uppercase tracking-[0.18em] ${
-          inverted ? "text-sky-200" : "text-sky-700"
-        }`}
-      >
+      <p className={inverted ? "ph-eyebrow-inverse" : "ph-eyebrow"}>
         {eyebrow}
       </p>
-      <h2
-        className={`text-2xl font-semibold leading-tight sm:text-[1.9rem] ${
-          inverted ? "text-white" : "text-slate-950"
-        }`}
-      >
+      <h2 className="ph-section-title">
         {title}
       </h2>
       {description ? (
         <p
           className={`max-w-3xl text-sm leading-7 ${
-            inverted ? "text-slate-300" : "text-slate-600"
+            inverted ? "text-text-secondary/90" : "text-text-secondary"
           }`}
         >
           {description}

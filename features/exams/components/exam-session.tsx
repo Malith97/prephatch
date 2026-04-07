@@ -241,7 +241,9 @@ export function ExamSession({
   if (!attempt) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-16">
-        <p className="text-sm text-slate-600">Preparing your local mock exam...</p>
+        <p className="text-sm text-text-secondary">
+          Preparing your local mock exam...
+        </p>
       </main>
     );
   }
@@ -266,23 +268,23 @@ export function ExamSession({
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-6">
       <div className="space-y-5">
-        <section className="rounded-[32px] border border-white/70 bg-white/85 p-5 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur sm:p-6">
+        <section className="ph-surface rounded-[32px] p-5 sm:p-6">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
             <div className="space-y-3">
               <Link
                 href={resolvedBackHref}
-                className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-950 active:translate-y-0"
+                className="ph-btn ph-btn-sm ph-button-secondary ph-hover-lift"
               >
                 Back to exam details
               </Link>
               <div className="space-y-2">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+                <p className="ph-eyebrow">
                   {exam.certificationCode}
                 </p>
-                <h1 className="text-3xl font-semibold text-slate-950 sm:text-4xl">
+                <h1 className="text-3xl font-semibold text-text-primary sm:text-4xl">
                   {resolvedMockTitle}
                 </h1>
-                <p className="max-w-3xl text-sm leading-7 text-slate-600">
+                <p className="max-w-3xl text-sm leading-7 text-text-secondary">
                   One question at a time, with answer persistence, review flags,
                   and a focused navigation flow. Answers stay local to this
                   browser session.
@@ -291,44 +293,44 @@ export function ExamSession({
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-[24px] border border-slate-200/80 bg-slate-50 px-5 py-4">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[24px] border border-border/70 bg-bg/35 px-5 py-4 shadow-subtle">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Time remaining
                 </p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                <p className="mt-2 text-2xl font-semibold text-text-primary">
                   {formatRemainingTime(remainingMs)}
                 </p>
               </div>
-              <div className="rounded-[24px] border border-slate-200/80 bg-slate-50 px-5 py-4">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[24px] border border-border/70 bg-bg/35 px-5 py-4 shadow-subtle">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Answered
                 </p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                <p className="mt-2 text-2xl font-semibold text-text-primary">
                   {answeredCount}/{exam.questions.length}
                 </p>
               </div>
-              <div className="rounded-[24px] border border-slate-200/80 bg-slate-50 px-5 py-4">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[24px] border border-border/70 bg-bg/35 px-5 py-4 shadow-subtle">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Flagged
                 </p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                <p className="mt-2 text-2xl font-semibold text-text-primary">
                   {flaggedCount}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 rounded-[24px] border border-slate-200/80 bg-slate-50 p-4">
+          <div className="mt-6 rounded-[24px] border border-border/70 bg-bg/35 p-4 shadow-subtle">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm font-medium text-slate-600">
+              <p className="text-sm font-medium text-text-secondary">
                 Progress indicator
               </p>
-              <p className="text-sm font-semibold text-slate-950">
+              <p className="text-sm font-semibold text-text-primary">
                 {progressPercentage}% complete
               </p>
             </div>
             <div
-              className="mt-3 h-3 overflow-hidden rounded-full bg-slate-200"
+              className="mt-3 h-3 overflow-hidden rounded-full bg-border/70"
               role="progressbar"
               aria-label="Exam progress"
               aria-valuemin={0}
@@ -344,24 +346,24 @@ export function ExamSession({
         </section>
 
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-          <section className="rounded-[32px] border border-white/70 bg-white/85 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8">
+          <section className="ph-surface rounded-[32px] p-6 sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="space-y-2">
-                <p className="text-sm font-semibold uppercase tracking-[0.16em] text-sky-700">
+                <p className="ph-eyebrow">
                   Question {currentQuestionIndex + 1} of {exam.questions.length}
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   {currentAnswer ? (
-                    <span className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-sky-800">
+                    <span className="ph-badge ph-badge-primary">
                       Answer saved
                     </span>
                   ) : (
-                    <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600">
+                    <span className="ph-badge ph-badge-neutral">
                       Unanswered
                     </span>
                   )}
                   {isCurrentQuestionFlagged ? (
-                    <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
+                    <span className="ph-badge ph-badge-warning">
                       Flagged for review
                     </span>
                   ) : null}
@@ -372,10 +374,10 @@ export function ExamSession({
                 type="button"
                 onClick={() => handleFlagToggle(currentQuestion.id)}
                 aria-pressed={isCurrentQuestionFlagged}
-                className={`inline-flex rounded-full px-4 py-2 text-sm font-semibold transition duration-200 active:translate-y-0 ${
+                className={`ph-btn ph-btn-sm ${
                   isCurrentQuestionFlagged
-                    ? "border border-amber-200 bg-amber-50 text-amber-700 hover:-translate-y-0.5 hover:bg-amber-100"
-                    : "border border-slate-200 bg-white text-slate-700 hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-950"
+                    ? "border border-warning/25 bg-warning/10 text-warning hover:-translate-y-0.5 hover:bg-warning/15"
+                    : "ph-button-secondary ph-hover-lift"
                 }`}
               >
                 {isCurrentQuestionFlagged ? "Unflag question" : "Flag for review"}
@@ -383,7 +385,7 @@ export function ExamSession({
             </div>
 
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold leading-9 text-slate-950">
+              <h2 className="text-2xl font-semibold leading-9 text-text-primary">
                 {currentQuestion.prompt}
               </h2>
             </div>
@@ -398,8 +400,8 @@ export function ExamSession({
                     key={option.id}
                     className={`flex cursor-pointer gap-4 rounded-[24px] border px-4 py-4 transition duration-200 ${
                       checked
-                        ? "border-sky-700 bg-sky-50 shadow-[0_16px_30px_rgba(56,189,248,0.10)]"
-                        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
+                        ? "border-primary/35 bg-primary/10 shadow-glow"
+                        : "border-border/70 bg-bg/35 hover:border-primary/20 hover:bg-surface-elevated/70"
                     }`}
                   >
                     <input
@@ -410,10 +412,10 @@ export function ExamSession({
                       onChange={() =>
                         handleAnswerChange(currentQuestion.id, option.id)
                       }
-                      className="mt-1 h-4 w-4 border-slate-300 text-slate-950 focus:ring-sky-200"
+                      className="ph-choice mt-1 h-4 w-4 border-border/80 bg-surface/80"
                     />
-                    <span className="text-sm leading-7 text-slate-700">
-                      <span className="mr-2 font-semibold text-slate-950">
+                    <span className="text-sm leading-7 text-text-secondary">
+                      <span className="mr-2 font-semibold text-text-primary">
                         {option.label}.
                       </span>
                       {option.text}
@@ -423,13 +425,13 @@ export function ExamSession({
               })}
             </fieldset>
 
-            <div className="mt-8 flex flex-col gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-8 flex flex-col gap-3 border-t border-border/70 pt-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
                   disabled={isFirstQuestion}
                   onClick={() => handleQuestionChange(currentQuestionIndex - 1)}
-                  className="inline-flex rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-950 active:translate-y-0 disabled:opacity-45"
+                  className="ph-btn ph-button-secondary ph-hover-lift"
                 >
                   Previous
                 </button>
@@ -437,7 +439,7 @@ export function ExamSession({
                   type="button"
                   disabled={isLastQuestion}
                   onClick={() => handleQuestionChange(currentQuestionIndex + 1)}
-                  className="inline-flex rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-950 active:translate-y-0 disabled:opacity-45"
+                  className="ph-btn ph-button-secondary ph-hover-lift"
                 >
                   Next
                 </button>
@@ -446,20 +448,20 @@ export function ExamSession({
               <button
                 type="button"
                 onClick={() => submitAttempt(attempt, true)}
-                className="inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_32px_rgba(15,23,42,0.12)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0"
+                className="ph-btn ph-button-primary ph-hover-lift"
               >
                 Submit exam
               </button>
             </div>
           </section>
 
-          <aside className="rounded-[32px] border border-white/70 bg-white/85 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur sm:p-6 xl:sticky xl:top-6 xl:self-start">
+          <aside className="ph-surface rounded-[32px] p-6 sm:p-6 xl:sticky xl:top-6 xl:self-start">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+                <p className="ph-eyebrow">
                   Question panel
                 </p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
+                <p className="mt-2 text-sm leading-6 text-text-secondary">
                   Jump between questions, track progress, and revisit flagged
                   items before submitting.
                 </p>
@@ -467,27 +469,27 @@ export function ExamSession({
             </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3 xl:grid-cols-2">
-              <div className="rounded-[24px] border border-slate-200/80 bg-slate-50 px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[24px] border border-border/70 bg-bg/35 px-4 py-3 shadow-subtle">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Answered
                 </p>
-                <p className="mt-2 text-lg font-semibold text-slate-950">
+                <p className="mt-2 text-lg font-semibold text-text-primary">
                   {answeredCount}
                 </p>
               </div>
-              <div className="rounded-[24px] border border-slate-200/80 bg-slate-50 px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[24px] border border-border/70 bg-bg/35 px-4 py-3 shadow-subtle">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Remaining
                 </p>
-                <p className="mt-2 text-lg font-semibold text-slate-950">
+                <p className="mt-2 text-lg font-semibold text-text-primary">
                   {exam.questions.length - answeredCount}
                 </p>
               </div>
-              <div className="rounded-[24px] border border-slate-200/80 bg-slate-50 px-4 py-3 sm:col-span-3 xl:col-span-2">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[24px] border border-border/70 bg-bg/35 px-4 py-3 shadow-subtle sm:col-span-3 xl:col-span-2">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Flagged
                 </p>
-                <p className="mt-2 text-lg font-semibold text-slate-950">
+                <p className="mt-2 text-lg font-semibold text-text-primary">
                   {flaggedCount}
                 </p>
               </div>
@@ -498,12 +500,12 @@ export function ExamSession({
                 const questionState = getQuestionState(attempt, question.id, index);
                 const questionClasses =
                   questionState === "current"
-                    ? "border-slate-950 bg-slate-950 text-white"
+                    ? "border-primary/25 bg-primary text-text-primary"
                     : questionState === "answered"
-                      ? "border-sky-200 bg-sky-50 text-sky-900"
+                      ? "border-primary/25 bg-primary/10 text-primary"
                       : questionState === "flagged"
-                        ? "border-amber-200 bg-amber-50 text-amber-800"
-                        : "border-slate-200 bg-white text-slate-700";
+                        ? "border-warning/25 bg-warning/10 text-warning"
+                        : "border-border/70 bg-surface-elevated/70 text-text-secondary";
 
                 return (
                   <button
@@ -523,17 +525,17 @@ export function ExamSession({
               })}
             </div>
 
-            <div className="mt-6 space-y-3 text-xs uppercase tracking-[0.16em] text-slate-500">
+            <div className="mt-6 space-y-3 text-xs uppercase tracking-[0.16em] text-text-secondary/75">
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-slate-950" />
+                <span className="h-3 w-3 rounded-full bg-primary" />
                 Current question
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-sky-400" />
+                <span className="h-3 w-3 rounded-full bg-primary/80" />
                 Answered
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-amber-400" />
+                <span className="h-3 w-3 rounded-full bg-warning" />
                 Flagged
               </div>
             </div>
@@ -541,7 +543,7 @@ export function ExamSession({
             <button
               type="button"
               onClick={() => submitAttempt(attempt, true)}
-              className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_32px_rgba(15,23,42,0.12)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0"
+              className="ph-btn ph-button-primary ph-hover-lift mt-6 w-full"
             >
               Submit exam
             </button>

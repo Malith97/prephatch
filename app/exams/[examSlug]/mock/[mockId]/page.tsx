@@ -18,14 +18,14 @@ export default function MockPlayerPage({ params }: MockPlayerPageProps) {
   if (!exam || !mock) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center px-6 py-16">
-        <div className="space-y-3 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+        <div className="ph-surface space-y-3 rounded-3xl p-8">
+          <p className="ph-eyebrow">
             Mock not found
           </p>
-          <h1 className="text-3xl font-semibold text-slate-950">
+          <h1 className="text-3xl font-semibold text-text-primary">
             This mock exam is not available.
           </h1>
-          <p className="text-sm leading-7 text-slate-600">
+          <p className="text-sm leading-7 text-text-secondary">
             Return to the certification page and choose one of the available
             mock exams.
           </p>
@@ -37,17 +37,17 @@ export default function MockPlayerPage({ params }: MockPlayerPageProps) {
   if (!mock.isLive) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center px-6 py-16">
-        <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+        <div className="ph-surface space-y-4 rounded-3xl p-8">
+          <p className="ph-eyebrow">
             Mock coming soon
           </p>
-          <h1 className="text-3xl font-semibold text-slate-950">
+          <h1 className="text-3xl font-semibold text-text-primary">
             {mock.title} is not live yet.
           </h1>
-          <p className="text-sm leading-7 text-slate-600">{mock.note}</p>
+          <p className="text-sm leading-7 text-text-secondary">{mock.note}</p>
           <Link
             href={`/exams/${params.examSlug}`}
-            className="inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="ph-btn ph-button-primary ph-hover-lift"
           >
             Back to exam details
           </Link>

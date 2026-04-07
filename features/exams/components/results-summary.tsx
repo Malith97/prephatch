@@ -186,7 +186,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
   if (resultsState === undefined) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-16">
-        <p role="status" className="text-sm text-slate-600">
+        <p role="status" className="text-sm text-text-secondary">
           Loading your local review...
         </p>
       </main>
@@ -196,15 +196,15 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
   if (resultsState === null) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center px-6 py-16">
-        <div className="space-y-6 rounded-[36px] border border-white/70 bg-white/85 p-8 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur">
+        <div className="ph-surface space-y-6 rounded-[36px] p-8">
           <div className="space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+            <p className="ph-eyebrow">
               Results unavailable
             </p>
-            <h1 className="text-3xl font-semibold text-slate-950">
+            <h1 className="text-3xl font-semibold text-text-primary">
               No matching local attempt was found for this result.
             </h1>
-            <p className="text-sm leading-7 text-slate-600">
+            <p className="text-sm leading-7 text-text-secondary">
               Return to the certification page to start a mock or reopen the
               latest local results alias.
             </p>
@@ -212,13 +212,13 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
           <div className="flex flex-wrap gap-3">
             <Link
               href={examPageHref}
-              className="inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_36px_rgba(15,23,42,0.14)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0"
+              className="ph-btn ph-button-primary ph-hover-lift"
             >
               Return to exam page
             </Link>
             <Link
               href={defaultMockHref}
-              className="inline-flex rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-950 active:translate-y-0"
+              className="ph-btn ph-button-secondary ph-hover-lift"
             >
               Start this mock
             </Link>
@@ -244,41 +244,41 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
     <main className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-6">
       <div className="space-y-5">
         <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-          <section className="rounded-[36px] border border-white/70 bg-white/85 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8">
+          <section className="ph-surface rounded-[36px] p-6 sm:p-8">
             <div className="flex flex-wrap gap-3">
               <Link
                 href={examPageHref}
-                className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-950 active:translate-y-0"
+                className="ph-btn ph-btn-sm ph-button-secondary ph-hover-lift"
               >
                 Return to exam page
               </Link>
               <Link
                 href={defaultMockHref}
-                className="inline-flex rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-[0_16px_32px_rgba(15,23,42,0.12)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0"
+                className="ph-btn ph-btn-sm ph-button-primary ph-hover-lift"
               >
                 Retake mock
               </Link>
             </div>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-700">
+              <span className="ph-badge ph-badge-secondary">
                 {exam.certificationCode}
               </span>
               <span
-                className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] ${readinessState.tone}`}
+                className={`ph-badge ${readinessState.tone}`}
               >
                 {readinessState.label}
               </span>
             </div>
 
             <div className="mt-6 space-y-4">
-              <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-slate-950 sm:text-5xl">
+              <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-text-primary sm:text-5xl">
                 {exam.title} review
               </h1>
-              <p className="max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
+              <p className="max-w-3xl text-base leading-8 text-text-secondary sm:text-lg">
                 {readinessState.message}
               </p>
-              <p className="text-sm leading-7 text-slate-500">
+              <p className="text-sm leading-7 text-text-secondary/75">
                 Submitted locally at{" "}
                 {new Date(
                   attempt.submittedAt ?? attempt.endsAt,
@@ -287,42 +287,42 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-[28px] border border-slate-200/80 bg-slate-50 p-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Score
                 </p>
-                <p className="mt-3 text-3xl font-semibold text-slate-950">
+                <p className="mt-3 text-3xl font-semibold text-text-primary">
                   {score.percentageScore}%
                 </p>
               </div>
-              <div className="rounded-[28px] border border-slate-200/80 bg-slate-50 p-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Correct
                 </p>
-                <p className="mt-3 text-3xl font-semibold text-slate-950">
+                <p className="mt-3 text-3xl font-semibold text-text-primary">
                   {score.correctCount}
                 </p>
               </div>
-              <div className="rounded-[28px] border border-slate-200/80 bg-slate-50 p-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Incorrect
                 </p>
-                <p className="mt-3 text-3xl font-semibold text-slate-950">
+                <p className="mt-3 text-3xl font-semibold text-text-primary">
                   {score.incorrectCount}
                 </p>
               </div>
-              <div className="rounded-[28px] border border-slate-200/80 bg-slate-50 p-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              <div className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   Unanswered
                 </p>
-                <p className="mt-3 text-3xl font-semibold text-slate-950">
+                <p className="mt-3 text-3xl font-semibold text-text-primary">
                   {score.unansweredCount}
                 </p>
               </div>
             </div>
           </section>
 
-          <section className="rounded-[36px] border border-white/70 bg-slate-950 p-6 text-white shadow-[0_30px_90px_rgba(15,23,42,0.16)] sm:p-8">
+          <section className="ph-surface-elevated rounded-[36px] p-6 sm:p-8">
             <ExamSectionHeading
               eyebrow="Readiness message"
               title={readinessState.label}
@@ -330,25 +330,25 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
               inverted
             />
             <div className="mt-6 grid gap-4">
-              <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-300">
+              <div className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary/75">
                   Scaled score preview
                 </p>
-                <p className="mt-2 text-3xl font-semibold text-white">
+                <p className="mt-2 text-3xl font-semibold text-text-primary">
                   {score.scaledScorePreview}
                 </p>
-                <p className="mt-3 text-sm leading-7 text-slate-300">
+                <p className="mt-3 text-sm leading-7 text-text-secondary">
                   {score.previewFormulaLabel}
                 </p>
               </div>
-              <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-300">
+              <div className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary/75">
                   Review flags
                 </p>
-                <p className="mt-2 text-3xl font-semibold text-white">
+                <p className="mt-2 text-3xl font-semibold text-text-primary">
                   {(attempt.flaggedQuestionIds ?? []).length}
                 </p>
-                <p className="mt-3 text-sm leading-7 text-slate-300">
+                <p className="mt-3 text-sm leading-7 text-text-secondary">
                   Questions you marked for review during the timed run.
                 </p>
               </div>
@@ -356,7 +356,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
           </section>
         </section>
 
-        <section className="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur sm:p-8">
+        <section className="ph-surface rounded-[36px] p-6 sm:p-8">
           <ExamSectionHeading
             eyebrow="Topic breakdown"
             title="See which topics held up and which ones need another pass."
@@ -365,23 +365,23 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
             {topicBreakdown.map((topic) => (
               <article
                 key={topic.topicLabel}
-                className="rounded-[28px] border border-slate-200/80 bg-slate-50/90 p-5"
+                className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <h2 className="max-w-[16rem] text-base font-semibold text-slate-950">
+                  <h2 className="max-w-[16rem] text-base font-semibold text-text-primary">
                     {topic.topicLabel}
                   </h2>
-                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-700">
+                  <span className="ph-badge ph-badge-neutral">
                     {topic.percentageScore}%
                   </span>
                 </div>
-                <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
+                <div className="mt-4 h-2 overflow-hidden rounded-full bg-border/70">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-500"
                     style={{ width: `${topic.percentageScore}%` }}
                   />
                 </div>
-                <div className="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+                <div className="mt-4 space-y-2 text-sm leading-6 text-text-secondary">
                   <p>Correct: {topic.correctCount}</p>
                   <p>Incorrect: {topic.incorrectCount}</p>
                   <p>Unanswered: {topic.unansweredCount}</p>
@@ -392,7 +392,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
         </section>
 
         <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
-          <section className="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur sm:p-8">
+          <section className="ph-surface rounded-[36px] p-6 sm:p-8">
             <ExamSectionHeading
               eyebrow="Weak areas"
               title="These are the topics most likely to raise the next score."
@@ -401,17 +401,17 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
               {effectiveWeakAreas.map((topic) => (
                 <article
                   key={topic.topicLabel}
-                  className="rounded-[28px] border border-slate-200/80 bg-slate-50/90 p-5"
+                  className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h2 className="text-base font-semibold text-slate-950">
+                    <h2 className="text-base font-semibold text-text-primary">
                       {topic.topicLabel}
                     </h2>
-                    <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
+                    <span className="ph-badge ph-badge-warning">
                       {topic.percentageScore}% topic score
                     </span>
                   </div>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                  <p className="mt-3 text-sm leading-7 text-text-secondary">
                     {topic.incorrectCount > 0
                       ? "This topic had incorrect answers and should be reviewed before the next timed attempt."
                       : "This topic was left unanswered at least once and needs a cleaner recall pass."}
@@ -421,7 +421,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
             </div>
           </section>
 
-          <section className="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur sm:p-8">
+          <section className="ph-surface rounded-[36px] p-6 sm:p-8">
             <ExamSectionHeading
               eyebrow="Recommended next study actions"
               title="Use the review to make the next study block more targeted."
@@ -430,16 +430,16 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
               {recommendedActions.map((action) => (
                 <article
                   key={action}
-                  className="rounded-[28px] border border-slate-200/80 bg-slate-50/90 p-5"
+                  className="rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle"
                 >
-                  <p className="text-sm leading-7 text-slate-700">{action}</p>
+                  <p className="text-sm leading-7 text-text-secondary">{action}</p>
                 </article>
               ))}
             </div>
           </section>
         </div>
 
-        <section className="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur sm:p-8">
+        <section className="ph-surface rounded-[36px] p-6 sm:p-8">
           <ExamSectionHeading
             eyebrow="Answer review"
             title="Question-by-question review of the submitted attempt."
@@ -452,24 +452,24 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
               return (
                 <article
                   key={question.id}
-                  className="rounded-[32px] border border-slate-200/80 bg-slate-50/90 p-6"
+                  className="rounded-[32px] border border-border/70 bg-bg/35 p-6 shadow-subtle"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-3">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600">
+                        <span className="ph-badge ph-badge-neutral">
                           Question {index + 1}
                         </span>
-                        <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600">
+                        <span className="ph-badge ph-badge-neutral">
                           {question.topicLabel}
                         </span>
                         {wasFlagged ? (
-                          <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
+                          <span className="ph-badge ph-badge-warning">
                             Flagged during exam
                           </span>
                         ) : null}
                       </div>
-                      <h2 className="text-xl font-semibold text-slate-950">
+                      <h2 className="text-xl font-semibold text-text-primary">
                         {question.prompt}
                       </h2>
                     </div>
@@ -485,8 +485,8 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
                   </div>
 
                   <div className="mt-5 grid gap-4 md:grid-cols-2">
-                    <div className="rounded-[24px] border border-slate-200/80 bg-white px-4 py-4 text-sm leading-7 text-slate-700">
-                      <p className="font-semibold text-slate-950">Your answer</p>
+                    <div className="rounded-[24px] border border-border/70 bg-surface-elevated/70 px-4 py-4 text-sm leading-7 text-text-secondary">
+                      <p className="font-semibold text-text-primary">Your answer</p>
                       <p className="mt-2">
                         {getOptionText(
                           question,
@@ -494,16 +494,16 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
                         )}
                       </p>
                     </div>
-                    <div className="rounded-[24px] border border-slate-200/80 bg-white px-4 py-4 text-sm leading-7 text-slate-700">
-                      <p className="font-semibold text-slate-950">
+                    <div className="rounded-[24px] border border-border/70 bg-surface-elevated/70 px-4 py-4 text-sm leading-7 text-text-secondary">
+                      <p className="font-semibold text-text-primary">
                         Correct answer
                       </p>
                       <p className="mt-2">
                         {getOptionText(question, question.correctOptionId)}
                       </p>
                     </div>
-                    <div className="rounded-[24px] border border-slate-200/80 bg-white px-4 py-4 text-sm leading-7 text-slate-700 md:col-span-2">
-                      <p className="font-semibold text-slate-950">Explanation</p>
+                    <div className="rounded-[24px] border border-border/70 bg-surface-elevated/70 px-4 py-4 text-sm leading-7 text-text-secondary md:col-span-2">
+                      <p className="font-semibold text-text-primary">Explanation</p>
                       <p className="mt-2">{question.explanation}</p>
                     </div>
                   </div>

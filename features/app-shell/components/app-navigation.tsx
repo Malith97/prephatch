@@ -37,24 +37,26 @@ export function AppNavigation({
           (item.href !== "/" && pathname.startsWith(`${item.href}/`));
         const activeClass =
           theme === "dark"
-            ? "border-white/20 bg-white text-slate-950 shadow-[0_18px_34px_rgba(15,23,42,0.22)]"
-            : "border-sky-200 bg-sky-50 text-slate-950 shadow-[0_14px_28px_rgba(56,189,248,0.10)]";
+            ? "border-primary/25 bg-[linear-gradient(180deg,rgba(248,250,252,0.96),rgba(227,234,255,0.84))] text-slate-950 shadow-glow"
+            : "border-primary/25 bg-primary/12 text-text-primary shadow-subtle";
         const inactiveClass =
           theme === "dark"
-            ? "border-white/5 bg-white/[0.06] text-slate-300 hover:-translate-y-0.5 hover:border-white/10 hover:bg-white/[0.09] hover:text-white active:translate-y-0"
-            : "border-slate-200/80 bg-slate-50/90 text-slate-700 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white hover:text-slate-950 active:translate-y-0";
+            ? "border-border/65 bg-white/[0.04] text-text-secondary hover:-translate-y-0.5 hover:border-primary/20 hover:bg-white/[0.08] hover:text-text-primary active:translate-y-0"
+            : "border-border/70 bg-surface/55 text-text-secondary hover:-translate-y-0.5 hover:border-primary/20 hover:bg-surface-elevated/78 hover:text-text-primary active:translate-y-0";
         const descriptionClass = isActive
-          ? "text-slate-500"
+          ? theme === "dark"
+            ? "text-slate-500"
+            : "text-text-secondary/80"
           : theme === "dark"
-            ? "text-slate-400"
-            : "text-slate-500";
+            ? "text-slate-500"
+            : "text-text-secondary/70";
 
         return (
           <Link
             key={item.href}
             href={item.href}
             aria-current={isActive ? "page" : undefined}
-            className={`group rounded-[24px] border px-4 py-3.5 transition duration-200 ${
+            className={`group rounded-[26px] border px-4 py-4 transition duration-200 ease-premium ${
               isActive ? activeClass : inactiveClass
             } ${compact ? "min-w-[200px]" : ""}`}
           >
