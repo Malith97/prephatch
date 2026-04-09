@@ -9,6 +9,54 @@ type AuthPageProps = {
   mode: AuthMode;
 };
 
+function GoogleIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="h-5 w-5"
+      role="img"
+    >
+      <path
+        fill="#EA4335"
+        d="M12 10.2v3.9h5.5c-.2 1.2-.9 2.2-2 2.9v2.4h3.2c1.9-1.8 3-4.4 3-7.4 0-.7-.1-1.2-.2-1.8H12Z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 22c2.7 0 4.9-.9 6.5-2.5l-3.2-2.4c-.9.6-2 .9-3.3.9-2.5 0-4.5-1.7-5.3-3.9H3.4v2.5A10 10 0 0 0 12 22Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M6.7 14.1c-.2-.6-.3-1.3-.3-2.1s.1-1.4.3-2.1V7.4H3.4A10 10 0 0 0 2.3 12c0 1.7.4 3.3 1.1 4.6l3.3-2.5Z"
+      />
+      <path
+        fill="#4285F4"
+        d="M12 6c1.4 0 2.6.5 3.6 1.4l2.7-2.7C16.9 3.4 14.7 2.5 12 2.5A10 10 0 0 0 3.4 7.4l3.3 2.5C7.5 7.7 9.5 6 12 6Z"
+      />
+    </svg>
+  );
+}
+
+function FacebookIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="h-5 w-5"
+      role="img"
+    >
+      <path
+        fill="#1877F2"
+        d="M24 12a12 12 0 1 0-13.9 11.8v-8.4H7.1V12h3V9.4c0-3 1.8-4.6 4.5-4.6 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.4h-2.9v8.4A12 12 0 0 0 24 12Z"
+      />
+      <path
+        fill="#fff"
+        d="m16.7 15.4.5-3.4h-3.4V9.9c0-1 .5-1.9 2-1.9h1.5V5s-1.4-.2-2.7-.2c-2.7 0-4.5 1.6-4.5 4.6V12h-3v3.4h3v8.4a12 12 0 0 0 3.7 0v-8.4h2.9Z"
+      />
+    </svg>
+  );
+}
+
 const authContent: Record<
   AuthMode,
   {
@@ -52,6 +100,19 @@ const benefitPoints = [
   "Standalone front-end implementation with no backend dependency.",
 ];
 
+const previewHighlights: Record<AuthMode, string[]> = {
+  login: [
+    "Open the platform dashboard preview instantly.",
+    "Explore exam workspace navigation and structure.",
+    "Review the current premium UI system and interactions.",
+  ],
+  register: [
+    "Preview a polished first-time account creation flow.",
+    "Validate field hierarchy and form readability.",
+    "Jump directly into the dashboard experience after submit.",
+  ],
+};
+
 export function AuthPage({ mode }: AuthPageProps) {
   const content = authContent[mode];
 
@@ -63,8 +124,8 @@ export function AuthPage({ mode }: AuthPageProps) {
 
       <SiteHeader current={mode} />
 
-      <main className="px-6 pb-16 pt-8 sm:pb-20">
-        <div className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+      <main className="px-4 pb-16 pt-8 sm:px-6 sm:pb-20 xl:px-8">
+        <div className="mx-auto grid w-full max-w-[1600px] gap-8 lg:grid-cols-[1.15fr_0.85fr]">
           <section className="ph-surface-elevated rounded-[36px] p-8 sm:p-10">
             <div className="ph-badge ph-badge-secondary">
               {content.eyebrow}
@@ -93,6 +154,20 @@ export function AuthPage({ mode }: AuthPageProps) {
                 </div>
               ))}
             </div>
+
+            <div className="mt-8 rounded-[24px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+                In this preview
+              </p>
+              <ul className="mt-3 space-y-2 text-sm leading-7 text-text-secondary">
+                {previewHighlights[mode].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-2 inline-block h-1.5 w-1.5 rounded-full bg-primary/80" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </section>
 
           <section className="ph-surface rounded-[36px] p-8 sm:p-10">
@@ -111,6 +186,31 @@ export function AuthPage({ mode }: AuthPageProps) {
             </div>
 
             <form className="mt-8 space-y-5" aria-label={`${mode} preview form`}>
+              <div className="space-y-3">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    className="ph-hover-lift inline-flex items-center justify-center gap-2 rounded-[16px] border border-border/80 bg-bg/45 px-4 py-3 text-sm font-semibold text-text-primary"
+                  >
+                    <GoogleIcon />
+                    Continue with Google
+                  </button>
+                  <button
+                    type="button"
+                    className="ph-hover-lift inline-flex items-center justify-center gap-2 rounded-[16px] border border-border/80 bg-bg/45 px-4 py-3 text-sm font-semibold text-text-primary"
+                  >
+                    <FacebookIcon />
+                    Continue with Facebook
+                  </button>
+                </div>
+                <div className="relative flex items-center">
+                  <span className="h-px w-full bg-border/70" />
+                  <span className="absolute left-1/2 -translate-x-1/2 rounded-full border border-border/70 bg-bg px-3 py-0.5 text-xs font-medium uppercase tracking-[0.12em] text-text-secondary/70">
+                    Or continue with email
+                  </span>
+                </div>
+              </div>
+
               {mode === "register" ? (
                 <div className="space-y-2">
                   <label htmlFor="displayName" className="ph-field-label">

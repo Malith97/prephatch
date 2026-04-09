@@ -5,63 +5,12 @@ Owner: Founder
 Last Updated: 2026-04-07  
 Purpose: Define the two-level dashboard information architecture and the canonical route split for the current Next.js implementation.
 
-## Canonical Route Split
+## Architecture
 
-### Platform Dashboard
-
-Route family:
-- `/dashboard`
-- `/dashboard/my-exams`
-- `/dashboard/marketplace`
-- `/dashboard/marketplace/:packageSlug`
-- `/dashboard/billing`
-- `/dashboard/achievements`
-- `/dashboard/settings`
-- `/dashboard/help`
-
-Owns:
-- purchased exams summary
-- marketplace discovery
-- package preview and purchase-facing detail
-- billing and renewal flows
-- account-wide settings
-- learner-wide milestones and help
-
-Does not own:
-- topic mastery
-- weak area analysis
-- notes, cheatsheets, and tips
-- exam-specific recommendations
-- mock attempt runtime UI
-
-### Exam Dashboard
-
-Route family:
-- `/exam/:examSlug`
-- `/exam/:examSlug/mock-exams`
-- `/exam/:examSlug/practice-questions`
-- `/exam/:examSlug/analytics`
-- `/exam/:examSlug/weak-areas`
-- `/exam/:examSlug/notes`
-- `/exam/:examSlug/cheatsheets`
-- `/exam/:examSlug/tips`
-- `/exam/:examSlug/recommendations`
-- `/exam/:examSlug/settings`
-
-Owns:
-- exam overview
-- mock exam list
-- practice question sets
-- analytics and weak areas
-- notes, cheatsheets, and tips
-- exam-scoped recommendations
-- exam-specific preferences
-
-Does not own:
-- package marketplace browsing
-- billing
-- cross-exam progress management
-- account settings
+- Platform Dashboard (`/dashboard`)
+  - owns cross-exam overview and marketplace surfaces
+- Exam Dashboard (`/exam/:examId`)
+  - owns exam-specific progress, analytics, resources, and mock flow
 
 ## Runtime Routes Outside the Dashboard Shell
 
@@ -70,11 +19,12 @@ These routes remain exam-scoped but intentionally avoid the left dashboard shell
 - `/exam/:examSlug/results`
 - `/exam/:examSlug/results/:attemptId`
 
-## Shell Architecture
+## Navigation
 
-- `PlatformShell`: wraps only platform routes under `/dashboard/*`
-- `ExamShell`: wraps only exam dashboard routes under `/exam/:examSlug/*`
-- session and results routes stay outside the exam dashboard shell
+- Platform sidebar
+  - `Dashboard`, `My Exams`, `Marketplace`, `Billing`, `Achievements`, `Settings`, `Help`
+- Exam sidebar
+  - `Overview`, `Mock Exams`, `Practice Questions`, `Analytics`, `Weak Areas`, `Notes`, `Cheatsheets`, `Tips`, `Recommendations`, `Settings`
 
 ## Compatibility Redirects
 
@@ -89,12 +39,28 @@ Legacy route family:
 Behavior:
 - redirect into the canonical `/dashboard/*` or `/exam/*` routes
 
-## Current Feature Mapping
+## Components
 
-- `features/platform-dashboard/*`: platform-level pages and cards
-- `features/exam-dashboard/*`: exam-level pages and charts
-- `features/exams/components/exam-session.tsx`: focused exam-taking flow
-- `features/exams/components/results-summary.tsx`: focused result review flow
+- `MyExamCard`
+  - implementation: `PurchasedExamCard` in `features/platform-dashboard/components/purchased-exam-card.tsx`
+- `ExamMarketplaceCard`
+  - implementation: `MarketplaceExamCard` in `features/platform-dashboard/components/marketplace-exam-card.tsx`
+- `ExamProgressCard`
+  - implementation: `ExamProgressCard` in `features/exam-dashboard/components/exam-progress-card.tsx`
+- `WeakAreasChart`
+  - implementation: `WeakAreasChart` in `features/exam-dashboard/components/weak-areas-chart.tsx`
+- `RecommendationPanel`
+  - implementation: `RecommendedActionsPanel` in `features/exam-dashboard/components/recommended-actions-panel.tsx`
+
+## Routes
+
+| Route | Surface | Notes |
+| --- | --- | --- |
+| `/dashboard` | Platform Dashboard | Cross-exam entry page |
+| `/exam/:examId` | Exam Dashboard | Exam overview entry (`:examId` is implemented as `:examSlug` in code) |
+| `/exam/:examId/mock` | Exam Dashboard | Mock exam flow |
+| `/exam/:examId/analytics` | Exam Dashboard | Analytics and weak areas |
+| `/exam/:examId/resources` | Exam Dashboard | Notes, cheatsheets, and tips resource surfaces |
 
 ## UI Rule
 
