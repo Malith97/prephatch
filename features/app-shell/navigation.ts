@@ -37,6 +37,56 @@ export const platformNavigationItems: NavigationItem[] = [
     label: "Help",
     description: "Support and product guidance",
   },
+  {
+    href: "/seller",
+    label: "Seller Studio",
+    description: "Instructor operations and revenue",
+    activePrefixes: ["/seller"],
+  },
+];
+
+export const sellerNavigationItems: NavigationItem[] = [
+  {
+    href: "/seller",
+    label: "Overview",
+    description: "Operational command center",
+    exact: true,
+  },
+  {
+    href: "/seller/courses",
+    label: "Courses",
+    description: "Catalog and publish lifecycle",
+  },
+  {
+    href: "/seller/questions",
+    label: "Question Bank",
+    description: "Create and import questions",
+  },
+  {
+    href: "/seller/mock-exams",
+    label: "Mock Exams",
+    description: "Timed exam configurations",
+  },
+  {
+    href: "/seller/students",
+    label: "Students",
+    description: "Enrollments and activity",
+  },
+  {
+    href: "/seller/results",
+    label: "Results",
+    description: "Mock performance outcomes",
+  },
+  {
+    href: "/seller/analytics",
+    label: "Analytics",
+    description: "Growth and quality metrics",
+  },
+  {
+    href: "/seller/revenue",
+    label: "Revenue",
+    description: "Income, payouts, forecast",
+  },
 ];
 
 export function getExamNavigationItems(examSlug: string): NavigationItem[] {
