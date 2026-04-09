@@ -5,7 +5,7 @@ import { BrandMark } from "../../../components/brand-mark";
 export function SiteFooter() {
   return (
     <footer className="px-6 pb-10 pt-8 sm:pt-10">
-      <div className="ph-surface-elevated mx-auto grid w-full max-w-6xl gap-8 rounded-[32px] px-6 py-10 sm:px-8 lg:grid-cols-[1.3fr_0.7fr_0.7fr]">
+      <div className="ph-surface-elevated mx-auto grid w-full max-w-[1600px] gap-8 rounded-[32px] px-6 py-10 sm:px-8 xl:px-8 lg:grid-cols-[1.3fr_0.7fr_0.7fr]">
         <div className="space-y-4">
           <div className="ph-badge ph-badge-accent">
             Public preview

@@ -291,6 +291,93 @@ summary {
   }
 }
 
+@keyframes ph-shimmer {
+  0% {
+    transform: translate3d(-140%, 0, 0) skewX(-12deg);
+    opacity: 0;
+  }
+
+  18% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 0.75;
+  }
+
+  82% {
+    opacity: 0.45;
+  }
+
+  100% {
+    transform: translate3d(460%, 0, 0) skewX(-12deg);
+    opacity: 0;
+  }
+}
+
+@keyframes ph-sparkle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.75);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0) scale(1.1);
+    opacity: 0.95;
+  }
+}
+
+@keyframes ph-gift-bounce {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  45% {
+    transform: translate3d(0, -5px, 0);
+  }
+
+  65% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  78% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes ph-orbit {
+  0% {
+    transform: translate3d(-50%, -50%, 0) rotate(0deg);
+  }
+
+  100% {
+    transform: translate3d(-50%, -50%, 0) rotate(360deg);
+  }
+}
+
+@keyframes ph-orbit-reverse {
+  0% {
+    transform: translate3d(-50%, -50%, 0) rotate(360deg);
+  }
+
+  100% {
+    transform: translate3d(-50%, -50%, 0) rotate(0deg);
+  }
+}
+
+@keyframes ph-drift {
+  0%,
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(-46%, -54%, 0) scale(1.08);
+  }
+}
+
 .ph-animate-float {
   animation: ph-float 11s ease-in-out infinite;
 }

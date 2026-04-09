@@ -18,7 +18,7 @@ export function SiteHeader({ current = "home" }: SiteHeaderProps) {
 
   return (
     <div className="sticky top-0 z-30 px-4 pt-4 sm:px-6 sm:pt-5">
-      <header className="ph-surface mx-auto flex w-full max-w-6xl items-center justify-between gap-4 rounded-full px-4 py-3 sm:px-6">
+      <header className="ph-surface mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4 rounded-full px-4 py-3 sm:px-6 xl:px-8">
         <BrandMark />
 
         <nav
