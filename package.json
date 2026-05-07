@@ -10,6 +10,7 @@
     "build": "./scripts/use-project-node.sh next build",
     "start": "./scripts/use-project-node.sh next start",
     "lint": "./scripts/use-project-node.sh next lint",
+    "seed:dev": "./scripts/seed-dev-data.sh",
     "test": "./scripts/use-project-node.sh vitest run",
     "typecheck": "./scripts/use-project-node.sh tsc --noEmit"
   },
