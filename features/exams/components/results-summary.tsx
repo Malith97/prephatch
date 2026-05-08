@@ -12,6 +12,7 @@ import type {
   ScorePreview,
 } from "../../../server/exams/types";
 import { getDefaultLiveMockHref } from "../mock-exam-workspace";
+import { AiExplanationPanel } from "./ai-explanation-panel";
 import { ExamSectionHeading } from "./exam-section-heading";
 
 type ResultsSummaryProps = {
@@ -523,6 +524,12 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
                     <div className="rounded-[24px] border border-border/70 bg-surface-elevated/70 px-4 py-4 text-sm leading-7 text-text-secondary md:col-span-2">
                       <p className="font-semibold text-text-primary">Explanation</p>
                       <p className="mt-2">{question.explanation}</p>
+                      <AiExplanationPanel
+                        examSlug={exam.slug}
+                        questionId={question.id}
+                        selectedOptionId={questionResult?.selectedOptionId ?? null}
+                        correctOptionId={question.correctOptionId}
+                      />
                     </div>
                   </div>
                 </article>

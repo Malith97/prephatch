@@ -14,7 +14,7 @@ export function SellerPageHeader({
   actions,
 }: Readonly<SellerPageHeaderProps>) {
   return (
-    <section className="ph-surface rounded-[32px] p-6 sm:p-8">
+    <section className="ph-surface rounded-[30px] p-6 sm:p-8">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-4xl space-y-3">
           <p className="ph-eyebrow">{eyebrow}</p>
@@ -42,15 +42,15 @@ export function MetricCard({
 }: Readonly<MetricCardProps>) {
   const toneClass =
     tone === "success"
-      ? "border-success/20"
+      ? "border-success/30"
       : tone === "accent"
-        ? "border-accent/20"
+        ? "border-secondary/30"
         : tone === "warning"
-          ? "border-warning/20"
+          ? "border-warning/30"
           : "border-border/70";
 
   return (
-    <article className={`rounded-[24px] border ${toneClass} bg-bg/35 p-5 shadow-subtle`}>
+    <article className={`rounded-xl border ${toneClass} bg-bg/35 p-5 shadow-subtle`}>
       <p className="text-xs uppercase tracking-[0.18em] text-text-secondary/70">{label}</p>
       <p className="mt-3 text-3xl font-semibold text-text-primary">{value}</p>
       {note ? <p className="mt-3 text-sm leading-6 text-text-secondary">{note}</p> : null}
@@ -70,7 +70,7 @@ export function EmptyState({
   action,
 }: Readonly<EmptyStateProps>) {
   return (
-    <div className="rounded-[26px] border border-dashed border-border/70 bg-bg/25 p-8 text-center">
+    <div className="rounded-xl border border-dashed border-border/70 bg-bg/25 p-8 text-center">
       <p className="text-lg font-semibold text-text-primary">{title}</p>
       <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-text-secondary">{description}</p>
       {action ? <div className="mt-4">{action}</div> : null}
@@ -90,7 +90,7 @@ export function MiniTrend({ points }: Readonly<MiniTrendProps>) {
   const max = Math.max(...points, 1);
 
   return (
-    <div className="flex h-16 items-end gap-1.5">
+    <div className="flex h-16 items-end gap-1.5" aria-hidden>
       {points.map((point, index) => (
         <span
           key={`${index}-${point}`}

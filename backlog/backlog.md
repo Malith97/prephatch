@@ -81,7 +81,7 @@ DEPENDENCIES: TASK-001
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: High
 DEV_ONLY: false
-STATUS: Pending
+STATUS: Done
 NOTES: Ensure accessible navigation; CTA navigates correctly; use server-side data.
 
 TASK_ID: TASK-009
@@ -92,7 +92,7 @@ DEPENDENCIES: TASK-002, TASK-003
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: High
 DEV_ONLY: true
-STATUS: Pending
+STATUS: Done
 NOTES: Multi-tab safe; accessible; show error if server unavailable.
 
 TASK_ID: TASK-010
@@ -103,7 +103,7 @@ DEPENDENCIES: TASK-009
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: High
 DEV_ONLY: false
-STATUS: Pending
+STATUS: Done
 NOTES: Prioritize high-traffic pages first; ensure screen-reader friendly.
 
 ---
@@ -117,7 +117,7 @@ DEPENDENCIES: TASK-001
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: High
 DEV_ONLY: false
-STATUS: Pending
+STATUS: Done
 NOTES: Include skeletons for loading; accessible filtering.
 
 TASK_ID: TASK-012
@@ -128,7 +128,7 @@ DEPENDENCIES: TASK-004
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: High
 DEV_ONLY: true
-STATUS: Pending
+STATUS: Done
 NOTES: Aggregation only; no AI yet; charts must update in real-time from server.
 
 ---
@@ -142,7 +142,7 @@ DEPENDENCIES: TASK-004
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: High
 DEV_ONLY: false
-STATUS: Pending
+STATUS: Done
 NOTES: Log all auto-submits; prevent duplicate scoring; server authoritative.
 
 TASK_ID: TASK-014
@@ -153,7 +153,7 @@ DEPENDENCIES: TASK-002, TASK-004
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: Medium
 DEV_ONLY: false
-STATUS: Pending
+STATUS: Done
 NOTES: Structured logs for debugging; minimal overhead for MVP.
 
 TASK_ID: TASK-015
@@ -164,7 +164,7 @@ DEPENDENCIES: TASK-001
 ESTIMATED_EFFORT: Small
 MVP_PRIORITY: High
 DEV_ONLY: false
-STATUS: Pending
+STATUS: Done
 NOTES: Include analytics tracking for legacy routes.
 
 ---
@@ -178,7 +178,7 @@ DEPENDENCIES: TASK-004
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: Low
 DEV_ONLY: false
-STATUS: Pending
+STATUS: Done
 NOTES: Only add once exams are stable; token-cost aware.
 
 TASK_ID: TASK-005
@@ -189,7 +189,7 @@ DEPENDENCIES: TASK-004
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: Low
 DEV_ONLY: false
-STATUS: Pending
+STATUS: Done
 NOTES: Defer until paying users; test in dev only with sandbox keys.
 
 TASK_ID: TASK-006
@@ -200,5 +200,5 @@ DEPENDENCIES: TASK-005
 ESTIMATED_EFFORT: Medium
 MVP_PRIORITY: Low
 DEV_ONLY: false
-STATUS: Pending
+STATUS: Done
 NOTES: Only required once Stripe checkout is implemented.

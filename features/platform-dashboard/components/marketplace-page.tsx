@@ -84,6 +84,7 @@ export function MarketplacePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [providerFilter, setProviderFilter] = useState("all");
 
   const loadMarketplaceExams = useCallback(async () => {
     setIsLoading(true);
@@ -124,25 +125,24 @@ export function MarketplacePage() {
     void loadMarketplaceExams();
   }, [loadMarketplaceExams]);
 
+  const providers = useMemo(() => {
+    return Array.from(new Set(marketplaceExams.map((exam) => exam.provider))).sort();
+  }, [marketplaceExams]);
+
   const filteredExams = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    if (!normalizedQuery) {
-      return marketplaceExams;
-    }
-
-    return marketplaceExams.filter((exam) =>
-      [
-        exam.title,
-        exam.provider,
-        exam.certificationCode,
-        exam.description,
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(normalizedQuery)
-    );
-  }, [marketplaceExams, query]);
+    return marketplaceExams.filter((exam) => {
+      const matchesQuery =
+        !normalizedQuery ||
+        [exam.title, exam.provider, exam.certificationCode, exam.description]
+          .join(" ")
+          .toLowerCase()
+          .includes(normalizedQuery);
+      const matchesProvider = providerFilter === "all" || exam.provider === providerFilter;
+      return matchesQuery && matchesProvider;
+    });
+  }, [marketplaceExams, providerFilter, query]);
 
   return (
     <main className="space-y-5">
@@ -154,8 +154,8 @@ export function MarketplacePage() {
         />
 
         <div className="mt-6 space-y-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative w-full sm:max-w-xl">
+          <div className="flex flex-col gap-3 sm:items-center sm:justify-between lg:flex-row">
+            <div className="relative w-full lg:max-w-xl">
               <label htmlFor="marketplace-search" className="sr-only">
                 Search certifications
               </label>
@@ -185,6 +185,24 @@ export function MarketplacePage() {
               ) : null}
             </div>
 
+            <div className="flex w-full items-center gap-3 lg:w-auto">
+              <label htmlFor="provider-filter" className="text-sm text-text-secondary">
+                Provider
+              </label>
+              <select
+                id="provider-filter"
+                value={providerFilter}
+                onChange={(event) => setProviderFilter(event.target.value)}
+                className="ph-input h-11 w-full lg:w-56"
+              >
+                <option value="all">All providers</option>
+                {providers.map((provider) => (
+                  <option key={provider} value={provider}>
+                    {provider}
+                  </option>
+                ))}
+              </select>
+            </div>
             <p className="text-sm font-medium text-text-secondary">
               {isLoading
                 ? "Loading packages..."

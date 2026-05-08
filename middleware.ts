@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import type { DevBypassState } from "./lib/auth/dev-bypass";
 import { resolveDevBypassState } from "./lib/auth/dev-bypass";
+import { createClient as createSupabaseMiddlewareClient } from "./utils/supabase/middleware";
 
 const protectedRoots = ["/dashboard", "/exam", "/seller", "/exams"];
 const devBypass = resolveDevBypassState();
@@ -89,6 +90,8 @@ export function evaluateMiddlewareAccess(
 }
 
 export function middleware(request: NextRequest) {
+  const supabaseResponse = createSupabaseMiddlewareClient(request);
+
   const decision = evaluateMiddlewareAccess({
     pathname: request.nextUrl.pathname,
     method: request.method,
@@ -104,7 +107,7 @@ export function middleware(request: NextRequest) {
     console.info(decision.bypassLogMessage);
   }
 
-  const response = NextResponse.next();
+  const response = supabaseResponse;
   if (decision.bypassEnabled) {
     response.headers.set("x-prephatch-auth-bypass", "enabled");
   }

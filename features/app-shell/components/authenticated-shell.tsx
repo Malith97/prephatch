@@ -28,62 +28,41 @@ export function AuthenticatedShell({
       <div className="pointer-events-none absolute right-[10%] top-0 h-72 w-72 rounded-full bg-secondary/12 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
 
-      <div className="mx-auto grid w-full max-w-[1600px] gap-6 lg:grid-cols-[296px_minmax(0,1fr)]">
-        <aside className="ph-surface-elevated hidden rounded-[36px] p-5 lg:sticky lg:top-6 lg:flex lg:min-h-[calc(100vh-3rem)] lg:flex-col">
+      <div className="mx-auto grid w-full max-w-[1600px] gap-5 lg:grid-cols-[300px_minmax(0,1fr)]">
+        <aside className="ph-surface-elevated hidden rounded-[30px] p-5 lg:sticky lg:top-6 lg:flex lg:min-h-[calc(100vh-3rem)] lg:flex-col">
           <BrandMark inverted />
 
-          <div className="mt-8">
-            {railPanel}
-          </div>
+          <div className="mt-7">{railPanel}</div>
 
-          <div className="mt-6">
+          <div className="mt-5">
             <AppNavigation items={navigationItems} theme="dark" />
           </div>
 
-          <div className="mt-auto rounded-[28px] border border-border/70 bg-bg/35 p-5 shadow-subtle">
-            <p className="text-sm font-semibold text-text-primary">
-              {mockSession.name}
-            </p>
-            <p className="mt-1 text-sm text-text-secondary">
-              {mockSession.email}
-            </p>
+          <div className="mt-auto rounded-2xl border border-border/70 bg-bg/35 p-5 shadow-subtle">
+            <p className="text-sm font-semibold text-text-primary">{mockSession.name}</p>
+            <p className="mt-1 text-sm text-text-secondary">{mockSession.email}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="ph-badge ph-badge-accent">
-                {mockSession.accessLabel}
-              </span>
-              <span className="ph-badge ph-badge-neutral">
-                {mockSession.planLabel}
-              </span>
+              <span className="ph-badge ph-badge-accent">{mockSession.accessLabel}</span>
+              <span className="ph-badge ph-badge-neutral">{mockSession.planLabel}</span>
             </div>
-            <p className="mt-4 text-xs uppercase tracking-[0.16em] text-text-secondary/65">
-              {mockSession.renewalDateLabel}
-            </p>
-            <Link
-              href="/login"
-              className="ph-btn ph-btn-sm ph-button-secondary ph-hover-lift mt-5 w-fit"
-            >
+            <p className="mt-4 text-xs uppercase tracking-[0.16em] text-text-secondary/65">{mockSession.renewalDateLabel}</p>
+            <Link href="/login" className="ph-btn ph-btn-sm ph-button-secondary ph-hover-lift mt-5 w-fit">
               Return to login preview
             </Link>
           </div>
         </aside>
 
         <div className="space-y-5">
-          <header className="ph-surface rounded-[32px] p-4 sm:p-5">
+          <header className="ph-surface rounded-[28px] p-4 sm:p-5">
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="lg:hidden">
-                  <BrandMark />
-                </div>
-                <div className="hidden lg:block">
-                  <p className="ph-eyebrow">
-                    {headerEyebrow}
-                  </p>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
-                    {headerTitle}
-                  </p>
-                  <p className="mt-1 max-w-2xl text-sm leading-6 text-text-secondary/80">
-                    {headerDescription}
-                  </p>
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div className="space-y-2">
+                  <div className="lg:hidden">
+                    <BrandMark />
+                  </div>
+                  <p className="ph-eyebrow">{headerEyebrow}</p>
+                  <h1 className="text-2xl font-semibold leading-tight text-text-primary sm:text-3xl">{headerTitle}</h1>
+                  <p className="max-w-3xl text-sm leading-7 text-text-secondary">{headerDescription}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">{headerActions}</div>
               </div>

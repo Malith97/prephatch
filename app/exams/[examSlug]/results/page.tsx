@@ -7,5 +7,8 @@ type ResultsPageProps = {
 };
 
 export default function ResultsPage({ params }: ResultsPageProps) {
+  console.info(
+    `[routing] legacy_redirect from=/exams/${params.examSlug}/results to=/exam/${params.examSlug}/results`,
+  );
   redirect(`/exam/${params.examSlug}/results`);
 }

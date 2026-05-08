@@ -148,6 +148,11 @@ export function ExamSession({
           exam,
           resolvedMockId,
         );
+        console.info("[exam-runtime] attempt_initialized", {
+          attemptId: normalizedAttempt.attemptId,
+          examSlug: exam.slug,
+          mockId: resolvedMockId,
+        });
         latestAttemptRef.current = normalizedAttempt;
         serverVersionRef.current = normalizedAttempt.version;
         setAttempt(normalizedAttempt);
@@ -157,6 +162,11 @@ export function ExamSession({
         }
 
         setInitializationError(buildAttemptErrorMessage(error));
+        console.error("[exam-runtime] attempt_initialization_failed", {
+          examSlug: exam.slug,
+          mockId: resolvedMockId,
+          error: buildAttemptErrorMessage(error),
+        });
       } finally {
         if (!cancelled && !isUnmountedRef.current) {
           setIsInitializing(false);
@@ -225,6 +235,10 @@ export function ExamSession({
 
       setSaveStatus("saved");
       setSaveError(null);
+      console.info("[exam-runtime] attempt_autosaved", {
+        attemptId: response.attempt.attemptId,
+        version: response.attempt.version,
+      });
     } catch (error) {
       if (isUnmountedRef.current) {
         return;
@@ -247,6 +261,9 @@ export function ExamSession({
       }
 
       setSaveStatus("error");
+      console.error("[exam-runtime] attempt_autosave_failed", {
+        error: buildAttemptErrorMessage(error),
+      });
     } finally {
       inFlightSaveRef.current = false;
       if (pendingSaveRef.current && !isUnmountedRef.current) {
@@ -340,6 +357,10 @@ export function ExamSession({
         setAttempt(normalized);
         setSaveStatus("idle");
         setSaveError(null);
+        console.info("[exam-runtime] attempt_submitted", {
+          attemptId: normalized.attemptId,
+          score: normalized.score,
+        });
 
         startTransition(() => {
           router.replace(`${resolvedResultsBaseHref}/${normalized.attemptId}`);
@@ -359,6 +380,9 @@ export function ExamSession({
 
         setSaveStatus("error");
         setSaveError(buildAttemptErrorMessage(error));
+        console.error("[exam-runtime] attempt_submit_failed", {
+          error: buildAttemptErrorMessage(error),
+        });
       } finally {
         isSubmittingRef.current = false;
       }

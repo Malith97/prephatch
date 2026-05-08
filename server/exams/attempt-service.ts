@@ -135,6 +135,22 @@ function buildAttemptScore(attempt: ExamAttemptRecord): AttemptScore {
   };
 }
 
+function markSubmitted(attempt: ExamAttemptRecord, submittedAt: number): void {
+  attempt.score = buildAttemptScore(attempt);
+  attempt.status = "submitted";
+  attempt.submittedAt = submittedAt;
+  attempt.updatedAt = submittedAt;
+  attempt.version += 1;
+
+  activeAttemptByOwnerAndExam.delete(
+    activeAttemptKey(attempt.ownerUserId, attempt.examSlug, attempt.mockId),
+  );
+  latestSubmittedByOwnerAndExam.set(
+    ownerExamKey(attempt.ownerUserId, attempt.examSlug),
+    attempt.attemptId,
+  );
+}
+
 function validateAnswersPayload(
   attempt: ExamAttemptRecord,
   answers: Record<string, string>,
@@ -375,11 +391,15 @@ export function autosaveAttempt(
 
   const now = Date.now();
   if (now > attempt.endsAt) {
+    markSubmitted(attempt, now);
+    console.info(
+      `[attempt-runtime] event=auto_submit attemptId=${attempt.attemptId} owner=${ownerUserId} reason=expired_at_autosave`,
+    );
     return {
       ok: false,
       code: "attempt_expired",
       status: 409,
-      message: "Attempt deadline has passed. Autosave is rejected.",
+      message: "Attempt has expired and was auto-submitted.",
       attempt: toPublicAttempt(attempt),
     };
   }
@@ -515,6 +535,20 @@ export function submitAttempt(
     };
   }
 
+  if (attempt.endsAt <= now) {
+    markSubmitted(attempt, now);
+    console.info(
+      `[attempt-runtime] event=auto_submit attemptId=${attempt.attemptId} owner=${ownerUserId} reason=expired_at_submit`,
+    );
+    return {
+      ok: false,
+      code: "attempt_expired",
+      status: 409,
+      message: "Attempt has expired and was auto-submitted.",
+      attempt: toPublicAttempt(attempt),
+    };
+  }
+
   const normalizedIdempotencyKey = payload.idempotencyKey?.trim();
   if (
     normalizedIdempotencyKey &&
@@ -529,11 +563,7 @@ export function submitAttempt(
     };
   }
 
-  attempt.score = buildAttemptScore(attempt);
-  attempt.status = "submitted";
-  attempt.submittedAt = now;
-  attempt.updatedAt = now;
-  attempt.version += 1;
+  markSubmitted(attempt, now);
 
   if (normalizedIdempotencyKey) {
     attempt.submitIdempotency[normalizedIdempotencyKey] = {
@@ -541,14 +571,6 @@ export function submitAttempt(
       version: attempt.version,
     };
   }
-
-  activeAttemptByOwnerAndExam.delete(
-    activeAttemptKey(ownerUserId, attempt.examSlug, attempt.mockId),
-  );
-  latestSubmittedByOwnerAndExam.set(
-    ownerExamKey(ownerUserId, attempt.examSlug),
-    attempt.attemptId,
-  );
 
   return {
     ok: true,
@@ -637,4 +659,11 @@ export function clearAttemptStore(): void {
   activeAttemptByOwnerAndExam.clear();
   latestSubmittedByOwnerAndExam.clear();
   creationIdempotencyByOwner.clear();
+}
+
+export function listAttemptsForOwner(ownerUserId: string): PublicExamAttempt[] {
+  return Array.from(attemptsById.values())
+    .filter((attempt) => attempt.ownerUserId === ownerUserId)
+    .sort((a, b) => b.updatedAt - a.updatedAt)
+    .map((attempt) => toPublicAttempt(attempt));
 }
