@@ -10,10 +10,13 @@
     "build": "./scripts/use-project-node.sh next build",
     "start": "./scripts/use-project-node.sh next start",
     "lint": "./scripts/use-project-node.sh next lint",
+    "seed:dev": "./scripts/seed-dev-data.sh",
     "test": "./scripts/use-project-node.sh vitest run",
     "typecheck": "./scripts/use-project-node.sh tsc --noEmit"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.105.3",
     "next": "^14.2.32",
     "react": "18.2.0",
     "react-dom": "18.2.0"

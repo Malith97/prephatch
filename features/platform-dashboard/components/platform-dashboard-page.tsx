@@ -8,6 +8,7 @@ import {
 import { MarketplaceExamCard } from "./marketplace-exam-card";
 import { PromoBanner } from "./promo-banner";
 import { PurchasedExamCard } from "./purchased-exam-card";
+import { DashboardMetricsPanel } from "./dashboard-metrics-panel";
 
 export function PlatformDashboardPage() {
   const metrics = getPlatformDashboardMetrics();
@@ -81,6 +82,8 @@ export function PlatformDashboardPage() {
           ))}
         </div>
       </section>
+
+      <DashboardMetricsPanel />
 
       <PromoBanner banner={promoBanner} />
     </main>

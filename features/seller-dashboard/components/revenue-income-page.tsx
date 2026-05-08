@@ -140,7 +140,7 @@ export function RevenueIncomePage() {
           <p className="ph-eyebrow">Course revenue mix</p>
           <h2 className="ph-section-title mt-2">Revenue by course</h2>
           <div className="mt-4 overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
+            <table className="ph-table">
               <thead>
                 <tr className="border-b border-border/70 text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   <th className="px-3 py-3">Course</th>
@@ -168,7 +168,7 @@ export function RevenueIncomePage() {
           Track payout settlement status and reconcile your expected net with processor fees.
         </p>
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
+          <table className="ph-table">
             <thead>
               <tr className="border-b border-border/70 text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                 <th className="px-3 py-3">Period</th>

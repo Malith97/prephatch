@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ExamLogoBadge } from "../../../components/exam-logo-badge";
 import { SectionHeading } from "../../../components/section-heading";
 import { getPackagePreviewData } from "../platform-dashboard-data";
+import { CheckoutButton } from "./checkout-button";
 
 type PackagePreviewPageProps = {
   packageSlug: string;
@@ -62,12 +63,7 @@ export function PackagePreviewPage({
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/dashboard/marketplace"
-                className="ph-btn ph-button-primary ph-hover-lift w-full sm:w-auto"
-              >
-                Buy access
-              </Link>
+              <CheckoutButton packageSlug={packageSlug} />
               <Link
                 href="/dashboard/help"
                 className="ph-btn ph-button-secondary ph-hover-lift w-full sm:w-auto"

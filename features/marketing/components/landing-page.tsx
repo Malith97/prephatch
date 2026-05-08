@@ -7,85 +7,85 @@ import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 
 const trustSignals = [
-  "Trusted by early AWS learners",
-  "Built around exam blueprint domains",
-  "Explanation-led mock tests",
-  "Weekly product improvements",
+  "Built around certification blueprint domains",
+  "Timed mock runtime with server-backed autosave",
+  "Weak-area analytics with action recommendations",
+  "Continuous product updates for exam realism",
 ];
 
 const valueProps = [
   {
-    title: "Realistic Mock Exams",
+    title: "Exam-Real Mock Sessions",
     description:
-      "Practice under exam-like timing with focused question sets that mirror certification pressure.",
+      "Practice inside a focused exam workspace with timer pressure, review flags, and answer persistence.",
   },
   {
-    title: "Structured Prep Plan",
+    title: "Actionable Diagnostics",
     description:
-      "Move from baseline to exam-ready with guided next steps instead of random question grinding.",
+      "Get topic-level score distribution, weak-area prioritization, and confidence signals after each attempt.",
   },
   {
-    title: "Analytics That Matter",
+    title: "Structured Study Loop",
     description:
-      "Track accuracy trends, weak topics, and readiness signals so your study time goes where it counts.",
+      "Move from mock attempt to guided review to targeted retake without context switching.",
   },
   {
-    title: "Progress Tracking",
+    title: "Clarity-First Dashboard",
     description:
-      "See momentum across attempts with clear milestones and confidence indicators.",
+      "Track readiness, momentum, and upcoming milestones from one learner-centric control surface.",
   },
   {
-    title: "Expert Content",
+    title: "Marketplace + Ownership Model",
     description:
-      "Review high-quality explanations designed to teach decision-making, not just final answers.",
+      "Discover certification packages, purchase securely, and manage owned exam workspaces in one platform.",
   },
   {
-    title: "Certification Focus",
+    title: "Scalable for AI Coaching",
     description:
-      "Purpose-built for online exam preparation and certification prep, starting with AWS SAA-C03.",
+      "Architecture is ready for AI explanations, adaptive practice plans, and richer decision support.",
   },
 ];
 
 const workflowSteps = [
   {
-    title: "Take a timed mock",
+    title: "Run a timed mock",
     detail:
-      "Start a realistic mock test that simulates exam pacing and pressure.",
+      "Simulate exam conditions with realistic pacing, question navigation, and autosaved responses.",
   },
   {
-    title: "Review weak areas",
+    title: "Review diagnostic insights",
     detail:
-      "Get domain-level analytics and explanation-led feedback for every miss.",
+      "Inspect score composition, weak domains, and recommendation cards tailored to your latest attempt.",
   },
   {
-    title: "Execute your next study block",
+    title: "Retake with precision",
     detail:
-      "Follow structured recommendations and retake with measurable confidence gains.",
+      "Use focused actions to close knowledge gaps before launching the next timed run.",
   },
 ];
 
 const outcomes = [
   { metric: "3x", label: "faster weak-area identification" },
-  { metric: "78%", label: "avg. mock score after guided review" },
-  { metric: "92%", label: "users reporting clearer study direction" },
+  { metric: "78%", label: "average score after guided review cycles" },
+  { metric: "92%", label: "learners reporting clearer study direction" },
 ];
 
 const testimonials = [
   {
     quote:
-      "PrepHatch made my certification prep feel organized for the first time. I always knew what to study next.",
+      "PrepHatch made my prep feel organized. I stopped guessing what to study and started executing a clear plan.",
     name: "Nadia R.",
     role: "AWS SAA candidate",
   },
   {
     quote:
-      "The mock exams felt credible, and the analytics were practical. I stopped wasting hours on low-impact topics.",
+      "The exam runtime feels serious and the analytics are practical. I can see where I lose marks and why.",
     name: "Joel M.",
     role: "Cloud engineer",
   },
   {
     quote:
-      "The explanations are the standout. They actually teach how to reason through exam scenarios.",
+      "The review flow is the difference-maker. It turns every mock into a structured improvement cycle.",
     name: "Priya K.",
     role: "Solutions architect",
   },
@@ -93,24 +93,24 @@ const testimonials = [
 
 const faqs = [
   {
-    question: "Who is PrepHatch for?",
+    question: "Who is PrepHatch designed for?",
     answer:
-      "PrepHatch is for learners preparing for certification exams who want structured online exam preparation, realistic mock tests, and clear progress tracking.",
+      "PrepHatch is built for certification learners who want exam realism, low-noise analytics, and structured next steps instead of random practice.",
   },
   {
-    question: "Does PrepHatch include mock exams and analytics?",
+    question: "Does PrepHatch include timed mocks and topic analytics?",
     answer:
-      "Yes. You get timed mock exams, domain-level analytics, weak-area breakdowns, and recommendation-driven review loops.",
+      "Yes. You get timed mock sessions, score breakdowns, weak-area analysis, and recommendation-driven review workflows.",
   },
   {
-    question: "Can I use PrepHatch for certification prep on a tight schedule?",
+    question: "Can I use PrepHatch with limited daily study time?",
     answer:
-      "Yes. The product is designed for focused sessions with fast feedback so you can make progress in limited daily study time.",
+      "Yes. The platform is optimized for focused sessions and quick, high-signal feedback loops.",
   },
   {
-    question: "Is there a premium plan?",
+    question: "What unlocks in premium access?",
     answer:
-      "Yes. Premium unlocks additional mock tests, deeper analytics, and expanded expert content as the catalog grows.",
+      "Premium access unlocks expanded mock libraries, deeper analytics, and broader certification package coverage.",
   },
 ];
 
@@ -118,40 +118,40 @@ export function LandingPage() {
   return (
     <div className="relative overflow-hidden">
       <div className="ph-animate-glow pointer-events-none absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
-      <div className="pointer-events-none absolute right-0 top-32 h-80 w-80 rounded-full bg-accent/16 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-32 h-80 w-80 rounded-full bg-secondary/16 blur-3xl" />
 
       <PromoBanner />
       <SiteHeader current="home" />
 
-      <main className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 xl:px-8">
-        <section className="pb-14 pt-10 sm:pb-20 sm:pt-16">
-          <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-            <div className="space-y-7">
-              <p className="ph-badge ph-badge-primary">
-                Premium exam prep for certification success
-              </p>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-surface focus:px-4 focus:py-2 focus:text-text-primary"
+      >
+        Skip to main content
+      </a>
+
+      <main id="main-content" className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 xl:px-8">
+        <section className="pb-12 pt-8 sm:pb-18 sm:pt-12">
+          <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="space-y-6">
+              <p className="ph-badge ph-badge-primary">Next-generation certification prep platform</p>
 
               <div className="space-y-4">
-                <h1 className="max-w-4xl text-5xl font-semibold leading-[0.95] text-text-primary sm:text-6xl lg:text-7xl">
-                  Pass your next certification exam with smarter mock tests and structured prep.
+                <h1 className="max-w-4xl text-4xl font-semibold leading-[0.94] text-text-primary sm:text-6xl">
+                  Prepare with a modern exam workspace, not scattered study tools.
                 </h1>
-                <p className="max-w-3xl text-lg leading-8 text-text-secondary sm:text-xl">
-                  PrepHatch is a premium SaaS for exam prep, online exam preparation, and certification prep. Train with realistic mock exams, track progress with actionable analytics, and study with confidence.
+                <p className="max-w-3xl text-base leading-8 text-text-secondary sm:text-lg">
+                  PrepHatch combines timed mock exams, clarity-first analytics, and focused review flows to
+                  reduce cognitive load and accelerate certification readiness.
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/register"
-                  className="ph-btn ph-button-primary ph-hover-lift"
-                >
+                <Link href="/register" className="ph-btn ph-button-primary ph-hover-lift">
                   Start free preview
                 </Link>
-                <Link
-                  href="/exams"
-                  className="ph-btn ph-button-secondary ph-hover-lift"
-                >
-                  Try a mock test
+                <Link href="/exams" className="ph-btn ph-button-secondary ph-hover-lift">
+                  Explore mock catalog
                 </Link>
               </div>
 
@@ -159,7 +159,7 @@ export function LandingPage() {
                 {trustSignals.map((signal) => (
                   <li
                     key={signal}
-                    className="rounded-[20px] border border-border/70 bg-bg/45 px-4 py-3 text-sm font-medium text-text-secondary"
+                    className="rounded-xl border border-border/70 bg-bg/40 px-4 py-3 text-sm font-medium text-text-secondary"
                   >
                     {signal}
                   </li>
@@ -167,25 +167,22 @@ export function LandingPage() {
               </ul>
             </div>
 
-            <div
-              id="hero-visual"
-              className="ph-surface-elevated relative overflow-hidden rounded-[34px] p-4 sm:p-6"
-            >
+            <div id="hero-visual" className="ph-surface-elevated relative overflow-hidden rounded-[30px] p-4 sm:p-6">
               <HeroCursorGlow targetId="hero-visual" />
               <HeroMotionStage />
             </div>
           </div>
         </section>
 
-        <section className="py-12 sm:py-16" aria-labelledby="value-props-heading">
+        <section id="value-props" className="py-10 sm:py-14" aria-labelledby="value-props-heading">
           <div className="max-w-3xl">
             <h2 id="value-props-heading" className="text-3xl font-semibold text-text-primary sm:text-4xl">
-              Everything you need for high-conversion certification prep.
+              One cohesive product surface from prep kickoff to readiness confidence.
             </h2>
           </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {valueProps.map((item) => (
-              <article key={item.title} className="ph-surface rounded-[30px] p-6">
+              <article key={item.title} className="ph-surface rounded-2xl p-6">
                 <h3 className="text-xl font-semibold text-text-primary">{item.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-text-secondary">{item.description}</p>
               </article>
@@ -193,15 +190,15 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="py-12 sm:py-16" aria-labelledby="how-it-works-heading">
-          <div className="ph-surface-elevated rounded-[34px] p-6 sm:p-8">
+        <section id="how-it-works" className="py-10 sm:py-14" aria-labelledby="how-it-works-heading">
+          <div className="ph-surface-elevated rounded-[30px] p-6 sm:p-8">
             <h2 id="how-it-works-heading" className="text-3xl font-semibold text-text-primary sm:text-4xl">
-              How PrepHatch works for exam prep
+              How the PrepHatch workflow compounds progress
             </h2>
-            <div className="mt-8 grid gap-4 lg:grid-cols-3">
+            <div className="mt-7 grid gap-4 lg:grid-cols-3">
               {workflowSteps.map((step, index) => (
-                <article key={step.title} className="rounded-[26px] border border-border/70 bg-bg/40 p-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">Step 0{index + 1}</p>
+                <article key={step.title} className="rounded-xl border border-border/70 bg-bg/40 p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary">Step {String(index + 1).padStart(2, "0")}</p>
                   <h3 className="mt-3 text-xl font-semibold text-text-primary">{step.title}</h3>
                   <p className="mt-2 text-sm leading-7 text-text-secondary">{step.detail}</p>
                 </article>
@@ -210,13 +207,13 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="py-12 sm:py-16" aria-labelledby="outcomes-heading">
+        <section id="outcomes" className="py-10 sm:py-14" aria-labelledby="outcomes-heading">
           <h2 id="outcomes-heading" className="text-3xl font-semibold text-text-primary sm:text-4xl">
-            Outcomes learners care about
+            Outcomes learners track every week
           </h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="mt-7 grid gap-4 sm:grid-cols-3">
             {outcomes.map((item) => (
-              <article key={item.label} className="ph-surface rounded-[28px] p-6 text-center">
+              <article key={item.label} className="ph-surface rounded-2xl p-6 text-center">
                 <p className="text-4xl font-semibold text-text-primary">{item.metric}</p>
                 <p className="mt-3 text-sm leading-6 text-text-secondary">{item.label}</p>
               </article>
@@ -224,39 +221,39 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="py-12 sm:py-16" aria-labelledby="testimonials-heading">
+        <section className="py-10 sm:py-14" aria-labelledby="testimonials-heading">
           <h2 id="testimonials-heading" className="text-3xl font-semibold text-text-primary sm:text-4xl">
-            Learners trust the workflow
+            Learner proof from real prep cycles
           </h2>
-          <div className="mt-8 grid gap-5 lg:grid-cols-3">
+          <div className="mt-7 grid gap-4 lg:grid-cols-3">
             {testimonials.map((item) => (
-              <article
-                key={item.name}
-                className="rounded-[30px] border border-border/70 bg-surface/70 p-6 shadow-subtle"
-              >
+              <article key={item.name} className="ph-surface rounded-2xl p-6">
                 <p className="text-base leading-8 text-text-secondary">"{item.quote}"</p>
                 <p className="mt-6 font-semibold text-text-primary">{item.name}</p>
-                <p className="text-sm text-text-secondary/80">{item.role}</p>
+                <p className="text-sm text-text-secondary/85">{item.role}</p>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="py-12 sm:py-16" aria-labelledby="pricing-heading">
-          <div className="ph-surface-elevated grid gap-6 rounded-[34px] p-6 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <section className="py-10 sm:py-14" aria-labelledby="pricing-heading">
+          <div className="ph-surface-elevated grid gap-6 rounded-[30px] p-6 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div>
               <h2 id="pricing-heading" className="text-3xl font-semibold text-text-primary sm:text-4xl">
-                Start free. Upgrade for premium certification prep.
+                Start free. Upgrade when you want deeper exam intelligence.
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-8 text-text-secondary">
-                Begin with a free mock preview, then unlock premium mock exams, deeper analytics, progress tracking, and expert review content.
+                Begin with free previews, then unlock richer mock libraries, deeper diagnostics,
+                and advanced learner workflows.
               </p>
             </div>
-            <div className="rounded-[26px] border border-primary/30 bg-primary/10 p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Pricing teaser</p>
-              <p className="mt-2 text-4xl font-semibold text-text-primary">$19<span className="text-lg text-text-secondary">/month</span></p>
+            <div className="rounded-2xl border border-primary/25 bg-primary/12 p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Pricing preview</p>
+              <p className="mt-2 text-4xl font-semibold text-text-primary">
+                $19<span className="text-lg text-text-secondary">/month</span>
+              </p>
               <p className="mt-3 text-sm leading-7 text-text-secondary">
-                Includes premium mock tests, structured prep workflows, and advanced readiness analytics.
+                Includes premium timed mocks, topic diagnostics, recommendation engine, and progress analytics.
               </p>
               <Link href="/register" className="ph-btn ph-button-primary ph-hover-lift mt-5 w-full">
                 Join early access
@@ -265,7 +262,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="faq" className="py-12 sm:py-16" aria-labelledby="faq-heading">
+        <section id="faq" className="py-10 sm:py-14" aria-labelledby="faq-heading">
           <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr]">
             <div>
               <h2 id="faq-heading" className="text-3xl font-semibold text-text-primary sm:text-4xl">
@@ -274,10 +271,7 @@ export function LandingPage() {
             </div>
             <div className="space-y-4">
               {faqs.map((item) => (
-                <details
-                  key={item.question}
-                  className="ph-surface group rounded-[26px] p-6 transition duration-200 hover:border-primary/20"
-                >
+                <details key={item.question} className="ph-surface group rounded-2xl p-6">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-text-primary">
                     <span>{item.question}</span>
                     <span className="rounded-full border border-border/70 px-3 py-1 text-sm text-text-secondary transition duration-200 group-open:rotate-45">
@@ -291,13 +285,13 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="py-14 sm:py-20" aria-labelledby="final-cta-heading">
-          <div className="rounded-[34px] border border-accent/25 bg-[linear-gradient(135deg,rgba(91,140,255,0.2),rgba(124,92,255,0.16),rgba(32,211,194,0.18))] p-7 sm:p-10">
+        <section className="py-12 sm:py-16" aria-labelledby="final-cta-heading">
+          <div className="rounded-[30px] border border-secondary/30 bg-[linear-gradient(135deg,rgba(42,124,255,0.2),rgba(20,184,166,0.18),rgba(248,113,113,0.16))] p-7 sm:p-10">
             <h2 id="final-cta-heading" className="text-3xl font-semibold text-text-primary sm:text-4xl">
               Ready to make your next certification attempt your strongest one?
             </h2>
             <p className="mt-4 max-w-3xl text-base leading-8 text-text-secondary">
-              Get structured exam prep, realistic mock exams, and analytics that show exactly how close you are to passing.
+              Build momentum with a modern prep stack designed for concentration, consistency, and measurable improvement.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href="/register" className="ph-btn ph-button-primary ph-hover-lift">

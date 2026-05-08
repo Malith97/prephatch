@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { startTransition, useEffect, useRef, useState } from "react";
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  createLocalAttempt,
-  normalizeStoredAttempt,
-  readAttempt,
-  writeAttempt,
-} from "../../../lib/exams/session-storage";
-import type { MockExam, StoredAttempt } from "../../../server/exams/types";
+  AttemptApiError,
+  autosaveAttempt as autosaveAttemptRequest,
+  createAttempt,
+  submitAttempt as submitAttemptRequest,
+} from "../../../lib/exams/attempt-client";
+import type { PublicExamAttempt } from "../../../server/exams/attempt-types";
+import type { MockExam } from "../../../server/exams/types";
 
 type ExamSessionProps = {
   exam: MockExam;
@@ -19,6 +20,8 @@ type ExamSessionProps = {
   backHref?: string;
   resultsHref?: string;
 };
+
+type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 function formatRemainingTime(remainingMs: number): string {
   const totalSeconds = Math.max(0, Math.ceil(remainingMs / 1000));
@@ -33,23 +36,24 @@ function clampQuestionIndex(index: number, questionCount: number): number {
 }
 
 function normalizeAttempt(
-  attempt: StoredAttempt,
+  attempt: PublicExamAttempt,
   exam: MockExam,
   resolvedMockId: string,
-): StoredAttempt {
-  return normalizeStoredAttempt({
+): PublicExamAttempt {
+  return {
     ...attempt,
-    mockId: attempt.mockId ?? resolvedMockId,
+    mockId: attempt.mockId || resolvedMockId,
     currentQuestionIndex: clampQuestionIndex(
       attempt.currentQuestionIndex ?? 0,
       exam.questions.length,
     ),
     flaggedQuestionIds: attempt.flaggedQuestionIds ?? [],
-  });
+    answers: attempt.answers ?? {},
+  };
 }
 
 function getQuestionState(
-  attempt: StoredAttempt,
+  attempt: PublicExamAttempt,
   questionId: string,
   index: number,
 ): "current" | "answered" | "flagged" | "default" {
@@ -68,6 +72,18 @@ function getQuestionState(
   return "default";
 }
 
+function buildAttemptErrorMessage(error: unknown): string {
+  if (error instanceof AttemptApiError) {
+    return error.message;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "Unexpected network error while syncing attempt.";
+}
+
 export function ExamSession({
   exam,
   mockId,
@@ -80,34 +96,204 @@ export function ExamSession({
   const resolvedMockTitle = mockTitle ?? `${exam.title} Mock`;
   const resolvedBackHref = backHref ?? `/exams/${exam.slug}`;
   const resolvedResultsBaseHref = resultsHref ?? `/exams/${exam.slug}/results`;
-  const [attempt, setAttempt] = useState<StoredAttempt | null>(null);
+
+  const [attempt, setAttempt] = useState<PublicExamAttempt | null>(null);
+  const [initializationError, setInitializationError] = useState<string | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
+
+  const latestAttemptRef = useRef<PublicExamAttempt | null>(null);
+  const serverVersionRef = useRef<number>(0);
+  const pendingSaveRef = useRef(false);
+  const inFlightSaveRef = useRef(false);
+  const saveTimerRef = useRef<number | null>(null);
+  const editRevisionRef = useRef(0);
   const isSubmittingRef = useRef(false);
-  const remainingMs = attempt ? Math.max(0, attempt.endsAt - now) : 0;
+  const isUnmountedRef = useRef(false);
 
   useEffect(() => {
-    const storedAttempt = readAttempt(exam.slug);
+    latestAttemptRef.current = attempt;
+  }, [attempt]);
 
-    if (
-      storedAttempt &&
-      storedAttempt.examId === exam.id &&
-      storedAttempt.status === "in_progress" &&
-      (storedAttempt.mockId === resolvedMockId || storedAttempt.mockId === undefined)
-    ) {
-      const normalizedAttempt = normalizeAttempt(
-        storedAttempt,
-        exam,
-        resolvedMockId,
-      );
-      writeAttempt(normalizedAttempt);
-      setAttempt(normalizedAttempt);
+  useEffect(() => {
+    return () => {
+      isUnmountedRef.current = true;
+      if (saveTimerRef.current) {
+        window.clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function initializeAttempt() {
+      setIsInitializing(true);
+      setInitializationError(null);
+
+      try {
+        const response = await createAttempt({
+          examSlug: exam.slug,
+          mockId: resolvedMockId,
+        });
+
+        if (cancelled || isUnmountedRef.current) {
+          return;
+        }
+
+        const normalizedAttempt = normalizeAttempt(
+          response.attempt,
+          exam,
+          resolvedMockId,
+        );
+        console.info("[exam-runtime] attempt_initialized", {
+          attemptId: normalizedAttempt.attemptId,
+          examSlug: exam.slug,
+          mockId: resolvedMockId,
+        });
+        latestAttemptRef.current = normalizedAttempt;
+        serverVersionRef.current = normalizedAttempt.version;
+        setAttempt(normalizedAttempt);
+      } catch (error) {
+        if (cancelled || isUnmountedRef.current) {
+          return;
+        }
+
+        setInitializationError(buildAttemptErrorMessage(error));
+        console.error("[exam-runtime] attempt_initialization_failed", {
+          examSlug: exam.slug,
+          mockId: resolvedMockId,
+          error: buildAttemptErrorMessage(error),
+        });
+      } finally {
+        if (!cancelled && !isUnmountedRef.current) {
+          setIsInitializing(false);
+        }
+      }
+    }
+
+    void initializeAttempt();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [exam, resolvedMockId]);
+
+  const flushAutosave = useCallback(async () => {
+    if (inFlightSaveRef.current || isSubmittingRef.current) {
       return;
     }
 
-    const freshAttempt = createLocalAttempt(exam, resolvedMockId);
-    writeAttempt(freshAttempt);
-    setAttempt(freshAttempt);
+    const snapshot = latestAttemptRef.current;
+    if (!snapshot || snapshot.status !== "in_progress" || !pendingSaveRef.current) {
+      return;
+    }
+
+    inFlightSaveRef.current = true;
+    pendingSaveRef.current = false;
+    const sendingRevision = editRevisionRef.current;
+    const expectedVersion = serverVersionRef.current;
+
+    try {
+      const response = await autosaveAttemptRequest({
+        attemptId: snapshot.attemptId,
+        answers: snapshot.answers,
+        currentQuestionIndex: snapshot.currentQuestionIndex,
+        flaggedQuestionIds: snapshot.flaggedQuestionIds,
+        expectedVersion,
+      });
+
+      serverVersionRef.current = response.attempt.version;
+
+      if (isUnmountedRef.current) {
+        return;
+      }
+
+      if (editRevisionRef.current === sendingRevision) {
+        const normalized = normalizeAttempt(response.attempt, exam, resolvedMockId);
+        latestAttemptRef.current = normalized;
+        setAttempt(normalized);
+      } else {
+        setAttempt((previousAttempt) => {
+          if (!previousAttempt) {
+            return previousAttempt;
+          }
+
+          const mergedAttempt = {
+            ...previousAttempt,
+            version: response.attempt.version,
+            updatedAt: response.attempt.updatedAt,
+            endsAt: response.attempt.endsAt,
+          };
+          latestAttemptRef.current = mergedAttempt;
+          return mergedAttempt;
+        });
+        pendingSaveRef.current = true;
+      }
+
+      setSaveStatus("saved");
+      setSaveError(null);
+      console.info("[exam-runtime] attempt_autosaved", {
+        attemptId: response.attempt.attemptId,
+        version: response.attempt.version,
+      });
+    } catch (error) {
+      if (isUnmountedRef.current) {
+        return;
+      }
+
+      if (error instanceof AttemptApiError && error.attempt) {
+        const normalized = normalizeAttempt(error.attempt, exam, resolvedMockId);
+        latestAttemptRef.current = normalized;
+        serverVersionRef.current = normalized.version;
+        setAttempt(normalized);
+      }
+
+      if (
+        error instanceof AttemptApiError &&
+        (error.code === "version_conflict" || error.code === "attempt_expired")
+      ) {
+        setSaveError(error.message);
+      } else {
+        setSaveError(buildAttemptErrorMessage(error));
+      }
+
+      setSaveStatus("error");
+      console.error("[exam-runtime] attempt_autosave_failed", {
+        error: buildAttemptErrorMessage(error),
+      });
+    } finally {
+      inFlightSaveRef.current = false;
+      if (pendingSaveRef.current && !isUnmountedRef.current) {
+        if (saveTimerRef.current) {
+          window.clearTimeout(saveTimerRef.current);
+        }
+        saveTimerRef.current = window.setTimeout(() => {
+          void flushAutosave();
+        }, 60);
+      }
+    }
   }, [exam, resolvedMockId]);
+
+  const scheduleAutosave = useCallback(() => {
+    if (isSubmittingRef.current || !latestAttemptRef.current) {
+      return;
+    }
+
+    pendingSaveRef.current = true;
+    setSaveStatus("saving");
+    setSaveError(null);
+
+    if (saveTimerRef.current) {
+      window.clearTimeout(saveTimerRef.current);
+    }
+
+    saveTimerRef.current = window.setTimeout(() => {
+      void flushAutosave();
+    }, 300);
+  }, [flushAutosave]);
 
   useEffect(() => {
     if (!attempt || attempt.status !== "in_progress") {
@@ -121,129 +307,206 @@ export function ExamSession({
     return () => window.clearInterval(intervalId);
   }, [attempt]);
 
-  function persistAttempt(nextAttempt: StoredAttempt) {
-    const normalizedAttempt = normalizeAttempt(nextAttempt, exam, resolvedMockId);
-    writeAttempt(normalizedAttempt);
-    setAttempt(normalizedAttempt);
-  }
+  const remainingMs = attempt ? Math.max(0, attempt.endsAt - now) : 0;
 
-  function submitAttempt(
-    sourceAttempt: StoredAttempt,
-    confirmBeforeSubmit: boolean,
-  ) {
-    if (isSubmittingRef.current) {
-      return;
-    }
-
-    if (confirmBeforeSubmit && typeof window !== "undefined") {
-      const unansweredCount =
-        exam.questions.length - Object.keys(sourceAttempt.answers).length;
-      const message =
-        unansweredCount > 0
-          ? `You still have ${unansweredCount} unanswered question${
-              unansweredCount === 1 ? "" : "s"
-            }. Submit anyway?`
-          : "Submit this mock exam?";
-
-      if (!window.confirm(message)) {
+  const submitAttempt = useCallback(
+    async (confirmBeforeSubmit: boolean) => {
+      const currentAttempt = latestAttemptRef.current;
+      if (!currentAttempt || currentAttempt.status !== "in_progress") {
         return;
       }
-    }
 
-    isSubmittingRef.current = true;
+      if (isSubmittingRef.current) {
+        return;
+      }
 
-    const submittedAttempt: StoredAttempt = {
-      ...sourceAttempt,
-      mockId: sourceAttempt.mockId ?? resolvedMockId,
-      status: "submitted",
-      submittedAt: Date.now(),
-    };
+      if (confirmBeforeSubmit && typeof window !== "undefined") {
+        const unansweredCount =
+          exam.questions.length - Object.keys(currentAttempt.answers).length;
+        const message =
+          unansweredCount > 0
+            ? `You still have ${unansweredCount} unanswered question${
+                unansweredCount === 1 ? "" : "s"
+              }. Submit anyway?`
+            : "Submit this mock exam?";
 
-    persistAttempt(submittedAttempt);
+        if (!window.confirm(message)) {
+          return;
+        }
+      }
 
-    startTransition(() => {
-      router.replace(
-        `${resolvedResultsBaseHref}/${submittedAttempt.attemptId ?? "latest-local"}`,
-      );
-    });
-  }
+      isSubmittingRef.current = true;
+      if (saveTimerRef.current) {
+        window.clearTimeout(saveTimerRef.current);
+      }
+
+      try {
+        pendingSaveRef.current = true;
+        await flushAutosave();
+        const freshAttempt = latestAttemptRef.current;
+        if (!freshAttempt) {
+          return;
+        }
+
+        const response = await submitAttemptRequest({
+          attemptId: freshAttempt.attemptId,
+          idempotencyKey: `submit:${freshAttempt.attemptId}`,
+        });
+        const normalized = normalizeAttempt(response.attempt, exam, resolvedMockId);
+        latestAttemptRef.current = normalized;
+        setAttempt(normalized);
+        setSaveStatus("idle");
+        setSaveError(null);
+        console.info("[exam-runtime] attempt_submitted", {
+          attemptId: normalized.attemptId,
+          score: normalized.score,
+        });
+
+        startTransition(() => {
+          router.replace(`${resolvedResultsBaseHref}/${normalized.attemptId}`);
+        });
+      } catch (error) {
+        if (error instanceof AttemptApiError && error.attempt) {
+          const normalized = normalizeAttempt(error.attempt, exam, resolvedMockId);
+          latestAttemptRef.current = normalized;
+          setAttempt(normalized);
+          if (normalized.status === "submitted") {
+            startTransition(() => {
+              router.replace(`${resolvedResultsBaseHref}/${normalized.attemptId}`);
+            });
+            return;
+          }
+        }
+
+        setSaveStatus("error");
+        setSaveError(buildAttemptErrorMessage(error));
+        console.error("[exam-runtime] attempt_submit_failed", {
+          error: buildAttemptErrorMessage(error),
+        });
+      } finally {
+        isSubmittingRef.current = false;
+      }
+    },
+    [exam, flushAutosave, resolvedMockId, resolvedResultsBaseHref, router],
+  );
 
   useEffect(() => {
     if (!attempt || attempt.status !== "in_progress" || remainingMs > 0) {
       return;
     }
 
-    if (isSubmittingRef.current) {
-      return;
+    void submitAttempt(false);
+  }, [attempt, remainingMs, submitAttempt]);
+
+  const handleAnswerChange = useCallback(
+    (questionId: string, optionId: string) => {
+      const currentAttempt = latestAttemptRef.current;
+      if (!currentAttempt || currentAttempt.status !== "in_progress") {
+        return;
+      }
+
+      const nextAttempt = {
+        ...currentAttempt,
+        answers: {
+          ...currentAttempt.answers,
+          [questionId]: optionId,
+        },
+      };
+
+      editRevisionRef.current += 1;
+      latestAttemptRef.current = nextAttempt;
+      setAttempt(nextAttempt);
+      scheduleAutosave();
+    },
+    [scheduleAutosave],
+  );
+
+  const handleQuestionChange = useCallback(
+    (nextIndex: number) => {
+      const currentAttempt = latestAttemptRef.current;
+      if (!currentAttempt || currentAttempt.status !== "in_progress") {
+        return;
+      }
+
+      const nextAttempt = {
+        ...currentAttempt,
+        currentQuestionIndex: clampQuestionIndex(nextIndex, exam.questions.length),
+      };
+
+      editRevisionRef.current += 1;
+      latestAttemptRef.current = nextAttempt;
+      setAttempt(nextAttempt);
+      scheduleAutosave();
+    },
+    [exam.questions.length, scheduleAutosave],
+  );
+
+  const handleFlagToggle = useCallback(
+    (questionId: string) => {
+      const currentAttempt = latestAttemptRef.current;
+      if (!currentAttempt || currentAttempt.status !== "in_progress") {
+        return;
+      }
+
+      const flaggedQuestionIds = currentAttempt.flaggedQuestionIds ?? [];
+      const nextFlaggedQuestionIds = flaggedQuestionIds.includes(questionId)
+        ? flaggedQuestionIds.filter((id) => id !== questionId)
+        : [...flaggedQuestionIds, questionId];
+
+      const nextAttempt = {
+        ...currentAttempt,
+        flaggedQuestionIds: nextFlaggedQuestionIds,
+      };
+
+      editRevisionRef.current += 1;
+      latestAttemptRef.current = nextAttempt;
+      setAttempt(nextAttempt);
+      scheduleAutosave();
+    },
+    [scheduleAutosave],
+  );
+
+  const saveStateLabel = useMemo(() => {
+    if (saveStatus === "saving") {
+      return "Saving...";
     }
-
-    isSubmittingRef.current = true;
-
-    const submittedAttempt: StoredAttempt = {
-      ...attempt,
-      mockId: attempt.mockId ?? resolvedMockId,
-      status: "submitted",
-      submittedAt: Date.now(),
-    };
-
-    persistAttempt(submittedAttempt);
-
-    startTransition(() => {
-      router.replace(
-        `${resolvedResultsBaseHref}/${submittedAttempt.attemptId ?? "latest-local"}`,
-      );
-    });
-  }, [attempt, remainingMs, resolvedMockId, resolvedResultsBaseHref, router, exam]);
-
-  function handleAnswerChange(questionId: string, optionId: string) {
-    if (!attempt || attempt.status !== "in_progress") {
-      return;
+    if (saveStatus === "saved") {
+      return "Saved";
     }
-
-    const nextAttempt: StoredAttempt = {
-      ...attempt,
-      answers: {
-        ...attempt.answers,
-        [questionId]: optionId,
-      },
-    };
-
-    persistAttempt(nextAttempt);
-  }
-
-  function handleQuestionChange(nextIndex: number) {
-    if (!attempt || attempt.status !== "in_progress") {
-      return;
+    if (saveStatus === "error") {
+      return "Save failed";
     }
+    return "Idle";
+  }, [saveStatus]);
 
-    persistAttempt({
-      ...attempt,
-      currentQuestionIndex: clampQuestionIndex(nextIndex, exam.questions.length),
-    });
-  }
-
-  function handleFlagToggle(questionId: string) {
-    if (!attempt || attempt.status !== "in_progress") {
-      return;
-    }
-
-    const flaggedQuestionIds = attempt.flaggedQuestionIds ?? [];
-    const nextFlaggedQuestionIds = flaggedQuestionIds.includes(questionId)
-      ? flaggedQuestionIds.filter((id) => id !== questionId)
-      : [...flaggedQuestionIds, questionId];
-
-    persistAttempt({
-      ...attempt,
-      flaggedQuestionIds: nextFlaggedQuestionIds,
-    });
-  }
-
-  if (!attempt) {
+  if (isInitializing) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-[1600px] items-center px-4 py-16 sm:px-6 xl:px-8">
         <p className="text-sm text-text-secondary">
-          Preparing your local mock exam...
+          Preparing your server-backed mock exam...
         </p>
+      </main>
+    );
+  }
+
+  if (initializationError || !attempt) {
+    return (
+      <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center px-6 py-16">
+        <div className="ph-surface space-y-4 rounded-3xl p-8">
+          <p className="ph-eyebrow">Unable to start mock attempt</p>
+          <h1 className="text-3xl font-semibold text-text-primary">
+            Attempt initialization failed.
+          </h1>
+          <p className="text-sm leading-7 text-text-secondary">
+            {initializationError ?? "Unable to create an attempt right now."}
+          </p>
+          <Link
+            href={resolvedBackHref}
+            className="ph-btn ph-button-primary ph-hover-lift"
+          >
+            Back to exam details
+          </Link>
+        </div>
       </main>
     );
   }
@@ -278,16 +541,16 @@ export function ExamSession({
                 Back to exam details
               </Link>
               <div className="space-y-2">
-                <p className="ph-eyebrow">
-                  {exam.certificationCode}
-                </p>
+                <p className="ph-eyebrow">{exam.certificationCode}</p>
                 <h1 className="text-3xl font-semibold text-text-primary sm:text-4xl">
                   {resolvedMockTitle}
                 </h1>
                 <p className="max-w-3xl text-sm leading-7 text-text-secondary">
-                  One question at a time, with answer persistence, review flags,
-                  and a focused navigation flow. Answers stay local to this
-                  browser session.
+                  One question at a time, with server-backed save, review flags, and
+                  a focused navigation flow.
+                </p>
+                <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/75">
+                  Save status: {saveStateLabel}
                 </p>
               </div>
             </div>
@@ -320,11 +583,18 @@ export function ExamSession({
             </div>
           </div>
 
+          {saveError ? (
+            <p
+              role="alert"
+              className="mt-4 rounded-2xl border border-warning/25 bg-warning/10 px-4 py-3 text-sm text-warning"
+            >
+              {saveError}
+            </p>
+          ) : null}
+
           <div className="mt-6 rounded-[24px] border border-border/70 bg-bg/35 p-4 shadow-subtle">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm font-medium text-text-secondary">
-                Progress indicator
-              </p>
+              <p className="text-sm font-medium text-text-secondary">Progress indicator</p>
               <p className="text-sm font-semibold text-text-primary">
                 {progressPercentage}% complete
               </p>
@@ -354,18 +624,12 @@ export function ExamSession({
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   {currentAnswer ? (
-                    <span className="ph-badge ph-badge-primary">
-                      Answer saved
-                    </span>
+                    <span className="ph-badge ph-badge-primary">Answer saved</span>
                   ) : (
-                    <span className="ph-badge ph-badge-neutral">
-                      Unanswered
-                    </span>
+                    <span className="ph-badge ph-badge-neutral">Unanswered</span>
                   )}
                   {isCurrentQuestionFlagged ? (
-                    <span className="ph-badge ph-badge-warning">
-                      Flagged for review
-                    </span>
+                    <span className="ph-badge ph-badge-warning">Flagged for review</span>
                   ) : null}
                 </div>
               </div>
@@ -409,9 +673,7 @@ export function ExamSession({
                       name={currentQuestion.id}
                       value={option.id}
                       checked={checked}
-                      onChange={() =>
-                        handleAnswerChange(currentQuestion.id, option.id)
-                      }
+                      onChange={() => handleAnswerChange(currentQuestion.id, option.id)}
                       className="ph-choice mt-1 h-4 w-4 border-border/80 bg-surface/80"
                     />
                     <span className="text-sm leading-7 text-text-secondary">
@@ -449,12 +711,10 @@ export function ExamSession({
           <aside className="ph-surface rounded-[32px] p-6 sm:p-6 xl:sticky xl:top-6 xl:self-start">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="ph-eyebrow">
-                  Question panel
-                </p>
+                <p className="ph-eyebrow">Question panel</p>
                 <p className="mt-2 text-sm leading-6 text-text-secondary">
-                  Jump between questions, track progress, and revisit flagged
-                  items before submitting.
+                  Jump between questions, track progress, and revisit flagged items
+                  before submitting.
                 </p>
               </div>
             </div>
@@ -533,7 +793,7 @@ export function ExamSession({
 
             <button
               type="button"
-              onClick={() => submitAttempt(attempt, true)}
+              onClick={() => void submitAttempt(true)}
               className="ph-btn ph-button-primary ph-hover-lift mt-6 w-full"
             >
               Submit exam

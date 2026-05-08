@@ -3,16 +3,16 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { readAttempt } from "../../../lib/exams/session-storage";
-import { scoreAttempt } from "../../../server/exams/scoring";
+import { readAttempt } from "../../../lib/exams/attempt-client";
+import type { PublicExamAttempt } from "../../../server/exams/attempt-types";
 import type {
   MockExam,
   Question,
   QuestionResult,
   ScorePreview,
-  StoredAttempt,
 } from "../../../server/exams/types";
 import { getDefaultLiveMockHref } from "../mock-exam-workspace";
+import { AiExplanationPanel } from "./ai-explanation-panel";
 import { ExamSectionHeading } from "./exam-section-heading";
 
 type ResultsSummaryProps = {
@@ -22,7 +22,7 @@ type ResultsSummaryProps = {
 
 type ResultsState =
   | {
-      attempt: StoredAttempt;
+      attempt: PublicExamAttempt;
       score: ScorePreview;
     }
   | null
@@ -121,7 +121,7 @@ function getReadinessState(percentageScore: number) {
 
 function buildRecommendedActions(
   weakAreas: TopicBreakdown[],
-  attempt: StoredAttempt,
+  attempt: Pick<PublicExamAttempt, "flaggedQuestionIds">,
   unansweredCount: number,
 ): string[] {
   const actions: string[] = [];
@@ -164,30 +164,49 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
   const examPageHref = `/exams/${exam.slug}`;
 
   useEffect(() => {
-    const storedAttempt = readAttempt(exam.slug);
+    let cancelled = false;
 
-    const attemptMatches =
-      storedAttempt &&
-      storedAttempt.examId === exam.id &&
-      storedAttempt.status === "submitted" &&
-      (attemptId === "latest-local" || storedAttempt.attemptId === attemptId);
+    async function loadAttempt() {
+      try {
+        const response = await readAttempt({
+          attemptId,
+          examSlug: exam.slug,
+        });
 
-    if (!storedAttempt || !attemptMatches) {
-      setResultsState(null);
-      return;
+        if (cancelled) {
+          return;
+        }
+
+        const fetchedAttempt = response.attempt;
+        const isSubmittedAttempt = fetchedAttempt.status === "submitted";
+        if (!isSubmittedAttempt || !fetchedAttempt.score) {
+          setResultsState(null);
+          return;
+        }
+
+        setResultsState({
+          attempt: fetchedAttempt,
+          score: fetchedAttempt.score,
+        });
+      } catch {
+        if (!cancelled) {
+          setResultsState(null);
+        }
+      }
     }
 
-    setResultsState({
-      attempt: storedAttempt,
-      score: scoreAttempt(exam, storedAttempt.answers),
-    });
+    void loadAttempt();
+
+    return () => {
+      cancelled = true;
+    };
   }, [attemptId, exam]);
 
   if (resultsState === undefined) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-[1600px] items-center px-4 py-16 sm:px-6 xl:px-8">
         <p role="status" className="text-sm text-text-secondary">
-          Loading your local review...
+          Loading your submitted attempt...
         </p>
       </main>
     );
@@ -202,11 +221,11 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
               Results unavailable
             </p>
             <h1 className="text-3xl font-semibold text-text-primary">
-              No matching local attempt was found for this result.
+              No matching submitted attempt was found for this result.
             </h1>
             <p className="text-sm leading-7 text-text-secondary">
               Return to the certification page to start a mock or reopen the
-              latest local results alias.
+              latest results alias.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -279,7 +298,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
                 {readinessState.message}
               </p>
               <p className="text-sm leading-7 text-text-secondary/75">
-                Submitted locally at{" "}
+                Submitted at{" "}
                 {new Date(
                   attempt.submittedAt ?? attempt.endsAt,
                 ).toLocaleString()}.
@@ -505,6 +524,12 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
                     <div className="rounded-[24px] border border-border/70 bg-surface-elevated/70 px-4 py-4 text-sm leading-7 text-text-secondary md:col-span-2">
                       <p className="font-semibold text-text-primary">Explanation</p>
                       <p className="mt-2">{question.explanation}</p>
+                      <AiExplanationPanel
+                        examSlug={exam.slug}
+                        questionId={question.id}
+                        selectedOptionId={questionResult?.selectedOptionId ?? null}
+                        correctOptionId={question.correctOptionId}
+                      />
                     </div>
                   </div>
                 </article>

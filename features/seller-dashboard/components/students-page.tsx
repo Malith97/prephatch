@@ -152,7 +152,7 @@ export function StudentsPage() {
           </div>
         ) : (
           <div className="mt-5 overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
+            <table className="ph-table">
               <thead>
                 <tr className="border-b border-border/70 text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                   <th className="px-3 py-3">Student</th>

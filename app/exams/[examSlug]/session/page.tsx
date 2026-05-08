@@ -32,9 +32,13 @@ export default function SessionPage({ params }: SessionPageProps) {
     );
   }
 
+  const destination = defaultMock
+    ? `/exam/${params.examSlug}/session/${defaultMock.id}`
+    : `/exam/${params.examSlug}/mock-exams`;
+  console.info(
+    `[routing] legacy_redirect from=/exams/${params.examSlug}/session to=${destination}`,
+  );
   redirect(
-    defaultMock
-      ? `/exam/${params.examSlug}/session/${defaultMock.id}`
-      : `/exam/${params.examSlug}/mock-exams`,
+    destination,
   );
 }

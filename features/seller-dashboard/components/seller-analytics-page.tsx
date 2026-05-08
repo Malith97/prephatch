@@ -162,7 +162,7 @@ export function SellerAnalyticsPage() {
         </p>
 
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
+          <table className="ph-table">
             <thead>
               <tr className="border-b border-border/70 text-xs uppercase tracking-[0.16em] text-text-secondary/70">
                 <th className="px-3 py-3">Course</th>
