@@ -103,6 +103,7 @@ export function ExamSession({
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [isResumedAttempt, setIsResumedAttempt] = useState(false);
 
   const latestAttemptRef = useRef<PublicExamAttempt | null>(null);
   const serverVersionRef = useRef<number>(0);
@@ -135,6 +136,7 @@ export function ExamSession({
 
       try {
         const response = await createAttempt({
+          examId: exam.id,
           examSlug: exam.slug,
           mockId: resolvedMockId,
         });
@@ -148,10 +150,12 @@ export function ExamSession({
           exam,
           resolvedMockId,
         );
+        setIsResumedAttempt(response.resumed);
         console.info("[exam-runtime] attempt_initialized", {
           attemptId: normalizedAttempt.attemptId,
           examSlug: exam.slug,
           mockId: resolvedMockId,
+          resumed: response.resumed,
         });
         latestAttemptRef.current = normalizedAttempt;
         serverVersionRef.current = normalizedAttempt.version;
@@ -552,6 +556,11 @@ export function ExamSession({
                 <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/75">
                   Save status: {saveStateLabel}
                 </p>
+                {isResumedAttempt ? (
+                  <p className="text-xs uppercase tracking-[0.16em] text-text-secondary/75">
+                    Resumed previous in-progress attempt
+                  </p>
+                ) : null}
               </div>
             </div>
 

@@ -1,15 +1,17 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PATCH as patchAttemptAnswers } from "../app/api/attempts/[attemptId]/answers/route";
 import { GET as getAttempt } from "../app/api/attempts/[attemptId]/route";
 import { POST as submitAttempt } from "../app/api/attempts/[attemptId]/submit/route";
 import { POST as createAttempt } from "../app/api/attempts/route";
-import { getExamBySlug } from "../server/exams/mock-repository";
 import { clearAttemptStore } from "../server/exams/attempt-service";
+import { setAttemptsRepositoryForTests } from "../server/exams/db-repository";
+import { FakeAttemptsRepository, fakeExam } from "./helpers/fake-attempts-repository";
 
 const USER_HEADER = "x-prephatch-user-id";
+const ORG_HEADER = "x-prephatch-organization-id";
 const EXAM_SLUG = "aws-saa-c03";
-const MOCK_ID = "free-mock-1";
+const MOCK_ID = "mock-version-free";
 
 type AttemptPayload = {
   attemptId: string;
@@ -29,26 +31,28 @@ type AttemptPayload = {
   };
 };
 
-function buildJsonRequest(url: string, body: unknown): Request {
+let repository: FakeAttemptsRepository;
+
+function buildJsonRequest(url: string, body: unknown, userId = "dev-user-a"): Request {
   return new Request(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      [USER_HEADER]: "dev-user-a",
+      [USER_HEADER]: userId,
+      [ORG_HEADER]: "dev-organization",
     },
     body: JSON.stringify(body),
   });
 }
 
+beforeEach(async () => {
+  repository = new FakeAttemptsRepository();
+  setAttemptsRepositoryForTests(repository);
+  await clearAttemptStore();
+  vi.restoreAllMocks();
+});
+
 describe("TASK-002/003/004 attempts API", () => {
-  beforeEach(() => {
-    clearAttemptStore();
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it("creates and resumes an in-progress attempt idempotently for the same user/mock", async () => {
     const firstResponse = await createAttempt(
       buildJsonRequest("http://localhost/api/attempts", {
@@ -72,8 +76,8 @@ describe("TASK-002/003/004 attempts API", () => {
 
     const secondResponse = await createAttempt(
       buildJsonRequest("http://localhost/api/attempts", {
-        examSlug: EXAM_SLUG,
-        mockId: MOCK_ID,
+        slug: EXAM_SLUG,
+        mock_exam_id: MOCK_ID,
       }),
     );
 
@@ -89,12 +93,6 @@ describe("TASK-002/003/004 attempts API", () => {
   });
 
   it("autosaves answers and rejects stale writes via version conflict", async () => {
-    const exam = getExamBySlug(EXAM_SLUG);
-    expect(exam).not.toBeNull();
-    if (!exam) {
-      return;
-    }
-
     const createResponse = await createAttempt(
       buildJsonRequest("http://localhost/api/attempts", {
         examSlug: EXAM_SLUG,
@@ -106,7 +104,7 @@ describe("TASK-002/003/004 attempts API", () => {
       attempt: AttemptPayload;
     };
 
-    const question = exam.questions[0];
+    const question = fakeExam.questions[0];
     const patchResponse = await patchAttemptAnswers(
       new Request(
         `http://localhost/api/attempts/${createPayload.attempt.attemptId}/answers`,
@@ -115,6 +113,7 @@ describe("TASK-002/003/004 attempts API", () => {
           headers: {
             "Content-Type": "application/json",
             [USER_HEADER]: "dev-user-a",
+            [ORG_HEADER]: "dev-organization",
           },
           body: JSON.stringify({
             answers: {
@@ -148,6 +147,7 @@ describe("TASK-002/003/004 attempts API", () => {
           headers: {
             "Content-Type": "application/json",
             [USER_HEADER]: "dev-user-a",
+            [ORG_HEADER]: "dev-organization",
           },
           body: JSON.stringify({
             answers: {
@@ -172,12 +172,6 @@ describe("TASK-002/003/004 attempts API", () => {
   });
 
   it("rejects autosave writes past the attempt deadline", async () => {
-    const exam = getExamBySlug(EXAM_SLUG);
-    expect(exam).not.toBeNull();
-    if (!exam) {
-      return;
-    }
-
     const createResponse = await createAttempt(
       buildJsonRequest("http://localhost/api/attempts", {
         examSlug: EXAM_SLUG,
@@ -199,10 +193,11 @@ describe("TASK-002/003/004 attempts API", () => {
           headers: {
             "Content-Type": "application/json",
             [USER_HEADER]: "dev-user-a",
+            [ORG_HEADER]: "dev-organization",
           },
           body: JSON.stringify({
             answers: {
-              [exam.questions[0].id]: exam.questions[0].options[0].id,
+              [fakeExam.questions[0].id]: fakeExam.questions[0].options[0].id,
             },
             expectedVersion: createPayload.attempt.version,
           }),
@@ -223,12 +218,6 @@ describe("TASK-002/003/004 attempts API", () => {
   });
 
   it("submits with deterministic score and keeps submit idempotent across duplicate calls", async () => {
-    const exam = getExamBySlug(EXAM_SLUG);
-    expect(exam).not.toBeNull();
-    if (!exam) {
-      return;
-    }
-
     const createResponse = await createAttempt(
       buildJsonRequest("http://localhost/api/attempts", {
         examSlug: EXAM_SLUG,
@@ -240,7 +229,7 @@ describe("TASK-002/003/004 attempts API", () => {
       attempt: AttemptPayload;
     };
 
-    const firstQuestion = exam.questions[0];
+    const firstQuestion = fakeExam.questions[0];
     await patchAttemptAnswers(
       new Request(
         `http://localhost/api/attempts/${createPayload.attempt.attemptId}/answers`,
@@ -249,6 +238,7 @@ describe("TASK-002/003/004 attempts API", () => {
           headers: {
             "Content-Type": "application/json",
             [USER_HEADER]: "dev-user-a",
+            [ORG_HEADER]: "dev-organization",
           },
           body: JSON.stringify({
             answers: {
@@ -273,6 +263,7 @@ describe("TASK-002/003/004 attempts API", () => {
           headers: {
             "Content-Type": "application/json",
             [USER_HEADER]: "dev-user-a",
+            [ORG_HEADER]: "dev-organization",
           },
           body: JSON.stringify({
             idempotencyKey: `submit:${createPayload.attempt.attemptId}`,
@@ -304,6 +295,7 @@ describe("TASK-002/003/004 attempts API", () => {
           headers: {
             "Content-Type": "application/json",
             [USER_HEADER]: "dev-user-a",
+            [ORG_HEADER]: "dev-organization",
           },
           body: JSON.stringify({
             idempotencyKey: `submit:${createPayload.attempt.attemptId}`,
@@ -325,13 +317,14 @@ describe("TASK-002/003/004 attempts API", () => {
     expect(secondSubmitPayload.submittedAlready).toBe(true);
     expect(secondSubmitPayload.attempt.attemptId).toBe(firstSubmitPayload.attempt.attemptId);
 
-    const latestResponse = getAttempt(
+    const latestResponse = await getAttempt(
       new Request(
         `http://localhost/api/attempts/latest-local?examSlug=${EXAM_SLUG}`,
         {
           method: "GET",
           headers: {
             [USER_HEADER]: "dev-user-a",
+            [ORG_HEADER]: "dev-organization",
           },
         },
       ),
@@ -347,5 +340,72 @@ describe("TASK-002/003/004 attempts API", () => {
       attempt: AttemptPayload;
     };
     expect(latestPayload.attempt.attemptId).toBe(firstSubmitPayload.attempt.attemptId);
+  });
+
+  it("uses immutable attempt snapshots when source questions mutate before submit", async () => {
+    const createResponse = await createAttempt(
+      buildJsonRequest("http://localhost/api/attempts", {
+        examSlug: EXAM_SLUG,
+        mockId: MOCK_ID,
+      }),
+    );
+    const createPayload = (await createResponse.json()) as { attempt: AttemptPayload };
+    const firstQuestion = fakeExam.questions[0];
+
+    await patchAttemptAnswers(
+      new Request(`http://localhost/api/attempts/${createPayload.attempt.attemptId}/answers`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          [USER_HEADER]: "dev-user-a",
+          [ORG_HEADER]: "dev-organization",
+        },
+        body: JSON.stringify({
+          answers: { [firstQuestion.id]: firstQuestion.correctOptionId },
+          expectedVersion: createPayload.attempt.version,
+        }),
+      }),
+      { params: { attemptId: createPayload.attempt.attemptId } },
+    );
+
+    repository.mutateCorrectAnswer(firstQuestion.id, "A");
+
+    const response = await submitAttempt(
+      buildJsonRequest(`http://localhost/api/attempts/${createPayload.attempt.attemptId}/submit`, {
+        idempotencyKey: "snapshot-test",
+      }),
+      { params: { attemptId: createPayload.attempt.attemptId } },
+    );
+    const payload = (await response.json()) as { attempt: AttemptPayload };
+    expect(payload.attempt.score?.correctCount).toBe(1);
+  });
+
+  it("persists result fetches across route calls and blocks cross-user reads", async () => {
+    const createResponse = await createAttempt(
+      buildJsonRequest("http://localhost/api/attempts", { examSlug: EXAM_SLUG, mockId: MOCK_ID }),
+    );
+    const createPayload = (await createResponse.json()) as { attempt: AttemptPayload };
+    await submitAttempt(
+      buildJsonRequest(`http://localhost/api/attempts/${createPayload.attempt.attemptId}/submit`, {
+        idempotencyKey: "reload-test",
+      }),
+      { params: { attemptId: createPayload.attempt.attemptId } },
+    );
+
+    const reloadResponse = await getAttempt(
+      new Request(`http://localhost/api/attempts/${createPayload.attempt.attemptId}?examSlug=${EXAM_SLUG}`, {
+        headers: { [USER_HEADER]: "dev-user-a", [ORG_HEADER]: "dev-organization" },
+      }),
+      { params: { attemptId: createPayload.attempt.attemptId } },
+    );
+    expect(reloadResponse.status).toBe(200);
+
+    const forbiddenResponse = await getAttempt(
+      new Request(`http://localhost/api/attempts/${createPayload.attempt.attemptId}?examSlug=${EXAM_SLUG}`, {
+        headers: { [USER_HEADER]: "dev-user-b", [ORG_HEADER]: "dev-organization" },
+      }),
+      { params: { attemptId: createPayload.attempt.attemptId } },
+    );
+    expect(forbiddenResponse.status).toBe(404);
   });
 });

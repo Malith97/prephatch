@@ -40,7 +40,7 @@ function notFound(message: string) {
   return NextResponse.json(payload, { status: 404 });
 }
 
-export function GET(_: Request, context: PackageDetailRouteContext) {
+export async function GET(_: Request, context: PackageDetailRouteContext) {
   const requestedAt = new Date().toISOString();
   const incomingSlug = context.params.slug ?? "";
   const normalizedSlug = normalizePackageSlug(incomingSlug);
@@ -54,7 +54,7 @@ export function GET(_: Request, context: PackageDetailRouteContext) {
     );
   }
 
-  const packageRecord = getCatalogPackageBySlug(normalizedSlug);
+  const packageRecord = await getCatalogPackageBySlug(normalizedSlug);
   if (!packageRecord) {
     console.info(
       `[catalog-api] ts=${requestedAt} method=GET path=/api/packages/${normalizedSlug} result=not-found`,

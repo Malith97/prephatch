@@ -1,18 +1,35 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+import { getSupabasePublicKey } from "../../server/db/supabase-env";
 
-export const createClient = (request: NextRequest) => {
-  // Create an unmodified response
+function getSupabaseUrl(): string {
+  const value = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+
+  if (!value) {
+    throw new Error(
+      "Missing required environment variable: NEXT_PUBLIC_SUPABASE_URL. Please define it in .env.local.",
+    );
+  }
+
+  return value;
+}
+
+export type MiddlewareSupabaseAuthResult = {
+  response: NextResponse;
+  hasSession: boolean;
+};
+
+export const createClient = async (
+  request: NextRequest,
+): Promise<MiddlewareSupabaseAuthResult> => {
   let supabaseResponse = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
 
-  const supabase = createServerClient(supabaseUrl!, supabaseKey!, {
+  const supabase = createServerClient(getSupabaseUrl(), getSupabasePublicKey(), {
     cookies: {
       getAll() {
         return request.cookies.getAll();
@@ -29,8 +46,12 @@ export const createClient = (request: NextRequest) => {
     },
   });
 
-  // IMPORTANT: ensure session refresh logic runs.
-  void supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return supabaseResponse;
+  return {
+    response: supabaseResponse,
+    hasSession: Boolean(user),
+  };
 };

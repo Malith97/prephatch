@@ -5,9 +5,9 @@ import type { CatalogPackagesListResponse } from "../../../server/catalog/types"
 
 export const revalidate = 60;
 
-export function GET() {
+export async function GET() {
   const requestedAt = new Date().toISOString();
-  const packages = listCatalogPackages();
+  const packages = await listCatalogPackages();
 
   console.info(
     `[catalog-api] ts=${requestedAt} method=GET path=/api/packages result=ok count=${packages.length}`,

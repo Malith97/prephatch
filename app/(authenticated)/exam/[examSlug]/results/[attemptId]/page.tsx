@@ -8,10 +8,10 @@ type ExamAttemptResultsRouteProps = {
   };
 };
 
-export default function ExamAttemptResultsRoute({
+export default async function ExamAttemptResultsRoute({
   params,
 }: ExamAttemptResultsRouteProps) {
-  const exam = getExamBySlug(params.examSlug);
+  const exam = await getExamBySlug(params.examSlug, { includeAnswers: false });
 
   if (!exam) {
     return null;

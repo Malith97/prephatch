@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { resolveRequestUserId } from "../../../../lib/auth/request-user";
+import { resolveRequestUserContext } from "../../../../lib/auth/request-user";
 import { getAttempt } from "../../../../server/exams/attempt-service";
 
 type AttemptRouteContext = {
@@ -21,24 +21,46 @@ function unauthorizedResponse() {
   );
 }
 
-export function GET(request: Request, context: AttemptRouteContext) {
+export async function GET(request: Request, context: AttemptRouteContext) {
   const requestedAt = new Date().toISOString();
-  const userId = resolveRequestUserId(request);
-
-  if (!userId) {
+  const userContext = await resolveRequestUserContext(request);
+  if (!userContext) {
     console.info(
       `[attempt-api] ts=${requestedAt} method=GET path=/api/attempts/${context.params.attemptId} result=unauthorized`,
     );
     return unauthorizedResponse();
   }
 
+  const organizationId =
+    userContext.organizationId ??
+    (
+      userContext.source === "dev_bypass" ||
+      userContext.source === "header" ||
+      userContext.source === "cookie"
+        ? "dev-organization"
+        : null
+    );
+  if (!organizationId) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "invalid_context",
+          message: "organization_id is required for attempt operations.",
+        },
+      },
+      { status: 403 },
+    );
+  }
+
   const url = new URL(request.url);
   const examSlug = url.searchParams.get("examSlug") ?? undefined;
-  const result = getAttempt(userId, context.params.attemptId, examSlug);
+  const result = await getAttempt(userContext.userId, context.params.attemptId, examSlug, {
+    organizationId,
+  });
 
   if (!result.ok) {
     console.info(
-      `[attempt-api] ts=${requestedAt} method=GET path=/api/attempts/${context.params.attemptId} result=${result.code} user=${userId}`,
+      `[attempt-api] ts=${requestedAt} method=GET path=/api/attempts/${context.params.attemptId} result=${result.code} user=${userContext.userId} org=${organizationId}`,
     );
     return NextResponse.json(
       {
@@ -52,7 +74,7 @@ export function GET(request: Request, context: AttemptRouteContext) {
   }
 
   console.info(
-    `[attempt-api] ts=${requestedAt} method=GET path=/api/attempts/${context.params.attemptId} result=ok user=${userId}`,
+    `[attempt-api] ts=${requestedAt} method=GET path=/api/attempts/${context.params.attemptId} result=ok user=${userContext.userId} org=${organizationId}`,
   );
 
   return NextResponse.json({

@@ -49,6 +49,7 @@ async function parseError(response: Response): Promise<AttemptApiError> {
 }
 
 export async function createAttempt(input: {
+  examId?: string;
   examSlug: string;
   mockId?: string;
   idempotencyKey?: string;

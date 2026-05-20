@@ -47,6 +47,7 @@ describe("TASK-000a seed assets", () => {
     expect(seedScript).toContain("NODE_ENV");
     expect(seedScript).toContain("VERCEL_ENV");
     expect(seedScript).toContain("ALLOW_DEV_BYPASS");
-    expect(seedScript).toContain("supabase db query --file");
+    expect(seedScript).toContain("SUPABASE_CLI_PATH");
+    expect(seedScript).toContain("\"$SUPABASE_BIN\" db query --file");
   });
 });

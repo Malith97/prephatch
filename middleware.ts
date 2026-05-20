@@ -24,10 +24,6 @@ function buildLoginRedirectUrl(request: NextRequest): URL {
   return loginUrl;
 }
 
-function hasSessionCookie(request: NextRequest): boolean {
-  return Boolean(request.cookies.get("ph_session")?.value);
-}
-
 function normalizeSearch(search: string | undefined): string {
   if (!search || search.length === 0) {
     return "no-query";
@@ -89,14 +85,15 @@ export function evaluateMiddlewareAccess(
   };
 }
 
-export function middleware(request: NextRequest) {
-  const supabaseResponse = createSupabaseMiddlewareClient(request);
+export async function middleware(request: NextRequest) {
+  const { response: supabaseResponse, hasSession } =
+    await createSupabaseMiddlewareClient(request);
 
   const decision = evaluateMiddlewareAccess({
     pathname: request.nextUrl.pathname,
     method: request.method,
     search: request.nextUrl.search,
-    hasSession: hasSessionCookie(request),
+    hasSession,
   });
 
   if (decision.kind === "redirect") {

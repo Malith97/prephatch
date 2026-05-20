@@ -11,10 +11,10 @@ type ExamSessionRouteProps = {
   };
 };
 
-export default function ExamSessionRoute({
+export default async function ExamSessionRoute({
   params,
 }: ExamSessionRouteProps) {
-  const exam = getExamBySlug(params.examSlug);
+  const exam = await getExamBySlug(params.examSlug, { includeAnswers: false });
   const mock = getExamWorkspaceMock(params.examSlug, params.mockId);
 
   if (!exam || !mock) {

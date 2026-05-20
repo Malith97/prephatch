@@ -21,11 +21,30 @@ export function ExamOverviewPage({
   const exam = getMockExamWorkspace(examSlug);
 
   if (!exam) {
-    return null;
+    return (
+      <main className="space-y-5">
+        <section className="ph-surface rounded-[36px] p-6 sm:p-8">
+          <p className="ph-eyebrow">Certification unavailable</p>
+          <h1 className="mt-3 text-3xl font-semibold text-text-primary">
+            We could not load this certification workspace.
+          </h1>
+          <p className="mt-3 text-sm leading-7 text-text-secondary">
+            The certification may be unavailable for your account or the slug is invalid.
+          </p>
+          <Link
+            href="/dashboard/my-exams"
+            className="ph-btn ph-button-primary ph-hover-lift mt-5"
+          >
+            Back to my exams
+          </Link>
+        </section>
+      </main>
+    );
   }
 
   const recentResults = getCanonicalResults(exam);
   const recommendations = getRecommendations(exam);
+  const defaultSelectedMockId = exam.mockExams[0]?.id;
 
   return (
     <main className="space-y-5">
@@ -65,7 +84,17 @@ export function ExamOverviewPage({
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
-                href={`/exam/${exam.slug}/mock-exams`}
+                href="/dashboard"
+                className="ph-btn ph-button-secondary ph-hover-lift w-full sm:w-auto"
+              >
+                Back to dashboard
+              </Link>
+              <Link
+                href={
+                  defaultSelectedMockId
+                    ? `/exam/${exam.slug}/mock-exams?mock=${defaultSelectedMockId}`
+                    : `/exam/${exam.slug}/mock-exams`
+                }
                 className="ph-btn ph-button-primary ph-hover-lift w-full sm:w-auto"
               >
                 Open mock exams

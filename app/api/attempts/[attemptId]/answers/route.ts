@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { resolveRequestUserId } from "../../../../../lib/auth/request-user";
+import { resolveRequestUserContext } from "../../../../../lib/auth/request-user";
 import { autosaveAttempt } from "../../../../../server/exams/attempt-service";
 import type { AutosaveAttemptRequest } from "../../../../../server/exams/attempt-types";
 
@@ -27,13 +27,34 @@ export async function PATCH(
   context: AttemptAnswersRouteContext,
 ) {
   const requestedAt = new Date().toISOString();
-  const userId = resolveRequestUserId(request);
+  const userContext = await resolveRequestUserContext(request);
 
-  if (!userId) {
+  if (!userContext) {
     console.info(
       `[attempt-api] ts=${requestedAt} method=PATCH path=/api/attempts/${context.params.attemptId}/answers result=unauthorized`,
     );
     return unauthorizedResponse();
+  }
+
+  const organizationId =
+    userContext.organizationId ??
+    (
+      userContext.source === "dev_bypass" ||
+      userContext.source === "header" ||
+      userContext.source === "cookie"
+        ? "dev-organization"
+        : null
+    );
+  if (!organizationId) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "invalid_context",
+          message: "organization_id is required for attempt operations.",
+        },
+      },
+      { status: 403 },
+    );
   }
 
   let payload: AutosaveAttemptRequest;
@@ -51,11 +72,18 @@ export async function PATCH(
     );
   }
 
-  const result = autosaveAttempt(userId, context.params.attemptId, payload ?? {});
+  const result = await autosaveAttempt(
+    userContext.userId,
+    context.params.attemptId,
+    payload ?? {},
+    {
+      organizationId,
+    },
+  );
 
   if (!result.ok) {
     console.info(
-      `[attempt-api] ts=${requestedAt} method=PATCH path=/api/attempts/${context.params.attemptId}/answers result=${result.code} user=${userId}`,
+      `[attempt-api] ts=${requestedAt} method=PATCH path=/api/attempts/${context.params.attemptId}/answers result=${result.code} user=${userContext.userId}`,
     );
     return NextResponse.json(
       {
@@ -70,7 +98,7 @@ export async function PATCH(
   }
 
   console.info(
-    `[attempt-api] ts=${requestedAt} method=PATCH path=/api/attempts/${context.params.attemptId}/answers result=ok user=${userId} version=${result.value.attempt.version}`,
+    `[attempt-api] ts=${requestedAt} method=PATCH path=/api/attempts/${context.params.attemptId}/answers result=ok user=${userContext.userId} version=${result.value.attempt.version}`,
   );
 
   return NextResponse.json(result.value);

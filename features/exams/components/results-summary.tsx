@@ -248,8 +248,11 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
   }
 
   const { attempt, score } = resultsState;
+  const reviewExam = attempt.reviewQuestions?.length
+    ? { ...exam, questions: attempt.reviewQuestions }
+    : exam;
   const readinessState = getReadinessState(score.percentageScore);
-  const topicBreakdown = buildTopicBreakdown(exam, score);
+  const topicBreakdown = buildTopicBreakdown(reviewExam, score);
   const weakAreas = topicBreakdown.filter((topic) => topic.percentageScore < 80);
   const effectiveWeakAreas =
     weakAreas.length > 0 ? weakAreas.slice(0, 3) : topicBreakdown.slice(0, 1);
@@ -281,7 +284,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <span className="ph-badge ph-badge-secondary">
-                {exam.certificationCode}
+                {reviewExam.certificationCode}
               </span>
               <span
                 className={`ph-badge ${readinessState.tone}`}
@@ -292,7 +295,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
 
             <div className="mt-6 space-y-4">
               <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-text-primary sm:text-5xl">
-                {exam.title} review
+                {reviewExam.title} review
               </h1>
               <p className="max-w-3xl text-base leading-8 text-text-secondary sm:text-lg">
                 {readinessState.message}
@@ -464,7 +467,7 @@ export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
             title="Question-by-question review of the submitted attempt."
           />
           <div className="mt-6 space-y-4">
-            {exam.questions.map((question, index) => {
+            {reviewExam.questions.map((question, index) => {
               const questionResult = getQuestionResult(score, question.id);
               const wasFlagged = (attempt.flaggedQuestionIds ?? []).includes(question.id);
 
