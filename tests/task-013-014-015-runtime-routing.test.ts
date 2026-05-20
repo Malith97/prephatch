@@ -5,8 +5,11 @@ import { POST as submitAttempt } from "../app/api/attempts/[attemptId]/submit/ro
 import { POST as createAttempt } from "../app/api/attempts/route";
 import LegacyExamDetailRoute from "../app/exams/[examSlug]/page";
 import { clearAttemptStore } from "../server/exams/attempt-service";
+import { setAttemptsRepositoryForTests } from "../server/exams/db-repository";
+import { FakeAttemptsRepository, fakeExam } from "./helpers/fake-attempts-repository";
 
 const USER_HEADER = "x-prephatch-user-id";
+const ORG_HEADER = "x-prephatch-organization-id";
 
 function buildCreateRequest() {
   return new Request("http://localhost/api/attempts", {
@@ -14,14 +17,16 @@ function buildCreateRequest() {
     headers: {
       "Content-Type": "application/json",
       [USER_HEADER]: "dev-user-a",
+      [ORG_HEADER]: "dev-organization",
     },
-    body: JSON.stringify({ examSlug: "aws-saa-c03", mockId: "free-mock-1" }),
+    body: JSON.stringify({ examSlug: "aws-saa-c03", mockId: "mock-version-free" }),
   });
 }
 
 describe("TASK-013/014/015 runtime and routing", () => {
-  beforeEach(() => {
-    clearAttemptStore();
+  beforeEach(async () => {
+    setAttemptsRepositoryForTests(new FakeAttemptsRepository());
+    await clearAttemptStore();
     vi.restoreAllMocks();
   });
 
@@ -43,9 +48,10 @@ describe("TASK-013/014/015 runtime and routing", () => {
         headers: {
           "Content-Type": "application/json",
           [USER_HEADER]: "dev-user-a",
+      [ORG_HEADER]: "dev-organization",
         },
         body: JSON.stringify({
-          answers: { q1: "a" },
+          answers: { [fakeExam.questions[0].id]: fakeExam.questions[0].options[0].id },
           expectedVersion: createdPayload.attempt.version,
         }),
       }),
@@ -66,6 +72,7 @@ describe("TASK-013/014/015 runtime and routing", () => {
         headers: {
           "Content-Type": "application/json",
           [USER_HEADER]: "dev-user-a",
+      [ORG_HEADER]: "dev-organization",
         },
         body: JSON.stringify({ idempotencyKey: "submit:test" }),
       }),

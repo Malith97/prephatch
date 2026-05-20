@@ -22,6 +22,8 @@ export type PracticeQuestionSet = {
   title: string;
   description: string;
   questionCount: number;
+  estimatedMinutes: number;
+  ctaLabel: string;
   ctaHref: string;
 };
 
@@ -98,7 +100,9 @@ export function getPracticeQuestionSets(
     title: `Practice set ${index + 1}`,
     description: focusArea,
     questionCount: 12 + index * 4,
-    ctaHref: `/exam/${exam.slug}/mock-exams`,
+    estimatedMinutes: 8 + index * 4,
+    ctaLabel: "Open practice set",
+    ctaHref: `/exam/${exam.slug}/practice-questions?set=${exam.slug}-practice-${index + 1}`,
   }));
 }
 

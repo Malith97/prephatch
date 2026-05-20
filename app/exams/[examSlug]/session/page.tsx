@@ -9,8 +9,8 @@ type SessionPageProps = {
   };
 };
 
-export default function SessionPage({ params }: SessionPageProps) {
-  const exam = getExamBySlug(params.examSlug);
+export default async function SessionPage({ params }: SessionPageProps) {
+  const exam = await getExamBySlug(params.examSlug, { includeAnswers: false });
   const defaultMock = getDefaultLiveMock(params.examSlug);
 
   if (!exam) {

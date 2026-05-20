@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { resolveRequestUserId } from "../../../../../lib/auth/request-user";
+import { resolveRequestUserContext } from "../../../../../lib/auth/request-user";
 import { submitAttempt } from "../../../../../server/exams/attempt-service";
 import type { SubmitAttemptRequest } from "../../../../../server/exams/attempt-types";
 
@@ -27,13 +27,34 @@ export async function POST(
   context: AttemptSubmitRouteContext,
 ) {
   const requestedAt = new Date().toISOString();
-  const userId = resolveRequestUserId(request);
+  const userContext = await resolveRequestUserContext(request);
 
-  if (!userId) {
+  if (!userContext) {
     console.info(
       `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts/${context.params.attemptId}/submit result=unauthorized`,
     );
     return unauthorizedResponse();
+  }
+
+  const organizationId =
+    userContext.organizationId ??
+    (
+      userContext.source === "dev_bypass" ||
+      userContext.source === "header" ||
+      userContext.source === "cookie"
+        ? "dev-organization"
+        : null
+    );
+  if (!organizationId) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "invalid_context",
+          message: "organization_id is required for attempt operations.",
+        },
+      },
+      { status: 403 },
+    );
   }
 
   let payload: SubmitAttemptRequest = {};
@@ -44,11 +65,13 @@ export async function POST(
     payload = {};
   }
 
-  const result = submitAttempt(userId, context.params.attemptId, payload);
+  const result = await submitAttempt(userContext.userId, context.params.attemptId, payload, {
+    organizationId,
+  });
 
   if (!result.ok) {
     console.info(
-      `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts/${context.params.attemptId}/submit result=${result.code} user=${userId}`,
+      `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts/${context.params.attemptId}/submit result=${result.code} user=${userContext.userId}`,
     );
     return NextResponse.json(
       {
@@ -63,7 +86,7 @@ export async function POST(
   }
 
   console.info(
-    `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts/${context.params.attemptId}/submit result=ok user=${userId} submittedAlready=${result.value.submittedAlready}`,
+    `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts/${context.params.attemptId}/submit result=ok user=${userContext.userId} submittedAlready=${result.value.submittedAlready}`,
   );
 
   return NextResponse.json(result.value);

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { resolveRequestUserId } from "../../../lib/auth/request-user";
+import { resolveRequestUserContext } from "../../../lib/auth/request-user";
 import {
   createOrResumeAttempt,
 } from "../../../server/exams/attempt-service";
@@ -20,9 +20,9 @@ function unauthorizedResponse() {
 
 export async function POST(request: Request) {
   const requestedAt = new Date().toISOString();
-  const userId = resolveRequestUserId(request);
+  const userContext = await resolveRequestUserContext(request);
 
-  if (!userId) {
+  if (!userContext) {
     console.info(
       `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts result=unauthorized`,
     );
@@ -44,30 +44,50 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!payload || typeof payload.examSlug !== "string" || !payload.examSlug.trim()) {
+    const organizationId =
+    userContext.organizationId ??
+    (
+      userContext.source === "dev_bypass" ||
+      userContext.source === "header" ||
+      userContext.source === "cookie"
+        ? "dev-organization"
+        : null
+    );
+  // Tenant guard: attempt creation requires explicit organization context.
+  if (!organizationId) {
     return NextResponse.json(
       {
         error: {
-          code: "invalid_payload",
-          message: "examSlug is required.",
+          code: "invalid_context",
+          message: "organization_id is required for attempt operations.",
         },
       },
-      { status: 400 },
+      { status: 403 },
     );
   }
 
-  const result = createOrResumeAttempt(userId, {
-    examSlug: payload.examSlug.trim(),
-    mockId: payload.mockId,
-    idempotencyKey:
-      typeof payload.idempotencyKey === "string"
-        ? payload.idempotencyKey
-        : undefined,
-  });
+  const result = await createOrResumeAttempt(
+    userContext.userId,
+    {
+      examSlug: typeof payload.examSlug === "string" ? payload.examSlug.trim() : undefined,
+      slug: typeof payload.slug === "string" ? payload.slug.trim() : undefined,
+      mock_exam_id: typeof payload.mock_exam_id === "string" ? payload.mock_exam_id.trim() : undefined,
+      examId: payload.examId,
+      organizationId,
+      mockId: payload.mockId,
+      idempotencyKey:
+        typeof payload.idempotencyKey === "string"
+          ? payload.idempotencyKey
+          : undefined,
+    },
+    {
+      organizationId,
+    },
+  );
 
   if (!result.ok) {
     console.info(
-      `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts result=${result.code} user=${userId}`,
+      `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts result=${result.code} user=${userContext.userId} org=${organizationId}`,
     );
     return NextResponse.json(
       {
@@ -82,7 +102,7 @@ export async function POST(request: Request) {
   }
 
   console.info(
-    `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts result=ok user=${userId} attemptId=${result.value.attempt.attemptId} resumed=${result.value.resumed}`,
+    `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts result=ok user=${userContext.userId} org=${organizationId} attemptId=${result.value.attempt.attemptId} resumed=${result.value.resumed}`,
   );
 
   return NextResponse.json(result.value);

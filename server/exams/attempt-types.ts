@@ -23,6 +23,7 @@ export type AttemptScore = ScorePreview & {
 export type ExamAttemptRecord = {
   attemptId: string;
   ownerUserId: string;
+  organizationId: string;
   examId: string;
   examSlug: string;
   mockId: string;
@@ -49,6 +50,7 @@ export type ExamAttemptRecord = {
 
 export type PublicExamAttempt = {
   attemptId: string;
+  organizationId: string;
   examId: string;
   examSlug: string;
   mockId: string;
@@ -62,10 +64,15 @@ export type PublicExamAttempt = {
   updatedAt: number;
   submittedAt?: number;
   score?: AttemptScore;
+  reviewQuestions?: import("./types").Question[];
 };
 
 export type CreateAttemptRequest = {
-  examSlug: string;
+  examSlug?: string;
+  slug?: string;
+  mock_exam_id?: string;
+  examId?: string;
+  organizationId?: string;
   mockId?: string;
   idempotencyKey?: string;
 };

@@ -1,17 +1,21 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import type { AppSessionUser } from "../../../lib/auth/app-session";
 import { AuthenticatedShell } from "./authenticated-shell";
-import { platformNavigationItems } from "../navigation";
+import { getPlatformNavigationItems } from "../navigation";
 
 export function PlatformShell({
   children,
+  sessionUser,
 }: Readonly<{
   children: ReactNode;
+  sessionUser: AppSessionUser;
 }>) {
   return (
     <AuthenticatedShell
-      navigationItems={platformNavigationItems}
+      sessionUser={sessionUser}
+      navigationItems={getPlatformNavigationItems(sessionUser.role)}
       headerEyebrow="Platform dashboard"
       headerTitle="Switch between owned certifications, new packages, and account-level actions."
       headerDescription="This layer owns cross-exam orientation, purchase flows, billing, and learner account surfaces."

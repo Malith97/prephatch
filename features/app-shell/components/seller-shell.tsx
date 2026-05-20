@@ -1,17 +1,21 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import type { AppSessionUser } from "../../../lib/auth/app-session";
 import { AuthenticatedShell } from "./authenticated-shell";
-import { sellerNavigationItems } from "../navigation";
+import { getSellerNavigationItems } from "../navigation";
 
 export function SellerShell({
   children,
+  sessionUser,
 }: Readonly<{
   children: ReactNode;
+  sessionUser: AppSessionUser;
 }>) {
   return (
     <AuthenticatedShell
-      navigationItems={sellerNavigationItems}
+      sessionUser={sessionUser}
+      navigationItems={getSellerNavigationItems(sessionUser.role)}
       headerEyebrow="Seller studio"
       headerTitle="Operate your course business across content quality, learner outcomes, and income."
       headerDescription="This workspace owns instructor-side operations: courses, questions, mocks, student performance, analytics, and payouts."

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 
 import { ExamLogoBadge } from "../../../components/exam-logo-badge";
+import type { AppSessionUser } from "../../../lib/auth/app-session";
 import { AuthenticatedShell } from "./authenticated-shell";
 import { getExamNavigationItems } from "../navigation";
 import { getMockExamWorkspace } from "../../exams/mock-exam-workspace";
@@ -10,9 +11,10 @@ import { getMockExamWorkspace } from "../../exams/mock-exam-workspace";
 type ExamShellProps = {
   children: ReactNode;
   examSlug: string;
+  sessionUser: AppSessionUser;
 };
 
-export function ExamShell({ children, examSlug }: Readonly<ExamShellProps>) {
+export function ExamShell({ children, examSlug, sessionUser }: Readonly<ExamShellProps>) {
   const exam = getMockExamWorkspace(examSlug);
 
   if (!exam) {
@@ -21,7 +23,8 @@ export function ExamShell({ children, examSlug }: Readonly<ExamShellProps>) {
 
   return (
     <AuthenticatedShell
-      navigationItems={getExamNavigationItems(exam.slug)}
+      sessionUser={sessionUser}
+      navigationItems={getExamNavigationItems(exam.slug, sessionUser.role)}
       headerEyebrow="Exam workspace"
       headerTitle={`${exam.title} workspace`}
       headerDescription="This layer owns one certification only: mocks, analytics, weak areas, notes, cheatsheets, tips, and recommendations."

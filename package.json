@@ -12,7 +12,9 @@
     "lint": "./scripts/use-project-node.sh next lint",
     "seed:dev": "./scripts/seed-dev-data.sh",
     "test": "./scripts/use-project-node.sh vitest run",
-    "typecheck": "./scripts/use-project-node.sh tsc --noEmit"
+    "typecheck": "./scripts/use-project-node.sh tsc --noEmit",
+    "free-mock:hosted": "./scripts/use-project-node.sh node scripts/free-mock-flow.mjs",
+    "test:free-mock-flow": "./scripts/use-project-node.sh node scripts/free-mock-flow.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.2",

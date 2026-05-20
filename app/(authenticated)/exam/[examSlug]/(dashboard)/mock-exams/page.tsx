@@ -4,10 +4,19 @@ type ExamMockExamsRouteProps = {
   params: {
     examSlug: string;
   };
+  searchParams?: {
+    mock?: string;
+  };
 };
 
 export default function ExamMockExamsRoute({
   params,
+  searchParams,
 }: ExamMockExamsRouteProps) {
-  return <ExamMockExamsPage examSlug={params.examSlug} />;
+  const selectedMockId =
+    typeof searchParams?.mock === "string" && searchParams.mock.trim().length > 0
+      ? searchParams.mock
+      : undefined;
+
+  return <ExamMockExamsPage examSlug={params.examSlug} selectedMockId={selectedMockId} />;
 }

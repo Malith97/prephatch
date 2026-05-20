@@ -1,4 +1,3 @@
-import { PlatformShell } from "../../app-shell/components/platform-shell";
 import { listMockExamCatalog } from "../mock-exam-catalog";
 import { ExamCard } from "./exam-card";
 
@@ -12,7 +11,7 @@ export function BrowseExamsPage() {
   const exams = listMockExamCatalog();
 
   return (
-    <PlatformShell>
+    <div className="space-y-5">
       <main className="space-y-5">
         <section className="ph-surface rounded-[36px] p-6 sm:p-8">
           <div className="ph-badge ph-badge-primary">
@@ -66,6 +65,6 @@ export function BrowseExamsPage() {
           </div>
         </section>
       </main>
-    </PlatformShell>
+    </div>
   );
 }

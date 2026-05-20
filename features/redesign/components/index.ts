@@ -9,6 +9,7 @@ export { Card } from "./ui/card";
 export { Modal } from "./ui/modal";
 export { Spinner } from "./ui/spinner";
 export { Alert } from "./ui/alert";
+export { SkeletonBlock } from "./ui/skeleton";
 
 export { LandingHero } from "./public/landing-hero";
 export { FeaturesGrid } from "./public/features-grid";
@@ -19,10 +20,12 @@ export { Footer } from "./public/footer";
 export { AuthWrapper } from "./auth/auth-wrapper";
 export { LoginForm } from "./auth/login-form";
 export { SignupForm } from "./auth/signup-form";
+export { OnboardingForm } from "./auth/onboarding-form";
 
 export { PackageCard } from "./marketplace/package-card";
 export { PackageList, PackageListSkeleton } from "./marketplace/package-list";
 export { FilterPanel } from "./marketplace/filter-panel";
+export { PackageDetail } from "./marketplace/package-detail";
 
 export { DashboardOverview, DashboardOverviewSkeleton } from "./dashboard/dashboard-overview";
 export { MetricCards } from "./dashboard/metric-cards";

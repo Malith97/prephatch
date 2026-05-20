@@ -54,6 +54,7 @@ export type QuestionResult = {
   selectedOptionId: string | null;
   correctOptionId: string;
   isCorrect: boolean;
+  topicLabel?: string;
 };
 
 export type ScorePreview = {

@@ -45,19 +45,20 @@ export async function GET(request: Request) {
     return unauthorizedResponse();
   }
 
-  const attempts = listAttemptsForOwner(userId);
+  const attempts = await listAttemptsForOwner(userId);
   const submitted = attempts.filter((attempt) => attempt.status === "submitted" && attempt.score);
   const scored = submitted.map((attempt) => attempt.score!.percentageScore);
 
   const weakAreasMap = new Map<string, { correct: number; total: number }>();
   for (const attempt of submitted) {
     for (const result of attempt.score!.questionResults) {
-      const existing = weakAreasMap.get(result.topicLabel) ?? { correct: 0, total: 0 };
+      const topicLabel = result.topicLabel ?? "Unknown topic";
+      const existing = weakAreasMap.get(topicLabel) ?? { correct: 0, total: 0 };
       existing.total += 1;
       if (result.isCorrect) {
         existing.correct += 1;
       }
-      weakAreasMap.set(result.topicLabel, existing);
+      weakAreasMap.set(topicLabel, existing);
     }
   }
 

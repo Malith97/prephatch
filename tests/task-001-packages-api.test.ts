@@ -3,14 +3,17 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { GET as getPackageDetail } from "../app/api/packages/[slug]/route";
 import { GET as getPackageList } from "../app/api/packages/route";
 import { clearCatalogRepositoryCache } from "../server/catalog/repository";
+import { setAttemptsRepositoryForTests } from "../server/exams/db-repository";
+import { FakeAttemptsRepository } from "./helpers/fake-attempts-repository";
 
 describe("TASK-001 package catalog API", () => {
   beforeEach(() => {
+    setAttemptsRepositoryForTests(new FakeAttemptsRepository());
     clearCatalogRepositoryCache();
   });
 
   it("returns package catalog list from GET /api/packages", async () => {
-    const response = getPackageList();
+    const response = await getPackageList();
     expect(response.status).toBe(200);
 
     const payload = (await response.json()) as {
@@ -26,7 +29,7 @@ describe("TASK-001 package catalog API", () => {
   });
 
   it("returns package detail from GET /api/packages/:slug", async () => {
-    const response = getPackageDetail(new Request("http://localhost/api/packages/aws-saa-c03"), {
+    const response = await getPackageDetail(new Request("http://localhost/api/packages/aws-saa-c03"), {
       params: {
         slug: "aws-saa-c03",
       },
@@ -46,7 +49,7 @@ describe("TASK-001 package catalog API", () => {
   });
 
   it("rejects invalid slug format with 400", async () => {
-    const response = getPackageDetail(
+    const response = await getPackageDetail(
       new Request("http://localhost/api/packages/Bad_Slug"),
       {
         params: {
@@ -65,7 +68,7 @@ describe("TASK-001 package catalog API", () => {
   });
 
   it("returns 404 for unknown package slug", async () => {
-    const response = getPackageDetail(
+    const response = await getPackageDetail(
       new Request("http://localhost/api/packages/does-not-exist"),
       {
         params: {

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { BrandMark } from "../../../components/brand-mark";
-import { mockSession } from "../mock-session";
+import { formatRoleLabel, type AppSessionUser } from "../../../lib/auth/app-session";
 import { AppNavigation, type NavigationItem } from "./app-navigation";
 
 export function AuthenticatedShell({
@@ -13,6 +13,7 @@ export function AuthenticatedShell({
   headerTitle,
   headerDescription,
   headerActions,
+  sessionUser,
 }: Readonly<{
   children: ReactNode;
   navigationItems: NavigationItem[];
@@ -21,6 +22,7 @@ export function AuthenticatedShell({
   headerTitle: string;
   headerDescription: string;
   headerActions?: ReactNode;
+  sessionUser: AppSessionUser;
 }>) {
   return (
     <div className="relative min-h-screen overflow-hidden px-4 py-4 sm:px-6 sm:py-6 xl:px-8">
@@ -39,13 +41,17 @@ export function AuthenticatedShell({
           </div>
 
           <div className="mt-auto rounded-2xl border border-border/70 bg-bg/35 p-5 shadow-subtle">
-            <p className="text-sm font-semibold text-text-primary">{mockSession.name}</p>
-            <p className="mt-1 text-sm text-text-secondary">{mockSession.email}</p>
+            <p className="text-sm font-semibold text-text-primary">{sessionUser.email}</p>
+            <p className="mt-1 text-sm text-text-secondary">{sessionUser.userId}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="ph-badge ph-badge-accent">{mockSession.accessLabel}</span>
-              <span className="ph-badge ph-badge-neutral">{mockSession.planLabel}</span>
+              <span className="ph-badge ph-badge-accent">{formatRoleLabel(sessionUser.role)}</span>
+              <span className="ph-badge ph-badge-neutral">{sessionUser.membershipStatus}</span>
             </div>
-            <p className="mt-4 text-xs uppercase tracking-[0.16em] text-text-secondary/65">{mockSession.renewalDateLabel}</p>
+            {sessionUser.organizationId ? (
+              <p className="mt-4 break-all text-xs uppercase tracking-[0.16em] text-text-secondary/65">
+                Org {sessionUser.organizationId}
+              </p>
+            ) : null}
             <Link href="/login" className="ph-btn ph-btn-sm ph-button-secondary ph-hover-lift mt-5 w-fit">
               Return to login preview
             </Link>
