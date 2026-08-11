@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { resolveDevBypassOrganizationId } from "../../../../../lib/auth/dev-bypass-identity";
 import { resolveRequestUserContext } from "../../../../../lib/auth/request-user";
 import { autosaveAttempt } from "../../../../../server/exams/attempt-service";
 import type { AutosaveAttemptRequest } from "../../../../../server/exams/attempt-types";
@@ -42,7 +43,7 @@ export async function PATCH(
       userContext.source === "dev_bypass" ||
       userContext.source === "header" ||
       userContext.source === "cookie"
-        ? "dev-organization"
+        ? resolveDevBypassOrganizationId()
         : null
     );
   if (!organizationId) {
@@ -83,7 +84,7 @@ export async function PATCH(
 
   if (!result.ok) {
     console.info(
-      `[attempt-api] ts=${requestedAt} method=PATCH path=/api/attempts/${context.params.attemptId}/answers result=${result.code} user=${userContext.userId}`,
+      `[attempt-api] ts=${requestedAt} method=PATCH path=/api/attempts/${context.params.attemptId}/answers result=${result.code} user=${userContext.userId} org=${organizationId}`,
     );
     return NextResponse.json(
       {
@@ -98,7 +99,7 @@ export async function PATCH(
   }
 
   console.info(
-    `[attempt-api] ts=${requestedAt} method=PATCH path=/api/attempts/${context.params.attemptId}/answers result=ok user=${userContext.userId} version=${result.value.attempt.version}`,
+    `[attempt-api] ts=${requestedAt} method=PATCH path=/api/attempts/${context.params.attemptId}/answers result=ok user=${userContext.userId} org=${organizationId} version=${result.value.attempt.version}`,
   );
 
   return NextResponse.json(result.value);

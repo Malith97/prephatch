@@ -9,7 +9,7 @@ type ExamMockExamsRouteProps = {
   };
 };
 
-export default function ExamMockExamsRoute({
+export default async function ExamMockExamsRoute({
   params,
   searchParams,
 }: ExamMockExamsRouteProps) {
@@ -18,5 +18,5 @@ export default function ExamMockExamsRoute({
       ? searchParams.mock
       : undefined;
 
-  return <ExamMockExamsPage examSlug={params.examSlug} selectedMockId={selectedMockId} />;
+  return ExamMockExamsPage({ examSlug: params.examSlug, selectedMockId });
 }

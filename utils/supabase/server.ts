@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 
 import { getSupabasePublicKey } from "../../server/db/supabase-env";
+import { nodeRealtimeOptions } from "../../server/db/supabase-realtime";
 
 function getSupabaseUrl(): string {
   const value = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
@@ -25,7 +26,13 @@ export const createClient = (cookieStore: SupabaseCookieStore) => {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(
+        cookiesToSet: Array<{
+          name: string;
+          value: string;
+          options?: Record<string, unknown>;
+        }>,
+      ) {
         try {
           cookiesToSet.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, options),
@@ -36,5 +43,6 @@ export const createClient = (cookieStore: SupabaseCookieStore) => {
         }
       },
     },
+    realtime: nodeRealtimeOptions,
   });
 };

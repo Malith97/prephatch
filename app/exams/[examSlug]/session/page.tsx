@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { getDefaultLiveMock } from "../../../../features/exams/mock-exam-workspace";
 import { getExamBySlug } from "../../../../server/exams/mock-repository";
+import type { MockExam } from "../../../../server/exams/types";
 
 type SessionPageProps = {
   params: {
@@ -11,7 +11,6 @@ type SessionPageProps = {
 
 export default async function SessionPage({ params }: SessionPageProps) {
   const exam = await getExamBySlug(params.examSlug, { includeAnswers: false });
-  const defaultMock = getDefaultLiveMock(params.examSlug);
 
   if (!exam) {
     return (
@@ -32,9 +31,8 @@ export default async function SessionPage({ params }: SessionPageProps) {
     );
   }
 
-  const destination = defaultMock
-    ? `/exam/${params.examSlug}/session/${defaultMock.id}`
-    : `/exam/${params.examSlug}/mock-exams`;
+  const runtimeExam = exam as MockExam & { examVersionId?: string };
+  const destination = `/exam/${params.examSlug}/session/${runtimeExam.examVersionId ?? exam.slug}`;
   console.info(
     `[routing] legacy_redirect from=/exams/${params.examSlug}/session to=${destination}`,
   );

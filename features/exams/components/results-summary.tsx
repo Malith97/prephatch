@@ -11,7 +11,6 @@ import type {
   QuestionResult,
   ScorePreview,
 } from "../../../server/exams/types";
-import { getDefaultLiveMockHref } from "../mock-exam-workspace";
 import { AiExplanationPanel } from "./ai-explanation-panel";
 import { ExamSectionHeading } from "./exam-section-heading";
 
@@ -160,7 +159,8 @@ function buildRecommendedActions(
 
 export function ResultsSummary({ exam, attemptId }: ResultsSummaryProps) {
   const [resultsState, setResultsState] = useState<ResultsState>(undefined);
-  const defaultMockHref = getDefaultLiveMockHref(exam.slug);
+  const runtimeExam = exam as MockExam & { examVersionId?: string };
+  const defaultMockHref = `/exam/${exam.slug}/session/${runtimeExam.examVersionId ?? exam.slug}`;
   const examPageHref = `/exams/${exam.slug}`;
 
   useEffect(() => {

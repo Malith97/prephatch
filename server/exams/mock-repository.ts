@@ -1,18 +1,16 @@
 import { getAttemptsRepository } from "./db-repository";
 import type { ExamSummary, MockExam } from "./types";
+import { resolveDevBypassOrganizationId } from "../../lib/auth/dev-bypass-identity";
 
 type GetExamOptions = {
   organizationId?: string | null;
   includeAnswers?: boolean;
 };
 
-const DEFAULT_DEV_ORG_ID = "22222222-2222-4222-8222-222222222222";
-
 function resolveOrganizationId(options?: GetExamOptions): string {
   return (
     options?.organizationId?.trim() ||
-    process.env.DEV_BYPASS_ORGANIZATION_ID?.trim() ||
-    DEFAULT_DEV_ORG_ID
+    resolveDevBypassOrganizationId()
   );
 }
 

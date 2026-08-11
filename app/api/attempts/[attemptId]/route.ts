@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { resolveDevBypassOrganizationId } from "../../../../lib/auth/dev-bypass-identity";
 import { resolveRequestUserContext } from "../../../../lib/auth/request-user";
 import { getAttempt } from "../../../../server/exams/attempt-service";
 
@@ -37,7 +38,7 @@ export async function GET(request: Request, context: AttemptRouteContext) {
       userContext.source === "dev_bypass" ||
       userContext.source === "header" ||
       userContext.source === "cookie"
-        ? "dev-organization"
+        ? resolveDevBypassOrganizationId()
         : null
     );
   if (!organizationId) {
@@ -60,7 +61,7 @@ export async function GET(request: Request, context: AttemptRouteContext) {
 
   if (!result.ok) {
     console.info(
-      `[attempt-api] ts=${requestedAt} method=GET path=/api/attempts/${context.params.attemptId} result=${result.code} user=${userContext.userId} org=${organizationId}`,
+      `[attempt-api] ts=${requestedAt} method=GET path=/api/attempts/${context.params.attemptId} result=${result.code} user=${userContext.userId} org=${organizationId} examSlug=${examSlug ?? ""}`,
     );
     return NextResponse.json(
       {
@@ -74,7 +75,7 @@ export async function GET(request: Request, context: AttemptRouteContext) {
   }
 
   console.info(
-    `[attempt-api] ts=${requestedAt} method=GET path=/api/attempts/${context.params.attemptId} result=ok user=${userContext.userId} org=${organizationId}`,
+    `[attempt-api] ts=${requestedAt} method=GET path=/api/attempts/${context.params.attemptId} result=ok user=${userContext.userId} org=${organizationId} examSlug=${examSlug ?? ""}`,
   );
 
   return NextResponse.json({

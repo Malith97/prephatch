@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { resolveDevBypassOrganizationId } from "../../../../../lib/auth/dev-bypass-identity";
 import { resolveRequestUserContext } from "../../../../../lib/auth/request-user";
 import { submitAttempt } from "../../../../../server/exams/attempt-service";
 import type { SubmitAttemptRequest } from "../../../../../server/exams/attempt-types";
@@ -42,7 +43,7 @@ export async function POST(
       userContext.source === "dev_bypass" ||
       userContext.source === "header" ||
       userContext.source === "cookie"
-        ? "dev-organization"
+        ? resolveDevBypassOrganizationId()
         : null
     );
   if (!organizationId) {
@@ -71,7 +72,7 @@ export async function POST(
 
   if (!result.ok) {
     console.info(
-      `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts/${context.params.attemptId}/submit result=${result.code} user=${userContext.userId}`,
+      `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts/${context.params.attemptId}/submit result=${result.code} user=${userContext.userId} org=${organizationId}`,
     );
     return NextResponse.json(
       {
@@ -86,7 +87,7 @@ export async function POST(
   }
 
   console.info(
-    `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts/${context.params.attemptId}/submit result=ok user=${userContext.userId} submittedAlready=${result.value.submittedAlready}`,
+    `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts/${context.params.attemptId}/submit result=ok user=${userContext.userId} org=${organizationId} submittedAlready=${result.value.submittedAlready}`,
   );
 
   return NextResponse.json(result.value);

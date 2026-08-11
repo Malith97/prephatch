@@ -164,6 +164,21 @@ function normalizeTier(value: unknown): "free" | "premium" | "unknown" {
   return value === "free" || value === "premium" ? value : "unknown";
 }
 
+function hasFreeMetadata(metadata: JsonRecord): boolean {
+  return metadata.free === true || metadata.free === "true" || metadata.tier === "free";
+}
+
+function resolveMetadataTier(...metadataRecords: JsonRecord[]): "free" | "premium" | "unknown" {
+  for (const metadata of metadataRecords) {
+    const tier = normalizeTier(metadata.tier);
+    if (tier !== "unknown") {
+      return tier;
+    }
+  }
+
+  return metadataRecords.some(hasFreeMetadata) ? "free" : "unknown";
+}
+
 function normalizeOption(option: unknown): QuestionOption | null {
   const record = asRecord(option);
   const id = asString(record.id);
@@ -321,8 +336,74 @@ function buildTopicBreakdown(score: AttemptScore): JsonRecord {
   };
 }
 
-async function assertNoError<T>(result: { data: T; error: { message: string } | null }): Promise<T> {
+function normalizeQuestionResult(value: unknown): AttemptScore["questionResults"][number] | null {
+  const record = asRecord(value);
+  const questionId = asString(record.questionId) ?? asString(record.question_id);
+  const selectedOptionId = asString(record.selectedOptionId) ?? asString(record.selected_option_id);
+  const correctOptionId = asString(record.correctOptionId) ?? asString(record.correct_option_id);
+
+  if (!questionId || !correctOptionId) {
+    return null;
+  }
+
+  return {
+    questionId,
+    selectedOptionId,
+    correctOptionId,
+    isCorrect: Boolean(record.isCorrect ?? record.is_correct),
+    topicLabel: asString(record.topicLabel) ?? asString(record.topic_label) ?? "General",
+  };
+}
+
+function scoreFromPersistedResult(
+  result: ResultRow,
+  questions: SnapshotQuestion[],
+  answers: AttemptAnswers,
+): AttemptScore {
+  const breakdown = asRecord(result.breakdown);
+  const resultSnapshot = asRecord(breakdown.result_snapshot);
+  const persistedQuestionResults = (
+    Array.isArray(breakdown.question_results)
+      ? breakdown.question_results
+      : Array.isArray(resultSnapshot.question_results)
+        ? resultSnapshot.question_results
+        : []
+  ).map(normalizeQuestionResult).filter(
+    (entry): entry is AttemptScore["questionResults"][number] => entry !== null,
+  );
+  const questionResults = persistedQuestionResults.length > 0
+    ? persistedQuestionResults
+    : scoreFromSnapshot(questions, answers).questionResults;
+  const correctCount = questionResults.filter((entry) => entry.isCorrect).length;
+  const unansweredCount = questionResults.filter((entry) => entry.selectedOptionId === null).length;
+  const incorrectCount = questionResults.length - correctCount - unansweredCount;
+  const percentageScore = Number(result.percentage ?? 0);
+
+  return {
+    correctCount,
+    incorrectCount,
+    unansweredCount,
+    percentageScore,
+    scaledScorePreview: Math.round(100 + (percentageScore / 100) * 900),
+    questionResults,
+    previewFormulaLabel: SCORE_PREVIEW_LABEL,
+    computedAt: Date.parse(result.graded_at) || Date.now(),
+  };
+}
+
+async function assertNoError<T>(
+  result: {
+    data: T;
+    error: { message: string; code?: string; details?: string | null; hint?: string | null } | null;
+  },
+): Promise<T> {
   if (result.error) {
+    console.info("[supabase-db] query_failed", {
+      code: result.error.code,
+      message: result.error.message,
+      details: result.error.details,
+      hint: result.error.hint,
+    });
     throw new Error(result.error.message);
   }
 
@@ -402,7 +483,12 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
       if (!normalizedSlug) {
         return false;
       }
-      return slugify(row.exam_code) === normalizedSlug || slugify(row.external_id ?? "") === normalizedSlug;
+      const metadataSlug = asString(asRecord(row.metadata).slug);
+      return (
+        slugify(row.exam_code) === normalizedSlug ||
+        slugify(row.external_id ?? "") === normalizedSlug ||
+        (metadataSlug ? slugify(metadataSlug) === normalizedSlug : false)
+      );
     });
 
     if (!exam) {
@@ -453,7 +539,7 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
       const normalizedMock = slugify(input.mockId);
       const { data: versions } = await this.db
         .from("exam_versions")
-        .select("id, external_id")
+        .select("id, external_id, metadata")
         .eq("organization_id", input.organizationId)
         .eq("exam_id", input.examId)
         .eq("status", "published")
@@ -463,7 +549,8 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
         (versions ?? []).find(
           (version) =>
             version.id === input.mockId ||
-            slugify(version.external_id ?? "") === normalizedMock,
+            slugify(version.external_id ?? "") === normalizedMock ||
+            slugify(asString(asRecord(version.metadata).slug) ?? "") === normalizedMock,
         )?.id ?? null;
     }
 
@@ -508,7 +595,7 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
         .maybeSingle(),
       this.db
         .from("exam_versions")
-        .select("id, duration_minutes, pass_score, max_attempts_per_user, title_override")
+        .select("id, duration_minutes, pass_score, max_attempts_per_user, title_override, metadata")
         .eq("organization_id", input.organizationId)
         .eq("id", input.examVersionId)
         .maybeSingle(),
@@ -579,13 +666,17 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
       };
     });
 
+    const examMetadata = asRecord(exam.metadata);
+    const versionMetadata = asRecord(version.metadata);
     const packageVersionId = packageItems?.[0]?.package_version_id ?? null;
+    const metadataTier = resolveMetadataTier(versionMetadata, examMetadata);
     const packageTier = packageVersionId
       ? await this.findPackageTier(input.organizationId, packageVersionId)
-      : "unknown";
+      : metadataTier;
 
     const certificationCode = String(exam.exam_code).split("-").slice(-1)[0] || String(exam.exam_code);
-    const slug = slugify(String(exam.exam_code));
+    const metadataSlug = asString(versionMetadata.slug) ?? asString(examMetadata.slug);
+    const slug = slugify(metadataSlug ?? String(exam.exam_code));
 
     return {
       id: exam.id,
@@ -599,7 +690,7 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
       examId: exam.id,
       examVersionId: version.id,
       packageVersionId,
-      packageTier,
+      packageTier: packageTier === "unknown" ? metadataTier : packageTier,
       passScore: Number(version.pass_score ?? 70),
       maxAttemptsPerUser: Number(version.max_attempts_per_user ?? 1),
     };
@@ -746,6 +837,7 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
     const { data: attemptRows, error: attemptsError } = await this.db
       .from("exam_attempts")
       .select("attempt_no")
+      .eq("organization_id", input.organizationId)
       .eq("user_id", input.userId)
       .eq("exam_version_id", input.exam.examVersionId)
       .order("attempt_no", { ascending: false })
@@ -756,6 +848,10 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
     }
 
     const attemptNo = Number(attemptRows?.[0]?.attempt_no ?? 0) + 1;
+    if (input.exam.maxAttemptsPerUser > 0 && attemptNo > input.exam.maxAttemptsPerUser) {
+      throw new Error("attempt_limit_reached");
+    }
+
     const now = new Date();
     const expiresAt = new Date(now.getTime() + input.exam.durationMinutes * 60_000);
     const snapshot = input.exam.questions.map((question) => ({
@@ -774,6 +870,7 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
     const metadata = {
       examSlug: input.exam.slug,
       mockId: input.mockId,
+      passScore: input.exam.passScore,
       currentQuestionIndex: 0,
       flaggedQuestionIds: [],
       questionSnapshot: snapshot,
@@ -1033,6 +1130,7 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
     const questions = getSnapshotQuestions(attempt);
     const score = scoreFromSnapshot(questions, answers);
     const submittedStatus = expired ? "auto_submitted" : "submitted";
+    const passScore = asNumber(getAttemptMetadata(attempt).passScore) ?? 70;
 
     for (const result of score.questionResults) {
       await this.db
@@ -1063,7 +1161,20 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
       throw new Error(attemptError.message);
     }
 
-    const breakdown = buildTopicBreakdown(score);
+    const breakdown = {
+      ...buildTopicBreakdown(score),
+      result_snapshot: {
+        score_source: "exam_attempts.metadata.questionSnapshot",
+        total_questions: questions.length,
+        correct_answers: score.correctCount,
+        raw_score: score.correctCount,
+        max_score: Math.max(questions.length, 1),
+        percentage: score.percentageScore,
+        passed: score.percentageScore >= passScore,
+        pass_score: passScore,
+        question_results: score.questionResults,
+      },
+    };
     const { data: resultRow, error: resultError } = await this.db
       .from("attempt_results")
       .insert({
@@ -1077,7 +1188,7 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
         raw_score: score.correctCount,
         max_score: Math.max(questions.length, 1),
         percentage: score.percentageScore,
-        passed: score.percentageScore >= 70,
+        passed: score.percentageScore >= passScore,
         breakdown,
         graded_at: now.toISOString(),
       })
@@ -1237,8 +1348,13 @@ class SupabaseAttemptsRepository implements AttemptsRepository {
       : [];
     const flaggedQuestionIds = Array.from(new Set([...flaggedFromMetadata, ...flaggedFromAnswers]));
     const questions = getSnapshotQuestions(attempt);
+    const persistedResult = publicStatus(attempt.status) === "submitted"
+      ? await this.getResult(attempt.id, attempt.organization_id)
+      : null;
     const result = publicStatus(attempt.status) === "submitted"
-      ? scoreFromSnapshot(questions, answers)
+      ? persistedResult
+        ? scoreFromPersistedResult(persistedResult, questions, answers)
+        : scoreFromSnapshot(questions, answers)
       : undefined;
 
     return {

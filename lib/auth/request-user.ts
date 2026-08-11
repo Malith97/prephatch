@@ -1,14 +1,18 @@
 import { createServerClient } from "@supabase/ssr";
 
 import { getSupabasePublicKey } from "../../server/db/supabase-env";
+import { nodeRealtimeOptions } from "../../server/db/supabase-realtime";
 
+import {
+  resolveDevBypassOrganizationId,
+  resolveDevBypassUserId,
+} from "./dev-bypass-identity";
 import { resolveDevBypassState } from "./dev-bypass";
 
 const USER_HEADER = "x-prephatch-user-id";
 const USER_COOKIE = "ph_user_id";
 const ORG_HEADER = "x-prephatch-organization-id";
 const ORG_COOKIE = "ph_org_id";
-const DEV_BYPASS_USER_ID = "dev-bypass-user";
 
 type RequestRole = "student" | "instructor" | "admin" | "super_admin" | "unknown";
 type RequestMembershipStatus = "invited" | "active" | "suspended" | "left" | "unknown";
@@ -158,6 +162,7 @@ function buildSupabaseServerClientForRequest(request: Request) {
           // Route handlers do not need to write refreshed cookies for this resolver.
         },
       },
+      realtime: nodeRealtimeOptions,
     },
   );
 }
@@ -175,7 +180,7 @@ export function resolveRequestUserId(request: Request): string | null {
 
   const devBypassState = resolveDevBypassState();
   if (devBypassState.enabled) {
-    return DEV_BYPASS_USER_ID;
+    return resolveDevBypassUserId();
   }
 
   return null;
@@ -246,8 +251,8 @@ export async function resolveRequestUserContext(
   const devBypassState = resolveDevBypassState();
   if (devBypassState.enabled) {
     return {
-      userId: DEV_BYPASS_USER_ID,
-      organizationId: process.env.DEV_BYPASS_ORGANIZATION_ID?.trim() || "dev-organization",
+      userId: resolveDevBypassUserId(),
+      organizationId: resolveDevBypassOrganizationId(),
       role: normalizeRole(process.env.DEV_BYPASS_ROLE),
       membershipStatus: "active",
       email: process.env.DEV_BYPASS_EMAIL?.trim() || "dev-bypass@prephatch.dev",
