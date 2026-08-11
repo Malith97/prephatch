@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { resolveDevBypassOrganizationId } from "../../../lib/auth/dev-bypass-identity";
 import { resolveRequestUserContext } from "../../../lib/auth/request-user";
 import {
   createOrResumeAttempt,
@@ -44,13 +45,13 @@ export async function POST(request: Request) {
     );
   }
 
-    const organizationId =
+  const organizationId =
     userContext.organizationId ??
     (
       userContext.source === "dev_bypass" ||
       userContext.source === "header" ||
       userContext.source === "cookie"
-        ? "dev-organization"
+        ? resolveDevBypassOrganizationId()
         : null
     );
   // Tenant guard: attempt creation requires explicit organization context.
@@ -87,7 +88,7 @@ export async function POST(request: Request) {
 
   if (!result.ok) {
     console.info(
-      `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts result=${result.code} user=${userContext.userId} org=${organizationId}`,
+      `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts result=${result.code} user=${userContext.userId} org=${organizationId} examSlug=${payload.examSlug ?? payload.slug ?? ""} mockId=${payload.mockId ?? payload.mock_exam_id ?? ""}`,
     );
     return NextResponse.json(
       {
@@ -102,7 +103,7 @@ export async function POST(request: Request) {
   }
 
   console.info(
-    `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts result=ok user=${userContext.userId} org=${organizationId} attemptId=${result.value.attempt.attemptId} resumed=${result.value.resumed}`,
+    `[attempt-api] ts=${requestedAt} method=POST path=/api/attempts result=ok user=${userContext.userId} org=${organizationId} examSlug=${payload.examSlug ?? payload.slug ?? ""} mockId=${payload.mockId ?? payload.mock_exam_id ?? ""} attemptId=${result.value.attempt.attemptId} resumed=${result.value.resumed}`,
   );
 
   return NextResponse.json(result.value);

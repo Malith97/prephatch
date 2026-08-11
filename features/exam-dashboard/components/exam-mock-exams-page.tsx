@@ -1,19 +1,41 @@
 import Link from "next/link";
 
-import { getMockExamWorkspace } from "../../exams/mock-exam-workspace";
+import { getExamBySlug } from "../../../server/exams/mock-repository";
+import type { MockExam } from "../../../server/exams/types";
+import type { ExamWorkspaceMock } from "../../exams/mock-exam-workspace";
 import { ExamMockList } from "../../exams/components/exam-mock-list";
-import { getCanonicalMocks } from "../exam-dashboard-utils";
 
 type ExamMockExamsPageProps = {
   examSlug: string;
   selectedMockId?: string;
 };
 
-export function ExamMockExamsPage({
+function buildDbMock(exam: MockExam): ExamWorkspaceMock {
+  const runtimeExam = exam as MockExam & { examVersionId?: string; packageTier?: string };
+  const mockId = runtimeExam.examVersionId ?? exam.slug;
+
+  return {
+    id: mockId,
+    title: exam.title,
+    note: exam.description,
+    mode: "Timed",
+    status: exam.questions.length > 0 ? "Live" : "Coming soon",
+    questions: exam.questions.length,
+    duration: `${exam.durationMinutes} minutes`,
+    access: runtimeExam.packageTier === "premium" ? "Entitlement required" : "Free",
+    ctaLabel: exam.questions.length > 0 ? "Start free mock" : "View details",
+    href: exam.questions.length > 0
+      ? `/exam/${exam.slug}/session/${mockId}`
+      : `/exam/${exam.slug}/mock-exams`,
+    isLive: exam.questions.length > 0,
+  };
+}
+
+export async function ExamMockExamsPage({
   examSlug,
   selectedMockId,
 }: Readonly<ExamMockExamsPageProps>) {
-  const exam = getMockExamWorkspace(examSlug);
+  const exam = await getExamBySlug(examSlug, { includeAnswers: false });
 
   if (!exam) {
     return (
@@ -39,7 +61,7 @@ export function ExamMockExamsPage({
 
   return (
     <main className="space-y-5">
-      <ExamMockList mocks={getCanonicalMocks(exam)} selectedMockId={selectedMockId} />
+      <ExamMockList mocks={[buildDbMock(exam)]} selectedMockId={selectedMockId} />
     </main>
   );
 }

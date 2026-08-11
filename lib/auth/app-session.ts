@@ -1,6 +1,10 @@
 import { cookies } from "next/headers";
 
 import { createClient as createSupabaseServerClient } from "../../utils/supabase/server";
+import {
+  resolveDevBypassOrganizationId,
+  resolveDevBypassUserId,
+} from "./dev-bypass-identity";
 import { resolveDevBypassState } from "./dev-bypass";
 
 export type AppRole = "student" | "instructor" | "admin" | "super_admin" | "unknown";
@@ -120,11 +124,11 @@ export async function getAppSessionUser(): Promise<AppSessionUser | null> {
   }
 
   return {
-    userId: "dev-bypass-user",
+    userId: resolveDevBypassUserId(),
     email: process.env.DEV_BYPASS_EMAIL?.trim() || "dev-bypass@prephatch.dev",
     role: normalizeRole(process.env.DEV_BYPASS_ROLE),
     membershipStatus: "active",
-    organizationId: process.env.DEV_BYPASS_ORGANIZATION_ID?.trim() || "dev-organization",
+    organizationId: resolveDevBypassOrganizationId(),
     source: "dev_bypass",
   };
 }

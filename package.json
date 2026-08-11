@@ -14,6 +14,7 @@
     "test": "./scripts/use-project-node.sh vitest run",
     "typecheck": "./scripts/use-project-node.sh tsc --noEmit",
     "free-mock:hosted": "./scripts/use-project-node.sh node scripts/free-mock-flow.mjs",
+    "smoke:free-mock-route": "ALLOW_DEV_BYPASS=true ./scripts/use-project-node.sh node scripts/free-mock-route-smoke.mjs",
     "test:free-mock-flow": "./scripts/use-project-node.sh node scripts/free-mock-flow.test.mjs"
   },
   "dependencies": {
@@ -21,7 +22,8 @@
     "@supabase/supabase-js": "^2.105.3",
     "next": "^14.2.32",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "@types/node": "20.14.10",

@@ -2,6 +2,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
+import WebSocket from "ws";
 
 const DEFAULT_ENV_FILES = [".env.local", ".env"];
 const DEFAULT_PASS_SCORE = 70;
@@ -48,6 +49,7 @@ function buildClient() {
     usingServiceRole: Boolean(serviceRoleKey),
     supabase: createClient(url, key, {
       auth: { autoRefreshToken: false, persistSession: false },
+      realtime: { transport: WebSocket },
     }),
   };
 }

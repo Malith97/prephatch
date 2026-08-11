@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import { getRequiredEnvVar } from "./supabase-env";
+import { nodeRealtimeOptions } from "./supabase-realtime";
 
 let serviceClient: SupabaseClient | null = null;
 
@@ -17,6 +18,7 @@ export function getSupabaseServiceClient(): SupabaseClient {
         autoRefreshToken: false,
         persistSession: false,
       },
+      realtime: nodeRealtimeOptions,
     },
   );
 

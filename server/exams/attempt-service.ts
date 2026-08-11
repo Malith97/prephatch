@@ -17,6 +17,7 @@ type ServiceErrorCode =
   | "unauthorized"
   | "attempt_already_submitted"
   | "attempt_expired"
+  | "attempt_limit_reached"
   | "version_conflict"
   | "invalid_answer_payload"
   | "access_denied"
@@ -80,6 +81,15 @@ function mapThrownError(error: unknown, fallbackMessage: string): ServiceError {
       code: "invalid_answer_payload",
       status: 400,
       message: "Answers payload contains invalid question or option values.",
+    };
+  }
+
+  if (message === "attempt_limit_reached") {
+    return {
+      ok: false,
+      code: "attempt_limit_reached",
+      status: 409,
+      message: "You have reached the maximum number of attempts for this mock exam.",
     };
   }
 
