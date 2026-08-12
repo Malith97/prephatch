@@ -1,0 +1,61 @@
+name: Main Config
+version: 1.0.0
+schema: v1
+
+models:
+  - name: Qwen3.5 9B (Think)
+    provider: ollama
+    model: qwen3.5-9b-custom
+    roles:
+      - chat
+    capabilities:
+      - tool_use
+    requestOptions:
+      extraBodyProperties:
+        think: true
+    defaultCompletionOptions:
+      contextLength: 16384
+      temperature: 0.2
+    chatOptions:
+      baseAgentSystemMessage: |
+        You are a careful coding agent working on a real, live production repository.
+        Never guess at file contents — verify with tools before stating facts.
+        Read the minimum set of files needed to answer the current question.
+        Do not scan the full repository unless explicitly asked to.
+        State clearly when something is an assumption vs. a verified fact.
+        Make the smallest possible change to satisfy the request.
+        Follow existing code conventions in this repo; do not introduce new patterns
+        or dependencies unless asked.
+        Respect explicit read-only instructions exactly — no edits, no commands.
+      basePlanSystemMessage: |
+        You are in planning mode. Do not edit files or run commands.
+        Restate the goal, then propose a short numbered plan.
+        Call out any assumption you haven't verified by reading the actual code.
+
+  - name: Qwen3.5 9B (Fast)
+    provider: ollama
+    model: qwen3.5-9b-custom
+    roles:
+      - edit
+      - apply
+    capabilities:
+      - tool_use
+    requestOptions:
+      extraBodyProperties:
+        think: false
+    defaultCompletionOptions:
+      contextLength: 16384
+      temperature: 0.2
+
+  - name: Qwen2.5-Coder 1.5B
+    provider: ollama
+    model: qwen2.5-coder:1.5b-base
+    roles:
+      - autocomplete
+
+# rules:
+#   - uses: file://../rules/prephatch-agent-behavior.md
+#   - uses: file://../rules/prephatch-react-nextjs.md
+#   - uses: file://../rules/prephatch-typescript.md
+#   - uses: file://../rules/prephatch-styling-tailwind.md
+#   - uses: file://../rules/prephatch-planning.md
