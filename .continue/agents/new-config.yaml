@@ -8,6 +8,8 @@ models:
     model: qwen3.5-9b-custom
     roles:
       - chat
+      - edit
+      - apply
     capabilities:
       - tool_use
     requestOptions:
