@@ -1,68 +1,52 @@
-interface Step {
-  number: number;
-  title: string;
-  description: string;
-}
+import StepLabel from "@/components/ui/StepLabel";
 
-const steps: Step[] = [
-  {
-    number: 1,
-    title: "Research",
-    description:
-      "[Placeholder description exploring the problem space and existing solutions.]",
-  },
-  {
-    number: 2,
-    title: "Experiment",
-    description:
-      "[Placeholder description testing hypotheses with small-scale prototypes.]",
-  },
-  {
-    number: 3,
-    title: "Build",
-    description:
-      "[Placeholder description developing the solution iteratively.]",
-  },
-  {
-    number: 4,
-    title: "Measure",
-    description:
-      "[Placeholder description evaluating real-world effectiveness.]",
-  },
-  {
-    number: 5,
-    title: "Improve",
-    description:
-      "[Placeholder description refining based on results and feedback.]",
-  },
+const steps = [
+  ["Research", "Define the task, context, and question."],
+  ["Experiment", "Test a focused hypothesis with a small prototype."],
+  ["Build", "Turn a useful pattern into a system that fits the work."],
+  ["Measure", "Evaluate quality, failure modes, effort, and uncertainty."],
+  ["Improve", "Use the evidence to decide what happens next."],
 ];
 
 export default function Methodology() {
   return (
-    <section className="py-16 sm:py-20">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">
-          <ol className="sm:flex sm:items-start sm:justify-between sm:space-x-4 lg:space-x-6">
-            {steps.map((step) => (
-              <li
-                key={step.title}
-                className="mb-8 last:mb-0 sm:mb-0 sm:flex-1 sm:text-center"
-              >
-                <span
-                  aria-hidden="true"
-                  className="flex items-center justify-center w-8 h-8 mx-auto mb-3 text-sm font-medium text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 rounded-full"
+    <section className="border-b border-gray-200 dark:border-gray-800 py-16 sm:py-24 lg:py-28">
+      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-[minmax(14rem,0.5fr)_minmax(0,1.5fr)] lg:gap-20">
+          <StepLabel number="08" label="Method" />
+
+          <div>
+            <h2 className="max-w-2xl text-3xl font-semibold tracking-tight sm:text-5xl sm:leading-tight">
+              A loop for turning uncertainty into the next useful question.
+            </h2>
+
+            <ol className="mt-12 grid gap-4 sm:grid-cols-5">
+              {steps.map(([step, description], index) => (
+                <li
+                  key={step}
+                  className="relative flex gap-4 rounded-[var(--radius-lg)] border border-gray-200 bg-[var(--surface)] p-5 sm:block dark:border-gray-800"
                 >
-                  {step.number}
-                </span>
-                <h3 className="text-base font-medium tracking-tight mb-1">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {step.description}
-                </p>
-              </li>
-            ))}
-          </ol>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 text-sm font-medium text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+                    0{index + 1}
+                  </span>
+                  <div>
+                    <h3 className="mt-0 text-lg font-medium tracking-tight sm:mt-5">
+                      {step}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                      {description}
+                    </p>
+                  </div>
+                  {index < steps.length - 1 ? (
+                    <span
+                      aria-hidden="true"
+                      className="absolute right-0 top-9 hidden h-px w-4 -translate-y-1/2 translate-x-full bg-gray-200 sm:block dark:bg-gray-800"
+                    />
+                  ) : null}
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
     </section>

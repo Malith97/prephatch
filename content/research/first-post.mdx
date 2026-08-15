@@ -1,10 +1,57 @@
 ---
-title: "[Placeholder Research Post Title]"
+title: "Splitting Tasks Across AI Models"
 date: "2025-01-01"
-summary: "[Placeholder summary of this research post. Will be replaced with final content during the content pass.]"
+summary: "An exploratory note on routing different parts of a task to different AI models while measuring cost, quality, and review effort."
 status: "draft"
 ---
 
-This is a placeholder. The body of this post will be replaced with actual
-research content during the content pass. No real claims, statistics, findings,
-or citations are included here.
+## The question
+
+Using one AI model for every part of a task is convenient, but it may not be
+the most economical way to work. Different stages of a task place different
+demands on a model. A short classification step may need speed and consistency,
+while a difficult synthesis or review may benefit from a model with stronger
+reasoning or a larger context window. This raises a practical research
+question: can a task be split across models to reduce cost without reducing the
+quality of the result?
+
+## A possible approach
+
+The basic idea is to route each subtask to the least expensive model that can
+perform it reliably. A smaller model might extract fields, sort examples, or
+draft a first pass. A more capable model could then handle ambiguous cases,
+combine the intermediate work, or review the final answer. Some tasks may also
+be checked by a separate model, a deterministic rule, or a person rather than
+sent through the same expensive model again.
+
+This is not simply a matter of assigning models by task label. The output of an
+early stage affects the work that follows. A cheap extraction step that loses an
+important detail can create errors that a later model cannot easily detect. A
+useful routing system therefore needs explicit handoff formats, confidence
+signals, and a way to escalate uncertain examples. It should also account for
+the cost of retries, reviews, and longer prompts when comparing approaches.
+
+## How to study it
+
+An exploratory evaluation could begin with a small set of representative tasks
+and a fixed quality rubric. Each task would be run through a single-model
+baseline and several split workflows. The comparison would consider total token
+and inference cost, completion time, error types, review effort, and the quality
+of the final answer. It would be important to inspect failures by stage rather
+than rely only on an overall score. A workflow that saves money by moving more
+work to human reviewers may not be cheaper in practice.
+
+The study should also test different routing thresholds. Sending every case to
+the strongest model is unlikely to be necessary, while escalating too rarely
+could produce silent quality loss. The useful operating point may differ by
+task, domain, and consequence of error. Repeated runs would help separate a
+stable pattern from an isolated result.
+
+## Working hypothesis
+
+The hypothesis is that model specialization can reduce cost when subtasks have
+meaningfully different difficulty levels and when escalation is reliable. This
+should be treated as a question to test, not as a shipped result or a promise of
+equal quality. The next step is to define the task set, establish the baseline,
+and measure where routing helps, where it fails, and what additional coordination
+it requires.

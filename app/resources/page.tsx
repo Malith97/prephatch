@@ -1,86 +1,100 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import StepLabel from "@/components/ui/StepLabel";
+import StatusBadge from "@/components/ui/StatusBadge";
+import Button from "@/components/ui/Button";
+import ExternalResearch from "@/components/sections/ExternalResearch";
 
-export const metadata: Metadata = {
-  title: "Resources",
-  description:
-    "Research notes, technical reports, and resources. The AI Resource Layer is in development.",
-};
-
-const researchPosts = [
-  {
-    title: "[Placeholder Research Post Title 1]",
-  },
-  {
-    title: "[Placeholder Research Post Title 2]",
-  },
-  {
-    title: "[Placeholder Research Post Title 3]",
-  },
-];
+export const metadata: Metadata = { title: "Resources", description: "Research notes and working observations from PrepHatch." };
 
 export default function ResourcesPage() {
   return (
     <>
-      <section className="py-20 sm:py-24">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl font-bold tracking-tight mb-6">
-              Resources
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-              [Placeholder introduction to the resources index. This will be
-              refined with final copy once messaging is settled.]
-            </p>
-          </div>
+      {/* Hero */}
+      <section className="border-b border-gray-200 dark:border-gray-800 py-20 sm:py-28">
+        <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+          <p className="mb-6 text-xs font-medium uppercase tracking-widest text-blue-600 dark:text-blue-400">
+            Research archive
+          </p>
+          <h1 className="max-w-5xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            Notes from questions still being worked through.
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-400">
+            An early archive of exploratory writing on AI tools, workflows,
+            evaluation, and the decisions around using them.
+          </p>
         </div>
       </section>
 
-      <section className="py-16 sm:py-20">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <h2 className="text-3xl font-semibold tracking-tight mb-6">
-              Research and notes
-            </h2>
-            <ul className="flex flex-col space-y-6 sm:space-y-8">
-              {researchPosts.map((post) => (
-                <li
-                  key={post.title}
-                  className="border-b border-gray-200 dark:border-gray-800 pb-4 sm:pb-6"
-                >
-                  <a
-                    href="#"
-                    className="block group text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-                  >
-                    <h3 className="text-xl font-medium tracking-tight">
-                      {post.title}
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">
-                      Coming soon
-                    </p>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+      {/* Featured research */}
+      <section className="border-b border-gray-200 dark:border-gray-800 py-16 sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+          <p className="mb-5 text-xs font-medium uppercase tracking-widest text-blue-600 dark:text-blue-400">
+            Featured research / PrepHatch note
+          </p>
+
+          <article className="grid gap-10 rounded-[var(--radius-lg)] border border-gray-200 bg-[var(--surface)] p-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.6fr)] lg:gap-14 lg:p-10 dark:border-gray-800">
+            <div>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-500">
+                <span>Research notes</span>
+                <span>/</span>
+                <time dateTime="2025-01-01">2025-01-01</time>
+                <span>/</span>
+                <StatusBadge status="Draft" variant="draft" />
+              </div>
+
+              <h2 className="mt-6 max-w-3xl text-3xl font-semibold tracking-tight sm:text-5xl sm:leading-tight">
+                Splitting tasks across AI models
+              </h2>
+
+              <p className="mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-400">
+                An exploratory note on routing different parts of a task to
+                different models while measuring cost, quality, and review
+                effort.
+              </p>
+
+              <Link
+                href="/resources/research/first-post"
+                className="mt-8 inline-flex text-base font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+              >
+                Open the note <span aria-hidden="true" className="ml-2">→</span>
+              </Link>
+            </div>
+
+            <div className="border-t border-gray-200 pt-6 dark:border-gray-800 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+              <p className="text-xs font-medium uppercase tracking-widest text-gray-500 dark:text-gray-500">
+                Technical notes
+              </p>
+              <p className="mt-5 text-base text-gray-600 dark:text-gray-400">
+                The current archive begins with exploratory research. Technical
+                notes will be added when there is work that can be described
+                accurately and separately.
+              </p>
+            </div>
+          </article>
         </div>
       </section>
 
-      <section className="py-16 sm:py-20">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <h2 className="text-3xl font-semibold tracking-tight mb-6">
-              Careers
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-              [Placeholder: short note about joining the team. This will be
-              refined with final copy once messaging is settled.]
-            </p>
-            <a
-              href="/resources/careers"
-              className="inline-flex items-center px-5 py-2.5 text-base font-medium text-gray-900 dark:text-gray-100 bg-transparent border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              View careers
-            </a>
+      <ExternalResearch />
+
+      {/* CTA */}
+      <section className="py-16 sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+          <StepLabel number="" label="Field notes" className="mb-4" />
+          <div className="flex flex-col gap-8 border-t border-gray-200 pt-10 dark:border-gray-800 sm:flex-row sm:items-end sm:justify-between sm:pt-12">
+            <div>
+              <h2 className="max-w-xl text-3xl font-semibold tracking-tight sm:text-5xl">
+                The archive will grow with the work.
+              </h2>
+              <p className="mt-5 max-w-xl text-lg text-gray-600 dark:text-gray-400">
+                PrepHatch notes remain separate from external research: they
+                record questions and methods under development rather than
+                claiming finished results.
+              </p>
+            </div>
+            <Button href="/resources/careers" variant="secondary" className="w-fit shrink-0">
+              About the work
+            </Button>
           </div>
         </div>
       </section>
