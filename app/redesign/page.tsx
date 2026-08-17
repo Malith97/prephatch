@@ -67,7 +67,7 @@ export default function RedesignPage() {
 
       <section className="phx-page-bg py-8">
         <div className="phx-container grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <FilterPanel providers={["All", "PrepHatch Labs", "CertSprint"]} levels={["All", "Beginner", "Advanced"]} onChange={() => undefined} />
+          <FilterPanel providers={["All", "PrepHatch Labs", "CertSprint"]} levels={["All", "Beginner", "Advanced"]} />
           <Suspense fallback={<PackageListSkeleton />}>
             <PackageList packagesPromise={packagePromise} />
           </Suspense>

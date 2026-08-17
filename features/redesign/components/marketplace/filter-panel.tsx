@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 type FilterPanelProps = {
   providers: string[];
   levels: string[];
-  onChange: (filters: { provider: string; level: string }) => void;
+  onChange?: (filters: { provider: string; level: string }) => void;
 };
 
 export function FilterPanel({ providers, levels, onChange }: FilterPanelProps) {
@@ -26,7 +26,7 @@ export function FilterPanel({ providers, levels, onChange }: FilterPanelProps) {
           onChange={(event) => {
             const next = event.target.value;
             setProvider(next);
-            onChange({ ...selected, provider: next });
+            onChange?.({ ...selected, provider: next });
           }}
         >
           <option value="all">All providers</option>
@@ -46,7 +46,7 @@ export function FilterPanel({ providers, levels, onChange }: FilterPanelProps) {
           onChange={(event) => {
             const next = event.target.value;
             setLevel(next);
-            onChange({ ...selected, level: next });
+            onChange?.({ ...selected, level: next });
           }}
         >
           <option value="all">All levels</option>

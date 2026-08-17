@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { listCatalogPackages } from "../../../server/catalog/repository";
 import type { CatalogPackagesListResponse } from "../../../server/catalog/types";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const requestedAt = new Date().toISOString();
